@@ -39,6 +39,14 @@ import java.util.Optional;
 
 import static com.schnozz.identitiesmod.keymapping.ModMappings.*;
 
+/*
+Gravity power plan:
+    1. Delete everything
+    2. Add anvil drop
+    3. Add cyclone attack
+    4. Add meteor
+*/
+
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ClientGravityEvents {
     //chaos target find global variables

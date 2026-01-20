@@ -9,7 +9,11 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-
+/*
+Kyle Plan:
+    1. Add max cap (can't one shot netherite)
+    2. Increase loss on death
+ */
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME)
 public class ServerKyleEvents {
     @SubscribeEvent

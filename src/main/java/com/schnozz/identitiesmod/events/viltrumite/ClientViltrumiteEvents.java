@@ -39,7 +39,14 @@ import java.util.Comparator;
 import java.util.List;
 
 import static com.schnozz.identitiesmod.keymapping.ModMappings.*;
-
+/*
+Viltrumite Plan:
+    1. Change dash to big aoe punch without stun
+    2. Remove flight and custom weapons
+    3. Add permanent str and spd level 1
+    4. Add temp resistance 2 on cooldown
+    5. Think about grab and how the kit feels
+ */
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ClientViltrumiteEvents {
     //damage constants
