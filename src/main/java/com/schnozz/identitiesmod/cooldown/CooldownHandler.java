@@ -33,15 +33,12 @@ public class CooldownHandler {
                 for (Map.Entry<ResourceLocation, Cooldown> entry : cdMapAttached.getAllCooldowns().entrySet()) {
                     if (currentTime >= entry.getValue().startTime() + entry.getValue().duration()) {
                         toRemove.add(entry.getKey());
-
                     }
                 }
 
                 for (ResourceLocation key : toRemove) {
                     PacketDistributor.sendToPlayer(player, new CooldownSyncPayload(cdMapAttached.getAllCooldowns().get(key), key, true));
                     newAttachment.getAllCooldowns().remove(key); // SAFE: happens after iteration
-
-
                 }
 
                 player.setData(ModDataAttachments.COOLDOWN, newAttachment);

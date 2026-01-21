@@ -62,25 +62,32 @@ public class ModMappings {
             "key.categories.misc"
     ));
     //Gravity
-    public static final Lazy<KeyMapping> GRAVITY_PUSH_MAPPING = Lazy.of(() -> new KeyMapping(
-            "key.identitiesmod.gravity.push",
+    public static final Lazy<KeyMapping> GRAVITY_METEOR_MAPPING = Lazy.of(() -> new KeyMapping(
+            "key.identitiesmod.gravity.anvil",
             KeyConflictContext.UNIVERSAL,
             InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_C,
+            GLFW.GLFW_KEY_F,
             "key.categories.misc"
     ));
-    public static final Lazy<KeyMapping> GRAVITY_PULL_MAPPING = Lazy.of(() -> new KeyMapping(
-            "key.identitiesmod.gravity.pull",
+    public static final Lazy<KeyMapping> GRAVITY_DRIPSTONE_MAPPING = Lazy.of(() -> new KeyMapping(
+            "key.identitiesmod.gravity.dripstone",
+            KeyConflictContext.UNIVERSAL,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_R,
+            "key.categories.misc"
+    ));
+    public static final Lazy<KeyMapping> GRAVITY_ARROW_MAPPING = Lazy.of(() -> new KeyMapping(
+            "key.identitiesmod.gravity.arrow",
             KeyConflictContext.UNIVERSAL,
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_V,
             "key.categories.misc"
     ));
-    public static final Lazy<KeyMapping> GRAVITY_METEOR_MAPPING = Lazy.of(() -> new KeyMapping(
-            "key.identitiesmod.gravity.meteor",
+    public static final Lazy<KeyMapping> GRAVITY_CYCLONE_MAPPING = Lazy.of(() -> new KeyMapping(
+            "key.identitiesmod.gravity.cyclone",
             KeyConflictContext.UNIVERSAL,
             InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_R,
+            GLFW.GLFW_KEY_C,
             "key.categories.misc"
     ));
 
@@ -111,8 +118,9 @@ public class ModMappings {
         event.register(VILTRUMITE_FLIGHT_MAPPING.get());
 
         //Gravity mappings
-        event.register(GRAVITY_PUSH_MAPPING.get());
-        event.register(GRAVITY_PULL_MAPPING.get());
+        event.register(GRAVITY_DRIPSTONE_MAPPING.get());
+        event.register(GRAVITY_CYCLONE_MAPPING.get());
+        event.register(GRAVITY_ARROW_MAPPING.get());
         event.register(GRAVITY_METEOR_MAPPING.get());
 
         //Adaptation mapping
