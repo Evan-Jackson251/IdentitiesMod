@@ -32,7 +32,7 @@ import static com.schnozz.identitiesmod.keymapping.ModMappings.*;
 /*
 Gravity power plan:
     1. Add grav arrow visuals
-    4. Add meteor ult (charged by dealing damage with other abilities)
+    2. Add meteor ult (charged by dealing damage with other abilities)
 */
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)

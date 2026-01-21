@@ -1,6 +1,5 @@
 package com.schnozz.identitiesmod.events.viltrumite;
 
-
 import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.items.ItemRegistry;
 import com.schnozz.identitiesmod.mob_effects.ModEffects;
@@ -77,6 +76,7 @@ public class ServerViltrumiteEvents {
             }
         }
     }
+
     @SubscribeEvent
     public static void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
         if(event.getEntity().getData(ModDataAttachments.POWER_TYPE).equals("Viltrumite")) {
@@ -101,48 +101,6 @@ public class ServerViltrumiteEvents {
             }
         }
     }
-    @SubscribeEvent
-    public static void onEntityDamage(LivingIncomingDamageEvent event)
-    {
-        if(event.getEntity().level().isClientSide) return;
-        if(event.getEntity().getData(ModDataAttachments.POWER_TYPE).equals("Viltrumite"))
-        {
-            if(event.getSource().getDirectEntity()!=null){
-                if(event.getSource().getDirectEntity() instanceof Mob mob && !mob.isAggressive())
-                {
-                    return;
-                }
-            }
-            Player viltrumtiePlayer = (Player) event.getEntity();
-
-            //cd set
-            long startTime = viltrumtiePlayer.level().getGameTime();
-            Cooldown cd = new Cooldown(startTime, 600);
-            CooldownAttachment cdAttach = viltrumtiePlayer.getData(ModDataAttachments.COOLDOWN);
-            ResourceLocation key = ResourceLocation.fromNamespaceAndPath("identitiesmod", "fly_cd");
-
-            cdAttach.setCooldown(key, startTime, 600);
-            PacketDistributor.sendToPlayer((ServerPlayer) viltrumtiePlayer, new CooldownSyncPayload(cd,key, false  ));
-        }
-        else if(event.getSource().getDirectEntity() != null && event.getSource().getDirectEntity().isAlive()  ) {
-            if (event.getSource().getDirectEntity().getData(ModDataAttachments.POWER_TYPE).equals("Viltrumite")) {
-                if(event.getEntity() instanceof Mob mob && !mob.isAggressive())
-                {
-                    return;
-                }
-                Player viltrumtiePlayer = (Player) event.getSource().getDirectEntity();
-
-                //cd set
-                long startTime = viltrumtiePlayer.level().getGameTime();
-                Cooldown cd = new Cooldown(startTime, 600);
-                CooldownAttachment cdAttach = viltrumtiePlayer.getData(ModDataAttachments.COOLDOWN);
-                ResourceLocation key = ResourceLocation.fromNamespaceAndPath("identitiesmod", "fly_cd");
-
-                cdAttach.setCooldown(key, startTime, 600);
-                PacketDistributor.sendToPlayer((ServerPlayer) viltrumtiePlayer, new CooldownSyncPayload(cd,key, false  ));
-            }
-        }
-    }
 
     @SubscribeEvent
     public static void onKillBread(PlayerEvent.Clone event)
@@ -150,8 +108,13 @@ public class ServerViltrumiteEvents {
         if(event.getEntity().level().isClientSide) return;
         if(event.isWasDeath() && event.getEntity().level() instanceof ServerLevel level && event.getOriginal().getData(ModDataAttachments.POWER_TYPE).equals("Viltrumite"))
         {
-            event.getEntity().addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, MobEffectInstance.INFINITE_DURATION, 0, false, true,true));
-            PacketDistributor.sendToPlayer((ServerPlayer)event.getEntity(),new PotionLevelPayload(MobEffects.DAMAGE_RESISTANCE,0,MobEffectInstance.INFINITE_DURATION));
+            //perm strength 1
+            event.getEntity().addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, MobEffectInstance.INFINITE_DURATION, 0, false, true,true));
+            PacketDistributor.sendToPlayer((ServerPlayer)event.getEntity(),new PotionLevelPayload(MobEffects.DAMAGE_BOOST,0,MobEffectInstance.INFINITE_DURATION));
+            //perm speed 1
+            event.getEntity().addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, MobEffectInstance.INFINITE_DURATION, 0, false, true,true));
+            PacketDistributor.sendToPlayer((ServerPlayer)event.getEntity(),new PotionLevelPayload(MobEffects.MOVEMENT_SPEED,0,MobEffectInstance.INFINITE_DURATION));
+            //drops held entity
             if(event.getOriginal().hasData(ModDataAttachments.ENTITY_HELD) && event.getOriginal().getData(ModDataAttachments.ENTITY_HELD).hasUUID("UUID"))
             {
                 Objects.requireNonNull(level.getEntity(event.getOriginal().getData(ModDataAttachments.ENTITY_HELD).getUUID("UUID"))).setNoGravity(false);
@@ -173,7 +136,6 @@ public class ServerViltrumiteEvents {
         }
     }
 
-
     @SubscribeEvent
     public static void onAttackEntity(AttackEntityEvent event) {
         if(event.getEntity().level().isClientSide) return;
@@ -190,16 +152,6 @@ public class ServerViltrumiteEvents {
         }
 
     }
-
-    @SubscribeEvent
-    public static void onFall(LivingFallEvent event) {
-        Entity entity = event.getEntity();
-        if(entity.getData(ModDataAttachments.POWER_TYPE).equals("Viltrumite")) {
-            event.setCanceled(true);
-        }
-    }
-
-
 
     @SubscribeEvent
     public static void onDamage(LivingIncomingDamageEvent event) {

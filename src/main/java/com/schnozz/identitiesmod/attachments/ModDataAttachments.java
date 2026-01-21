@@ -58,12 +58,4 @@ public class ModDataAttachments {
             "home_pos", () -> AttachmentType.builder(() -> BlockPos.ZERO).serialize(BlockPos.CODEC).copyOnDeath().build()
     );
 
-    public static final Supplier<AttachmentType<ViltrumiteAttachment>> VILTRUMITE_STATES =
-            ATTACHMENT_TYPES.register("viltrumite_states", () ->
-                    AttachmentType.builder(ViltrumiteAttachment::new)
-                            .serialize(ViltrumiteAttachment.CODEC)
-                            .copyOnDeath()
-                            .build()
-            );
-
 }

@@ -22,15 +22,15 @@ public class ModMappings {
             GLFW.GLFW_KEY_G, // Default key is G
             "key.categories.misc" // Mapping will be in the misc category
     ));
-    public static final Lazy<KeyMapping> VILTRUMITE_CHOKE_MAPPING = Lazy.of(() -> new KeyMapping(
+    public static final Lazy<KeyMapping> VILTRUMITE_DASH_MAPPING = Lazy.of(() -> new KeyMapping(
             "key.identitiesmod.viltrumite.choke",
             KeyConflictContext.UNIVERSAL,
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_C,
             "key.categories.misc"
     ));
-    public static final Lazy<KeyMapping> VILTRUMITE_FLIGHT_MAPPING = Lazy.of(() -> new KeyMapping(
-            "key.identitiesmod.viltrumite.flight",
+    public static final Lazy<KeyMapping> VILTRUMITE_BLOCK_MAPPING = Lazy.of(() -> new KeyMapping(
+            "key.identitiesmod.viltrumite.block",
             KeyConflictContext.UNIVERSAL,
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_R,
@@ -114,9 +114,8 @@ public class ModMappings {
     public static void registerBindings(RegisterKeyMappingsEvent event) {
         //Viltrumite mappings
         event.register(VILTRUMITE_GRAB_MAPPING.get());
-        event.register(VILTRUMITE_CHOKE_MAPPING.get());
-        event.register(VILTRUMITE_FLIGHT_MAPPING.get());
-
+        event.register(VILTRUMITE_DASH_MAPPING.get());
+        event.register(VILTRUMITE_BLOCK_MAPPING.get());
         //Gravity mappings
         event.register(GRAVITY_DRIPSTONE_MAPPING.get());
         event.register(GRAVITY_CYCLONE_MAPPING.get());

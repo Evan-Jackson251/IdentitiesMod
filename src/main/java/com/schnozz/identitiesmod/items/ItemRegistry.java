@@ -84,8 +84,8 @@ public class ItemRegistry {
             new Item.Properties().stacksTo(1).attributes(
                     SwordItem.createAttributes(
                             ModToolTiers.STRONG_SEASON_1,
-                            3f,
-                            -3.3f
+                            0f,
+                            -3.2f
                     )
             )
     ));
@@ -95,7 +95,7 @@ public class ItemRegistry {
                     SwordItem.createAttributes(
                             ModToolTiers.FAST_SEASON_1,
                             0,
-                            -1f
+                            -2.4f
                     )
             )
     ));
@@ -104,8 +104,8 @@ public class ItemRegistry {
             new Item.Properties().stacksTo(1).attributes(
                     SwordItem.createAttributes(
                             ModToolTiers.STRONG_SEASON_2,
-                            3f,
-                            -3.3f
+                            0f,
+                            -3.1f
                     )
             )
     ));
@@ -115,7 +115,7 @@ public class ItemRegistry {
                     SwordItem.createAttributes(
                             ModToolTiers.FAST_SEASON_2,
                             0,
-                            -1f
+                            -2.4f
                     )
             )
     ));public static final Supplier<SwordItem> STRONG_S3_GAUNTLET = ITEMS.register("strong_s3_gauntlet", () -> new StrongPowerGauntlet(
@@ -123,8 +123,8 @@ public class ItemRegistry {
             new Item.Properties().stacksTo(1).attributes(
                     SwordItem.createAttributes(
                             ModToolTiers.STRONG_SEASON_3,
-                            3f,
-                            -3.2f
+                            0f,
+                            -3f
                     )
             )
     ));
@@ -134,7 +134,7 @@ public class ItemRegistry {
                     SwordItem.createAttributes(
                             ModToolTiers.FAST_SEASON_3,
                             0,
-                            -1f
+                            -2.4f
                     )
             )
     ));public static final Supplier<SwordItem> STRONG_S4_GAUNTLET = ITEMS.register("strong_s4_gauntlet", () -> new StrongPowerGauntlet(
@@ -142,8 +142,8 @@ public class ItemRegistry {
             new Item.Properties().stacksTo(1).attributes(
                     SwordItem.createAttributes(
                             ModToolTiers.STRONG_SEASON_4,
-                            3f,
-                            -3.2f
+                            0f,
+                            -3f
                     )
             )
     ));
@@ -153,7 +153,7 @@ public class ItemRegistry {
                     SwordItem.createAttributes(
                             ModToolTiers.FAST_SEASON_4,
                             0,
-                            -1f
+                            -2.4f
                     )
             )
     ));

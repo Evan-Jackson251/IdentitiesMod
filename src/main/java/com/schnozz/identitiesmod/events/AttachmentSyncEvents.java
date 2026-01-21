@@ -4,10 +4,8 @@ package com.schnozz.identitiesmod.events;
 import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.attachments.AdaptationAttachment;
 import com.schnozz.identitiesmod.attachments.LifestealerBuffsAttachment;
-import com.schnozz.identitiesmod.attachments.ViltrumiteAttachment;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.AdaptationSyncPayload;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.LifestealerBuffSyncPayload;
-import com.schnozz.identitiesmod.networking.payloads.sync_payloads.ViltrumiteAttachmentSyncPayload;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.PowerSyncPayload;
 import net.minecraft.server.level.ServerPlayer;
@@ -29,9 +27,6 @@ public class AttachmentSyncEvents {
 
             AdaptationAttachment adaptation = player.getData(ModDataAttachments.ADAPTION);
             PacketDistributor.sendToPlayer(player, new AdaptationSyncPayload(adaptation));
-
-            ViltrumiteAttachment viltrumiteStates = player.getData(ModDataAttachments.VILTRUMITE_STATES);
-            PacketDistributor.sendToPlayer(player, new ViltrumiteAttachmentSyncPayload(viltrumiteStates));
 
             LifestealerBuffsAttachment lifeBuffs = player.getData(ModDataAttachments.LIFESTEALER_BUFFS);
             PacketDistributor.sendToPlayer(player, new LifestealerBuffSyncPayload(lifeBuffs));

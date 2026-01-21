@@ -10,18 +10,17 @@ import com.schnozz.identitiesmod.cooldown.CooldownAttachment;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.CooldownSyncPayload;
 import com.schnozz.identitiesmod.screen.icon.CooldownIcon;
 import com.schnozz.identitiesmod.sounds.ModSounds;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -39,14 +38,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import static com.schnozz.identitiesmod.keymapping.ModMappings.*;
-/*
-Viltrumite Plan:
-    1. Change dash to big aoe punch without stun
-    2. Remove flight and custom weapons
-    3. Add permanent str and spd level 1
-    4. Add temp resistance 2 on cooldown
-    5. Think about grab and how the kit feels
- */
+
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ClientViltrumiteEvents {
     //damage constants
@@ -57,8 +49,7 @@ public class ClientViltrumiteEvents {
     private static int dashDuration = 0;
     private static int stunTimer = 0;
     private static int dashMisses = 0;
-    //flight speed double
-    private static double flightSpeed = 0.35;
+
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
         LocalPlayer viltrumitePlayer = Minecraft.getInstance().player;
@@ -73,44 +64,32 @@ public class ClientViltrumiteEvents {
                     findEntity(Minecraft.getInstance().player);
                 //}
             }
-            if(VILTRUMITE_CHOKE_MAPPING.get().consumeClick() && !viltrumitePlayer.getData(ModDataAttachments.VILTRUMITE_STATES).getViltrumiteState(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID,"flight")) && !viltrumitePlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "choke_dash_cd"), 0))
+            if(VILTRUMITE_DASH_MAPPING.get().consumeClick() && !viltrumitePlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "dash_cd"), 0))
             {
                 //if(viltrumitePlayer.getMainHandItem().getItem() == ItemRegistry.FAST_POWER_GAUNTLET || viltrumitePlayer.getMainHandItem().getItem() == ItemRegistry.STRONG_POWER_GAUNTLET) {
-                    chokeDash(viltrumitePlayer);
-                    viltrumitePlayer.getData(ModDataAttachments.COOLDOWN).setCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "choke_dash_cd"), viltrumitePlayer.level().getGameTime(), 500);
-                    PacketDistributor.sendToServer(new CooldownSyncPayload(new Cooldown(viltrumitePlayer.level().getGameTime(), 500), ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "choke_dash_cd"), false));
-                    CHOKE_DASH_CDICON.setCooldown(new Cooldown(viltrumitePlayer.level().getGameTime(), 500));
+                    dash(viltrumitePlayer);
+                    viltrumitePlayer.getData(ModDataAttachments.COOLDOWN).setCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "dash_cd"), viltrumitePlayer.level().getGameTime(), 500);
+                    PacketDistributor.sendToServer(new CooldownSyncPayload(new Cooldown(viltrumitePlayer.level().getGameTime(), 500), ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "dash_cd"), false));
+                    DASH_CDICON.setCooldown(new Cooldown(viltrumitePlayer.level().getGameTime(), 500));
                 //}
             }
-            if(VILTRUMITE_FLIGHT_MAPPING.get().consumeClick())
+            if(VILTRUMITE_BLOCK_MAPPING.get().consumeClick())
             {
-                //if(viltrumitePlayer.getMainHandItem().getItem() == ItemRegistry.FAST_POWER_GAUNTLET || viltrumitePlayer.getMainHandItem().getItem() == ItemRegistry.STRONG_POWER_GAUNTLET) {
-                    if (!viltrumitePlayer.getData(ModDataAttachments.VILTRUMITE_STATES).getViltrumiteState(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "flight"))) {
-                        viltrumitePlayer.getData(ModDataAttachments.VILTRUMITE_STATES).setViltrumiteState(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "flight"), true);
-                    } else {
-                        viltrumitePlayer.getData(ModDataAttachments.VILTRUMITE_STATES).setViltrumiteState(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "flight"), false);
-                    }
-                    if (viltrumitePlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "fly_cd"), 0)) {
-                        viltrumitePlayer.sendSystemMessage(Component.literal("COMBAT LOGGED").withStyle(ChatFormatting.RED));
-                    }
-                //}
+                viltrumitePlayer.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 60, 2, false, true,true));
+                PacketDistributor.sendToServer(new PotionLevelPayload(MobEffects.DAMAGE_RESISTANCE,2,60));
+                viltrumitePlayer.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 0, false, true,true));
+                PacketDistributor.sendToServer(new PotionLevelPayload(MobEffects.MOVEMENT_SLOWDOWN,0,60));
+
+                viltrumitePlayer.getData(ModDataAttachments.COOLDOWN).setCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "block_cd"), viltrumitePlayer.level().getGameTime(), 350);
+                PacketDistributor.sendToServer(new CooldownSyncPayload(new Cooldown(viltrumitePlayer.level().getGameTime(), 350), ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "block_cd"), false));
+                BLOCK_ICON.setCooldown(new Cooldown(viltrumitePlayer.level().getGameTime(), 350));
             }
 
-            //combat logged flight turn off
-            if(viltrumitePlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "fly_cd"), 0))
-            {
-                viltrumitePlayer.getData(ModDataAttachments.VILTRUMITE_STATES).setViltrumiteState(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID,"flight"),false);
-            }
-            //flight movement
-            if(viltrumitePlayer.getData(ModDataAttachments.VILTRUMITE_STATES).getViltrumiteState(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID,"flight")))
-            {
-                flight(viltrumitePlayer);
-            }
             //dash timer and choke hit
             if(dashDuration > 0 && dashDuration < 30)
             {
                 dashDuration++;
-                if(!chokeDamage(viltrumitePlayer))
+                if(!dashDamage(viltrumitePlayer))
                 {
                     dashMisses++;
                 }
@@ -135,7 +114,8 @@ public class ClientViltrumiteEvents {
     }
 
     private static final CooldownIcon cooldownIcon = new CooldownIcon(10, 10, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/viltrumitegrabcd_icon.png"));
-    private static final CooldownIcon CHOKE_DASH_CDICON = new CooldownIcon(10, 30, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/viltrumite_choke_dash_cd_icon.png"));
+    private static final CooldownIcon DASH_CDICON = new CooldownIcon(10, 30, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/viltrumite_choke_dash_cd_icon.png"));
+    private static final CooldownIcon BLOCK_ICON = new CooldownIcon(10, 50, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/shield_icon.png"));
     //fix grab with ridable entities by preventing ride function
     private static boolean findEntity (Player player)
     {
@@ -171,7 +151,7 @@ public class ClientViltrumiteEvents {
         // do nothing or anything you want to do if it fails put an else statement -- this wasn't chatgpt btw (I can tell. Your comment above says "a" instead of "an")
     }
 
-    private static boolean chokeDamage(Player viltrumitePlayer)
+    private static boolean dashDamage(Player viltrumitePlayer)
     {
         Level level = viltrumitePlayer.level();
 
@@ -192,19 +172,31 @@ public class ClientViltrumiteEvents {
         }
 
         if (target instanceof LivingEntity) {
+            //damage hit entity
             Holder<DamageType> placeHolderDamageType = level.registryAccess().lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.PLAYER_ATTACK);
             PacketDistributor.sendToServer(new EntityDamagePayload(target.getId(),viltrumitePlayer.getId(), CHOKE_DAMAGE,placeHolderDamageType));
             dashDuration = 0;
 
             PacketDistributor.sendToServer(new VelocityPayload(viltrumitePlayer.getId(),0,0,0));
             PacketDistributor.sendToServer(new VelocityPayload(target.getId(),0,0,0));
-
+            //damage entities in an aoe
+            List<Entity> aoeEntities = level.getEntities(viltrumitePlayer, viltrumitePlayer.getBoundingBox().inflate(3), (entity) -> {
+                return entity instanceof LivingEntity && !entity.isSpectator() && entity != viltrumitePlayer;
+            });
+            BoundingBoxVisualizer.showAABB(level, viltrumitePlayer.getBoundingBox().inflate(3));
+            for(Entity entity: aoeEntities)
+            {
+                if(entity instanceof LivingEntity)
+                {
+                    PacketDistributor.sendToServer(new EntityDamagePayload(entity.getId(),viltrumitePlayer.getId(), CHOKE_DAMAGE+0.1F,placeHolderDamageType));
+                }
+            }
             return true;
         }
         return false;
     }
 
-    private static void chokeDash(Player viltrumitePlayer)
+    private static void dash(Player viltrumitePlayer)
     {
         Vec3 angle = viltrumitePlayer.getLookAngle();
         double rx = angle.x; double ry = angle.y; double rz = angle.z;
@@ -212,13 +204,6 @@ public class ClientViltrumiteEvents {
         PacketDistributor.sendToServer(new VelocityPayload(viltrumitePlayer.getId(),vx,vy,vz));
         dashDuration = 1;
         dashMisses = 1;
-    }
-
-    private static void flight(Player viltrumitePlayer)
-    {
-        Vec3 angle = viltrumitePlayer.getLookAngle();
-        Vec3 flightVec = angle.multiply(flightSpeed,flightSpeed,flightSpeed);
-        viltrumitePlayer.setDeltaMovement(flightVec);
     }
 
     public static void setIconCooldown(Cooldown cod)
@@ -236,7 +221,8 @@ public class ClientViltrumiteEvents {
         long gameTime = Minecraft.getInstance().level.getGameTime();
         GuiGraphics graphics = event.getGuiGraphics();
         cooldownIcon.render(graphics, gameTime);
-        CHOKE_DASH_CDICON.render(graphics, gameTime);
+        DASH_CDICON.render(graphics, gameTime);
+        BLOCK_ICON.render(graphics,gameTime);
     }
 
 }
