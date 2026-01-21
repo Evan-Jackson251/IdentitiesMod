@@ -19,16 +19,19 @@ public class ServerGravityArrowHandler {
 
         if(entity instanceof Player gravPlayer)
         {
-            Vec3 arrowPos = gravPlayer.getEyePosition().add(gravPlayer.getLookAngle().scale(1.5));
+            //Vec3 arrowPos = gravPlayer.getEyePosition().add(gravPlayer.getLookAngle().scale(1.5));
+            float pitch = gravPlayer.getXRot();
+            float yaw = gravPlayer.getYRot();
+
             Arrow arrow = new Arrow(EntityType.ARROW, gravPlayer.level());
 
             if (gravPlayer.getData(ModDataAttachments.POWER_TYPE).equals("Gravity")) {
                 arrow.setOwner(gravPlayer);
             }
-
-            arrow.setPos(arrowPos);
+            arrow.addTag("Gravity Arrow");
+            arrow.setPos(gravPlayer.getEyePosition());
             arrow.setNoGravity(true);
-            arrow.setDeltaMovement(gravPlayer.getLookAngle().scale(10));
+            arrow.shootFromRotation(gravPlayer, pitch, yaw, 0f, 10f, 0f);
             gravPlayer.level().addFreshEntity(arrow);
         }
 

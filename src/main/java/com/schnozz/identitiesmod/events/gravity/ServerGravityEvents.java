@@ -6,10 +6,14 @@ import com.schnozz.identitiesmod.IdentitiesMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -47,26 +51,10 @@ public class ServerGravityEvents {
     @SubscribeEvent
     public static void onLivingDamage(LivingIncomingDamageEvent event)
     {
-        if(event.getSource().getDirectEntity() instanceof Player gravityPlayer && gravityPlayer.getData(ModDataAttachments.POWER_TYPE).equals("Gravity"))
+        if(event.getSource().is(DamageTypes.ARROW))
         {
-            long currentTime = gravityPlayer.level().getGameTime();
-            if(gravityPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "pull_strength_cd"), currentTime))
-            {
-                if(event.getSource().type().msgId().equals("player"))
-                {
-                    event.setAmount(event.getAmount()+2.5F);
-                }
-            }
-        }
-        if(event.getSource().getDirectEntity() != null && event.getSource().getEntity() instanceof Player gravityPlayer && gravityPlayer.getData(ModDataAttachments.POWER_TYPE).equals("Gravity"))
-        {
-            long currentTime = gravityPlayer.level().getGameTime();
-            if(gravityPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "push_strength_cd"), currentTime))
-            {
-                if(event.getSource().type().msgId().equals("arrow"))
-                {
-                    event.setAmount(event.getAmount()+2.5F);
-                }
+            if(event.getSource().getDirectEntity().getTags().contains("Gravity Arrow")) {
+                event.getEntity().addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,60,2,false,true,true));
             }
         }
     }
