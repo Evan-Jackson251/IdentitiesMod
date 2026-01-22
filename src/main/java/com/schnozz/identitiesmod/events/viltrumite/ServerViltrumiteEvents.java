@@ -42,6 +42,9 @@ import java.util.Objects;
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME)
 public class ServerViltrumiteEvents {
 
+    private static final int GRAB_CD = 350;
+    private static final int STUN_LENGTH = 20;
+
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event)
     {
@@ -87,16 +90,16 @@ public class ServerViltrumiteEvents {
             {
                 //add stun
                 LivingEntity target = (LivingEntity) level.getEntity(viltrumitePlayer.getData(ModDataAttachments.ENTITY_HELD).getUUID("UUID"));
-                target.addEffect(new MobEffectInstance(ModEffects.STUN, 30, 0,false,true,true));
+                target.addEffect(new MobEffectInstance(ModEffects.STUN, STUN_LENGTH, 0,false,true,true));
                 //let go
                 target.setNoGravity(false);;
                 viltrumitePlayer.setData(ModDataAttachments.ENTITY_HELD.get(), new CompoundTag());//sends an empty tag
                 long startTime = level.getGameTime();
-                Cooldown cd = new Cooldown(startTime, 200);
+                Cooldown cd = new Cooldown(startTime, GRAB_CD);
                 CooldownAttachment cdAttach = viltrumitePlayer.getData(ModDataAttachments.COOLDOWN);
                 ResourceLocation key = ResourceLocation.fromNamespaceAndPath("identitiesmod", "grab_cd");
                 ClientViltrumiteEvents.setIconCooldown(cd);
-                cdAttach.setCooldown(key, startTime, 200);
+                cdAttach.setCooldown(key, startTime, GRAB_CD);
                 PacketDistributor.sendToPlayer((ServerPlayer) viltrumitePlayer, new CooldownSyncPayload(cd,key, false  ));
             }
         }
@@ -144,11 +147,11 @@ public class ServerViltrumiteEvents {
             Entity target = level.getEntity(p.getData(ModDataAttachments.ENTITY_HELD).getUUID("UUID"));
             if(target == null) return;
             target.setNoGravity(false);
-            target.setDeltaMovement(p.getLookAngle().x * 3, p.getLookAngle().y * 0.75, p.getLookAngle().z * 3);
+            target.setDeltaMovement(p.getLookAngle().x * 1, p.getLookAngle().y * 0.75, p.getLookAngle().z * 1);
             p.setData(ModDataAttachments.ENTITY_HELD.get(), new CompoundTag());//sends an empty tag
-            p.getData(ModDataAttachments.COOLDOWN).setCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "grab_cd"), level.getGameTime(), 200);
-            PacketDistributor.sendToPlayer(p, new CooldownSyncPayload(new Cooldown(level.getGameTime(), 200), ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "grab_cd"), false));
-            PacketDistributor.sendToPlayer(p, new CDPayload(new Cooldown(level.getGameTime(), 200)));
+            p.getData(ModDataAttachments.COOLDOWN).setCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "grab_cd"), level.getGameTime(), GRAB_CD);
+            PacketDistributor.sendToPlayer(p, new CooldownSyncPayload(new Cooldown(level.getGameTime(), GRAB_CD), ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "grab_cd"), false));
+            PacketDistributor.sendToPlayer(p, new CDPayload(new Cooldown(level.getGameTime(), GRAB_CD)));
         }
 
     }
