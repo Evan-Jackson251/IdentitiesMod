@@ -42,7 +42,11 @@ import static com.schnozz.identitiesmod.keymapping.ModMappings.*;
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ClientViltrumiteEvents {
     //damage constants
-    private static final float CHOKE_DAMAGE = 3.0F;
+    private static final float DASH_DAMAGE = 6.0F;
+    //cooldown constants
+    private static final int GRAB_CD = 350;
+    private static final int DASH_CD = 800;
+    private static final int RES_CD = 350;
     //integer
     private static int stunDuration = 35;
     //timers
@@ -68,9 +72,9 @@ public class ClientViltrumiteEvents {
             {
                 //if(viltrumitePlayer.getMainHandItem().getItem() == ItemRegistry.FAST_POWER_GAUNTLET || viltrumitePlayer.getMainHandItem().getItem() == ItemRegistry.STRONG_POWER_GAUNTLET) {
                     dash(viltrumitePlayer);
-                    viltrumitePlayer.getData(ModDataAttachments.COOLDOWN).setCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "dash_cd"), viltrumitePlayer.level().getGameTime(), 500);
-                    PacketDistributor.sendToServer(new CooldownSyncPayload(new Cooldown(viltrumitePlayer.level().getGameTime(), 500), ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "dash_cd"), false));
-                    DASH_CDICON.setCooldown(new Cooldown(viltrumitePlayer.level().getGameTime(), 500));
+                    viltrumitePlayer.getData(ModDataAttachments.COOLDOWN).setCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "dash_cd"), viltrumitePlayer.level().getGameTime(), DASH_CD);
+                    PacketDistributor.sendToServer(new CooldownSyncPayload(new Cooldown(viltrumitePlayer.level().getGameTime(), DASH_CD), ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "dash_cd"), false));
+                    DASH_CDICON.setCooldown(new Cooldown(viltrumitePlayer.level().getGameTime(), DASH_CD));
                 //}
             }
             if(VILTRUMITE_BLOCK_MAPPING.get().consumeClick())
@@ -80,9 +84,9 @@ public class ClientViltrumiteEvents {
                 viltrumitePlayer.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 0, false, true,true));
                 PacketDistributor.sendToServer(new PotionLevelPayload(MobEffects.MOVEMENT_SLOWDOWN,0,60));
 
-                viltrumitePlayer.getData(ModDataAttachments.COOLDOWN).setCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "block_cd"), viltrumitePlayer.level().getGameTime(), 350);
-                PacketDistributor.sendToServer(new CooldownSyncPayload(new Cooldown(viltrumitePlayer.level().getGameTime(), 350), ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "block_cd"), false));
-                BLOCK_ICON.setCooldown(new Cooldown(viltrumitePlayer.level().getGameTime(), 350));
+                viltrumitePlayer.getData(ModDataAttachments.COOLDOWN).setCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "block_cd"), viltrumitePlayer.level().getGameTime(), RES_CD);
+                PacketDistributor.sendToServer(new CooldownSyncPayload(new Cooldown(viltrumitePlayer.level().getGameTime(), RES_CD), ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "block_cd"), false));
+                BLOCK_ICON.setCooldown(new Cooldown(viltrumitePlayer.level().getGameTime(), RES_CD));
             }
 
             //dash timer and choke hit
@@ -142,10 +146,10 @@ public class ClientViltrumiteEvents {
         long currentTime = player.level().getGameTime();
         CooldownAttachment newAtachment = new CooldownAttachment();
         newAtachment.getAllCooldowns().putAll(player.getData(ModDataAttachments.COOLDOWN).getAllCooldowns());
-        newAtachment.setCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "grab_cd"), currentTime, 200);
+        newAtachment.setCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "grab_cd"), currentTime, GRAB_CD);
         player.setData(ModDataAttachments.COOLDOWN, newAtachment);
-        cooldownIcon.setCooldown(new Cooldown(currentTime, 200));
-        PacketDistributor.sendToServer(new CooldownSyncPayload(new Cooldown(currentTime, 200), ResourceLocation.fromNamespaceAndPath("identitiesmod", "grab_cd"), false));
+        cooldownIcon.setCooldown(new Cooldown(currentTime, GRAB_CD));
+        PacketDistributor.sendToServer(new CooldownSyncPayload(new Cooldown(currentTime, GRAB_CD), ResourceLocation.fromNamespaceAndPath("identitiesmod", "grab_cd"), false));
         return false;
 
         // do nothing or anything you want to do if it fails put an else statement -- this wasn't chatgpt btw (I can tell. Your comment above says "a" instead of "an")
@@ -174,7 +178,7 @@ public class ClientViltrumiteEvents {
         if (target instanceof LivingEntity) {
             //damage hit entity
             Holder<DamageType> placeHolderDamageType = level.registryAccess().lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.PLAYER_ATTACK);
-            PacketDistributor.sendToServer(new EntityDamagePayload(target.getId(),viltrumitePlayer.getId(), CHOKE_DAMAGE,placeHolderDamageType));
+            PacketDistributor.sendToServer(new EntityDamagePayload(target.getId(),viltrumitePlayer.getId(), DASH_DAMAGE,placeHolderDamageType));
             dashDuration = 0;
 
             PacketDistributor.sendToServer(new VelocityPayload(viltrumitePlayer.getId(),0,0,0));
@@ -188,7 +192,7 @@ public class ClientViltrumiteEvents {
             {
                 if(entity instanceof LivingEntity)
                 {
-                    PacketDistributor.sendToServer(new EntityDamagePayload(entity.getId(),viltrumitePlayer.getId(), CHOKE_DAMAGE+0.1F,placeHolderDamageType));
+                    PacketDistributor.sendToServer(new EntityDamagePayload(entity.getId(),viltrumitePlayer.getId(), DASH_DAMAGE +0.1F,placeHolderDamageType));
                 }
             }
             return true;

@@ -41,6 +41,10 @@ public class ClientGravityEvents {
     private static final CooldownIcon CYCLONE_COOLDOWN_ICON = new CooldownIcon(10, 10, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/cyclone.png"));
     private static final CooldownIcon DRIPSTONE_COOLDOWN_ICON = new CooldownIcon(10, 30, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/dripstone.png"));
     private static final CooldownIcon ARROW_COOLDOWN_ICON = new CooldownIcon(10, 50, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/arrow_icon.png"));
+    //final cooldown values
+    private static final int DRIPSTONE_CD = 600;
+    private static final int CYCLONE_CD = 300;
+    private static final int ARROW_CD = 250;
     //cyclone timer variable
     private static int cycloneProgress = -1;
     //entity list within distance
@@ -58,13 +62,13 @@ public class ClientGravityEvents {
             //dripstone drop
             if(GRAVITY_DRIPSTONE_MAPPING.get().consumeClick() && !gravityPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "dripstone_cd"),0)) {
                 long currentTime = Minecraft.getInstance().level.getGameTime();
-                int cd = 600;
+
                 CooldownAttachment atachment = new CooldownAttachment();
                 atachment.getAllCooldowns().putAll(gravityPlayer.getData(ModDataAttachments.COOLDOWN).getAllCooldowns());
-                atachment.setCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "dripstone_cd"), currentTime, cd);
+                atachment.setCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "dripstone_cd"), currentTime, DRIPSTONE_CD);
                 gravityPlayer.setData(ModDataAttachments.COOLDOWN, atachment);
-                PacketDistributor.sendToServer(new CooldownSyncPayload(new Cooldown(currentTime, cd), ResourceLocation.fromNamespaceAndPath("identitiesmod", "dripstone_cd"), false));
-                DRIPSTONE_COOLDOWN_ICON.setCooldown(new Cooldown(currentTime, cd));
+                PacketDistributor.sendToServer(new CooldownSyncPayload(new Cooldown(currentTime, DRIPSTONE_CD), ResourceLocation.fromNamespaceAndPath("identitiesmod", "dripstone_cd"), false));
+                DRIPSTONE_COOLDOWN_ICON.setCooldown(new Cooldown(currentTime, DRIPSTONE_CD));
 
                 dripstoneDrop(gravityPlayer);
             }
@@ -73,25 +77,25 @@ public class ClientGravityEvents {
                 cycloneProgress = 0;
 
                 long currentTime = Minecraft.getInstance().level.getGameTime();
-                int cd = 300;
+
                 CooldownAttachment atachment = new CooldownAttachment();
                 atachment.getAllCooldowns().putAll(gravityPlayer.getData(ModDataAttachments.COOLDOWN).getAllCooldowns());
-                atachment.setCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "cyclone_cd"), currentTime, cd);
+                atachment.setCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "cyclone_cd"), currentTime, CYCLONE_CD);
                 gravityPlayer.setData(ModDataAttachments.COOLDOWN, atachment);
-                PacketDistributor.sendToServer(new CooldownSyncPayload(new Cooldown(currentTime, cd), ResourceLocation.fromNamespaceAndPath("identitiesmod", "cyclone_cd"), false));
-                CYCLONE_COOLDOWN_ICON.setCooldown(new Cooldown(currentTime, cd));
+                PacketDistributor.sendToServer(new CooldownSyncPayload(new Cooldown(currentTime, CYCLONE_CD), ResourceLocation.fromNamespaceAndPath("identitiesmod", "cyclone_cd"), false));
+                CYCLONE_COOLDOWN_ICON.setCooldown(new Cooldown(currentTime, CYCLONE_CD));
             }
             //arrow
             else if(GRAVITY_ARROW_MAPPING.get().consumeClick() && !gravityPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "gravity_arrow_cd"),0))
             {
                 long currentTime = Minecraft.getInstance().level.getGameTime();
-                int cd = 250;
+
                 CooldownAttachment atachment = new CooldownAttachment();
                 atachment.getAllCooldowns().putAll(gravityPlayer.getData(ModDataAttachments.COOLDOWN).getAllCooldowns());
-                atachment.setCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "gravity_arrow_cd"), currentTime, cd);
+                atachment.setCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "gravity_arrow_cd"), currentTime, ARROW_CD);
                 gravityPlayer.setData(ModDataAttachments.COOLDOWN, atachment);
-                PacketDistributor.sendToServer(new CooldownSyncPayload(new Cooldown(currentTime, cd), ResourceLocation.fromNamespaceAndPath("identitiesmod", "gravity_arrow_cd"), false));
-                ARROW_COOLDOWN_ICON.setCooldown(new Cooldown(currentTime, cd));
+                PacketDistributor.sendToServer(new CooldownSyncPayload(new Cooldown(currentTime, ARROW_CD), ResourceLocation.fromNamespaceAndPath("identitiesmod", "gravity_arrow_cd"), false));
+                ARROW_COOLDOWN_ICON.setCooldown(new Cooldown(currentTime, ARROW_CD));
                 arrow(gravityPlayer);
             }
             //meteor creation and set both position and movement
