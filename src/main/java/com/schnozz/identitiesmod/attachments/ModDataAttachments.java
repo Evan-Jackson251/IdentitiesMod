@@ -25,6 +25,10 @@ public class ModDataAttachments {
             "speedster_lightning", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).build()
     );
 
+    public static final Supplier<AttachmentType<Integer>> TIME_STOP_STATE = ATTACHMENT_TYPES.register(
+            "time_stop_state", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).build()
+    );
+
     public static final Supplier<AttachmentType<String>> POWER_TYPE = ATTACHMENT_TYPES.register(
             "power_type", () -> AttachmentType.builder(() -> "").serialize(Codec.STRING).copyOnDeath().build()
     );

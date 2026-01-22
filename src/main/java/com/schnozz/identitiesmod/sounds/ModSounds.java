@@ -27,6 +27,8 @@ public class ModSounds {
     public static final Supplier<SoundEvent> LIGHT_PUNCH_SOUND = registerSoundEvent("light_punch_sound");
     public static final Supplier<SoundEvent> MAHORAGA_THEME_SOUND = registerSoundEvent("mahoraga_theme_sound");
     public static final Supplier<SoundEvent> GRAB_SOUND = registerSoundEvent("grab_sound");
+    public static final Supplier<SoundEvent> CYCLONE_SOUND = registerSoundEvent("hurricane_sound");
+    public static final Supplier<SoundEvent> ARROW_RELEASE_SOUND = registerSoundEvent("arrow_release_sound");
 
     public static final Supplier<SoundEvent> DOG_DISC_SOUND = registerSoundEvent("dog_disc_sound");
     public static final ResourceKey<JukeboxSong> DOG_DISC_KEY = createSong("dog_disc_sound");

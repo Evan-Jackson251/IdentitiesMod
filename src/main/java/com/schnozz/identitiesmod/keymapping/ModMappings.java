@@ -93,7 +93,7 @@ public class ModMappings {
 
     //Parry
     public static final Lazy<KeyMapping> PARRY_MAPPING = Lazy.of(() -> new KeyMapping(
-            "key.identitiesmod.parry",
+            "key.identitiesmod.parry.parry",
             KeyConflictContext.UNIVERSAL,
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_R,
@@ -109,7 +109,7 @@ public class ModMappings {
     ));
     //Kyle
     public static final Lazy<KeyMapping> KYLE_WORTH_MAPPING = Lazy.of(() -> new KeyMapping(
-            "key.identitiesmod.adaptation.kyleworth",
+            "key.identitiesmod.kyle.kyleworth",
             KeyConflictContext.UNIVERSAL,
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_G,
@@ -117,7 +117,15 @@ public class ModMappings {
     ));
     //Speedster
     public static final Lazy<KeyMapping> SPEEDSTER_LIGHTNING_MAPPING = Lazy.of(() -> new KeyMapping(
-            "key.identitiesmod.adaptation.lightning",
+            "key.identitiesmod.speedster.lightning",
+            KeyConflictContext.UNIVERSAL,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_R,
+            "key.categories.misc"
+    ));
+    //Time Lord
+    public static final Lazy<KeyMapping> TIME_STOP_MAPPING = Lazy.of(() -> new KeyMapping(
+            "key.identitiesmod.time_lord.time_stop",
             KeyConflictContext.UNIVERSAL,
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_R,
@@ -151,6 +159,9 @@ public class ModMappings {
 
         //Speedster
         event.register(SPEEDSTER_LIGHTNING_MAPPING.get());
+
+        //Time Lord
+        event.register(TIME_STOP_MAPPING.get());
     }
 }
 

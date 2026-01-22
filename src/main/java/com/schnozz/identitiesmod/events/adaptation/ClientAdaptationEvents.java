@@ -45,7 +45,7 @@ public class   ClientAdaptationEvents {
 
         if(adaptationPlayer.getData(ModDataAttachments.POWER_TYPE).equals("Adaptation"))
         {
-            if(ADAPTATION_SWITCH_MAPPING.get().consumeClick() && !adaptationPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "adaptation.switchcd"), 0))  //EVAN THIS NEEDS COOLDOWN (long)
+            if(ADAPTATION_SWITCH_MAPPING.get().consumeClick() && !adaptationPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "adaptation.switchcd"), 0))
             {
                 switchAdaptation(adaptationPlayer);
                 switchTimer = 1;

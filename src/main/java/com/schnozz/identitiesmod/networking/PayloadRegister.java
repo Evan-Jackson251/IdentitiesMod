@@ -204,6 +204,15 @@ public class PayloadRegister {
                 )
         );
 
+        registrar.playBidirectional(
+                TimeStopSyncPayload.TYPE,
+                TimeStopSyncPayload.STREAM_CODEC,
+                new DirectionalPayloadHandler<>(
+                        ClientTimeStopHandler::handle,
+                        ServerTimeStopHandler::handle
+                )
+        );
+
         registrar.playToServer(
                 PotionTogglePayload.TYPE,
                 PotionTogglePayload.STREAM_CODEC,

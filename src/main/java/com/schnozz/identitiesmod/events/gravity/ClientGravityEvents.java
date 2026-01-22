@@ -7,6 +7,7 @@ import com.schnozz.identitiesmod.cooldown.Cooldown;
 import com.schnozz.identitiesmod.networking.payloads.*;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.CooldownSyncPayload;
 import com.schnozz.identitiesmod.screen.icon.CooldownIcon;
+import com.schnozz.identitiesmod.sounds.ModSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
@@ -31,8 +32,7 @@ import static com.schnozz.identitiesmod.keymapping.ModMappings.*;
 
 /*
 Gravity power plan:
-    1. Add grav arrow visuals
-    2. Add meteor ult (charged by dealing damage with other abilities)
+    1. Add meteor ult (charged by dealing damage with other abilities)
 */
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
@@ -75,6 +75,7 @@ public class ClientGravityEvents {
             //cyclone
             else if(GRAVITY_CYCLONE_MAPPING.get().consumeClick() && !gravityPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "cyclone_cd"),0)) {
                 cycloneProgress = 0;
+                //PacketDistributor.sendToServer(new SoundPayload(ModSounds.CYCLONE_SOUND.get(),10F));
 
                 long currentTime = Minecraft.getInstance().level.getGameTime();
 
@@ -88,8 +89,9 @@ public class ClientGravityEvents {
             //arrow
             else if(GRAVITY_ARROW_MAPPING.get().consumeClick() && !gravityPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "gravity_arrow_cd"),0))
             {
-                long currentTime = Minecraft.getInstance().level.getGameTime();
+                //PacketDistributor.sendToServer(new SoundPayload(ModSounds.ARROW_RELEASE_SOUND.get(),10F));
 
+                long currentTime = Minecraft.getInstance().level.getGameTime();
                 CooldownAttachment atachment = new CooldownAttachment();
                 atachment.getAllCooldowns().putAll(gravityPlayer.getData(ModDataAttachments.COOLDOWN).getAllCooldowns());
                 atachment.setCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "gravity_arrow_cd"), currentTime, ARROW_CD);
