@@ -78,6 +78,11 @@ public class FarmerCore extends BaseEntityBlock {
                     data.addToValue(12 * stack.getCount());
                     itemEntity.discard();
                 }
+
+                if(FarmValueSavedData.get(level.getServer()).getValue() > 40000)
+                {
+                    FarmValueSavedData.get(level.getServer()).setValue(40000);
+                }
             }
         }
         super.stepOn(level, pos, state, entity);

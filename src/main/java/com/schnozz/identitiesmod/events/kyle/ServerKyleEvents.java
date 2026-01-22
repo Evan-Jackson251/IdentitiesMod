@@ -12,7 +12,6 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 /*
 Kyle Plan:
     1. Add max cap (can't one shot netherite)
-    2. Increase loss on death
  */
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME)
 public class ServerKyleEvents {
@@ -24,7 +23,7 @@ public class ServerKyleEvents {
             if(event.getEntity().level() instanceof ServerLevel level)
             {
                 FarmValueSavedData data = FarmValueSavedData.get(level.getServer());
-                long toSubtract = ((long )(0.1 * data.getValue()));
+                long toSubtract = ((long )(0.2 * data.getValue()));
                 data.addToValue(-1 * toSubtract);
             }
         }

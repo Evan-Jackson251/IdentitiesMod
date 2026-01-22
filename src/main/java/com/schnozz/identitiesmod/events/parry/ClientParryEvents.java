@@ -25,7 +25,12 @@ import org.joml.Random;
 import org.joml.Vector3f;
 
 import static com.schnozz.identitiesmod.keymapping.ModMappings.PARRY_MAPPING;
-
+/*
+    Plan for Parry:
+       1. Add an ultimate that charges as you block more damage.
+       Ult will make player invincible for 10 seconds or so.
+       Should round out the kit and make it a little more interesting.
+ */
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ClientParryEvents {
 

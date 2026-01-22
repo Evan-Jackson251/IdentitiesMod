@@ -118,6 +118,12 @@ public class PayloadRegister {
         );
 
         registrar.playToServer(
+                KyleWorthPayload.TYPE,
+                KyleWorthPayload.STREAM_CODEC,
+                ServerKyleWorthHandler::handle
+        );
+
+        registrar.playToServer(
                 WeaknessEffectPayload.TYPE,
                 WeaknessEffectPayload.STREAM_CODEC,
                 ServerWeaknessEffectHandler::handle

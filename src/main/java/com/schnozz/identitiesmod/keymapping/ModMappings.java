@@ -107,7 +107,14 @@ public class ModMappings {
             GLFW.GLFW_KEY_G,
             "key.categories.misc"
     ));
-
+    //Kyle
+    public static final Lazy<KeyMapping> KYLE_WORTH_MAPPING = Lazy.of(() -> new KeyMapping(
+            "key.identitiesmod.adaptation.kyleworth",
+            KeyConflictContext.UNIVERSAL,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_G,
+            "key.categories.misc"
+    ));
 
     // Event is on the mod event bus only on the physical client
     @SubscribeEvent
@@ -131,7 +138,8 @@ public class ModMappings {
         //Lifestealer mapping
         event.register(LIFESTEALER_MAPPING.get());
 
-
+        //Kyle
+        event.register(KYLE_WORTH_MAPPING.get());
     }
 }
 
