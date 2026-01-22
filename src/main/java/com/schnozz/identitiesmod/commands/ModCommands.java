@@ -20,6 +20,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -46,6 +47,9 @@ public class ModCommands {
                                     target.setData(ModDataAttachments.POWER_TYPE, power);
                                     PacketDistributor.sendToPlayer(target, new PowerSyncPayload(power));
 
+                                    target.removeAllEffects();
+                                    target.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20);
+
                                     if(power.equals("Viltrumite"))
                                     {
                                         //perm strength 1
@@ -57,12 +61,16 @@ public class ModCommands {
                                     }
                                     else if(power.equals("Speedster"))
                                     {
+                                        target.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(2);
                                         //perm speed 3
                                         target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, MobEffectInstance.INFINITE_DURATION, 2, false, true,true));
                                         PacketDistributor.sendToPlayer(target,new PotionLevelPayload(MobEffects.MOVEMENT_SPEED,2,MobEffectInstance.INFINITE_DURATION));
                                         //perm haste 2
                                         target.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, MobEffectInstance.INFINITE_DURATION, 1, false, true,true));
                                         PacketDistributor.sendToPlayer(target,new PotionLevelPayload(MobEffects.DIG_SPEED,1,MobEffectInstance.INFINITE_DURATION));
+                                    }
+                                    else{
+                                        target.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(1);
                                     }
                                     return Command.SINGLE_SUCCESS;
                                 }))));

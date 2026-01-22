@@ -52,8 +52,8 @@ public class ClientSpeedsterEvents {
                 stateCount = 0;
                 LIGHTNING_STATE_ICON = new CooldownIcon(10, 10, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/blue_lightning_icon.png"));
 
-                speedPlayer.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED,STATE_DURATION,4,false,true,true));
-                PacketDistributor.sendToServer(new PotionLevelPayload(MobEffects.MOVEMENT_SPEED,4,STATE_DURATION));
+                speedPlayer.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED,STATE_DURATION,5,false,true,true));
+                PacketDistributor.sendToServer(new PotionLevelPayload(MobEffects.MOVEMENT_SPEED,5,STATE_DURATION));
                 speedPlayer.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED,STATE_DURATION,3,false,true,true));
                 PacketDistributor.sendToServer(new PotionLevelPayload(MobEffects.DIG_SPEED,3,STATE_DURATION));
             }

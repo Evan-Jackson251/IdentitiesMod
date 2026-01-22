@@ -5,12 +5,14 @@ import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.networking.payloads.PotionLevelPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
@@ -19,6 +21,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME)
 public class ServerSpeedsterEvents {
+    //lightning effect and immunity
     @SubscribeEvent
     public static void onLivingDamage(LivingIncomingDamageEvent event)
     {
@@ -47,6 +50,7 @@ public class ServerSpeedsterEvents {
             }
         }
     }
+    //Permanent effect refresh on death and spawn
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event)
     {
@@ -57,6 +61,21 @@ public class ServerSpeedsterEvents {
                 PacketDistributor.sendToPlayer((ServerPlayer)event.getEntity(),new PotionLevelPayload(MobEffects.MOVEMENT_SPEED,2,MobEffectInstance.INFINITE_DURATION));
                 event.getEntity().addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, MobEffectInstance.INFINITE_DURATION, 1, false, true,true));
                 PacketDistributor.sendToPlayer((ServerPlayer)event.getEntity(),new PotionLevelPayload(MobEffects.DIG_SPEED,1,MobEffectInstance.INFINITE_DURATION));
+            }
+        }
+    }
+    //Extra damage taken by players for Speedster weakness
+    @SubscribeEvent
+    public static void onDamage(LivingIncomingDamageEvent event) {
+        Entity entity = event.getEntity();
+        DamageSource source = event.getSource();
+        DamageType type = source.type();
+        String typeString = type.msgId();
+
+        if(entity.getData(ModDataAttachments.POWER_TYPE).equals("Speedster")) {
+            if(typeString.equals("minecraft:player"))
+            {
+                event.setAmount(event.getOriginalAmount()*1.8F);
             }
         }
     }
