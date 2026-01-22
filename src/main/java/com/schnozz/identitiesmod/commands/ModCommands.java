@@ -45,7 +45,6 @@ public class ModCommands {
 
                                     target.setData(ModDataAttachments.POWER_TYPE, power);
                                     PacketDistributor.sendToPlayer(target, new PowerSyncPayload(power));
-                                    System.out.println("Command was successfully executed");
 
                                     if(power.equals("Viltrumite"))
                                     {
@@ -55,6 +54,15 @@ public class ModCommands {
                                         //perm speed 1
                                         target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, MobEffectInstance.INFINITE_DURATION, 0, false, true,true));
                                         PacketDistributor.sendToPlayer(target,new PotionLevelPayload(MobEffects.MOVEMENT_SPEED,0,MobEffectInstance.INFINITE_DURATION));
+                                    }
+                                    else if(power.equals("Speedster"))
+                                    {
+                                        //perm speed 3
+                                        target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, MobEffectInstance.INFINITE_DURATION, 2, false, true,true));
+                                        PacketDistributor.sendToPlayer(target,new PotionLevelPayload(MobEffects.MOVEMENT_SPEED,2,MobEffectInstance.INFINITE_DURATION));
+                                        //perm haste 2
+                                        target.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, MobEffectInstance.INFINITE_DURATION, 1, false, true,true));
+                                        PacketDistributor.sendToPlayer(target,new PotionLevelPayload(MobEffects.DIG_SPEED,1,MobEffectInstance.INFINITE_DURATION));
                                     }
                                     return Command.SINGLE_SUCCESS;
                                 }))));

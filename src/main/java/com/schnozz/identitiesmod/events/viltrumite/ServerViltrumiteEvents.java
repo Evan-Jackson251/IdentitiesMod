@@ -56,7 +56,6 @@ public class ServerViltrumiteEvents {
                 Player viltrumitePlayer = event.getEntity();
                 Entity target = level.getEntity(viltrumitePlayer.getData(ModDataAttachments.ENTITY_HELD).getUUID("UUID"));
 
-
                 if(target == null){return;}
                 if(!target.isAlive()){return;}
                 //sets position in front and turns off gravity
@@ -109,20 +108,26 @@ public class ServerViltrumiteEvents {
     public static void onKillBread(PlayerEvent.Clone event)
     {
         if(event.getEntity().level().isClientSide) return;
-        if(event.isWasDeath() && event.getEntity().level() instanceof ServerLevel level && event.getOriginal().getData(ModDataAttachments.POWER_TYPE).equals("Viltrumite"))
+        if(event.getEntity().level() instanceof ServerLevel level)
         {
-            //drops held entity
-            if(event.getOriginal().hasData(ModDataAttachments.ENTITY_HELD) && event.getOriginal().getData(ModDataAttachments.ENTITY_HELD).hasUUID("UUID"))
+            if(event.getOriginal().getData(ModDataAttachments.POWER_TYPE).equals("Viltrumite"))
             {
-                Objects.requireNonNull(level.getEntity(event.getOriginal().getData(ModDataAttachments.ENTITY_HELD).getUUID("UUID"))).setNoGravity(false);
+                if(event.isWasDeath())
+                {
+                    //drops held entity
+                    if(event.getOriginal().hasData(ModDataAttachments.ENTITY_HELD) && event.getOriginal().getData(ModDataAttachments.ENTITY_HELD).hasUUID("UUID"))
+                    {
+                        Objects.requireNonNull(level.getEntity(event.getOriginal().getData(ModDataAttachments.ENTITY_HELD).getUUID("UUID"))).setNoGravity(false);
+                    }
+                }
+                //perm strength 1
+                event.getEntity().addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, MobEffectInstance.INFINITE_DURATION, 0, false, true,true));
+                PacketDistributor.sendToPlayer((ServerPlayer)event.getEntity(),new PotionLevelPayload(MobEffects.DAMAGE_BOOST,0,MobEffectInstance.INFINITE_DURATION));
+                //perm speed 1
+                event.getEntity().addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, MobEffectInstance.INFINITE_DURATION, 0, false, true,true));
+                PacketDistributor.sendToPlayer((ServerPlayer)event.getEntity(),new PotionLevelPayload(MobEffects.MOVEMENT_SPEED,0,MobEffectInstance.INFINITE_DURATION));
             }
         }
-        //perm strength 1
-        event.getEntity().addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, MobEffectInstance.INFINITE_DURATION, 0, false, true,true));
-        PacketDistributor.sendToPlayer((ServerPlayer)event.getEntity(),new PotionLevelPayload(MobEffects.DAMAGE_BOOST,0,MobEffectInstance.INFINITE_DURATION));
-        //perm speed 1
-        event.getEntity().addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, MobEffectInstance.INFINITE_DURATION, 0, false, true,true));
-        PacketDistributor.sendToPlayer((ServerPlayer)event.getEntity(),new PotionLevelPayload(MobEffects.MOVEMENT_SPEED,0,MobEffectInstance.INFINITE_DURATION));
     }
 
     @SubscribeEvent
