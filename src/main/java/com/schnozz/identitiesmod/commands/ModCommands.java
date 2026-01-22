@@ -49,8 +49,12 @@ public class ModCommands {
 
                                     if(power.equals("Viltrumite"))
                                     {
-                                        target.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, MobEffectInstance.INFINITE_DURATION, 0, false, true,true));
-                                        PacketDistributor.sendToPlayer(target,new PotionLevelPayload(MobEffects.DAMAGE_RESISTANCE,0,MobEffectInstance.INFINITE_DURATION));
+                                        //perm strength 1
+                                        target.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, MobEffectInstance.INFINITE_DURATION, 0, false, true,true));
+                                        PacketDistributor.sendToPlayer(target,new PotionLevelPayload(MobEffects.DAMAGE_BOOST,0,MobEffectInstance.INFINITE_DURATION));
+                                        //perm speed 1
+                                        target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, MobEffectInstance.INFINITE_DURATION, 0, false, true,true));
+                                        PacketDistributor.sendToPlayer(target,new PotionLevelPayload(MobEffects.MOVEMENT_SPEED,0,MobEffectInstance.INFINITE_DURATION));
                                     }
                                     return Command.SINGLE_SUCCESS;
                                 }))));

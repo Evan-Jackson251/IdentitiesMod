@@ -43,7 +43,7 @@ import java.util.Objects;
 public class ServerViltrumiteEvents {
 
     private static final int GRAB_CD = 350;
-    private static final int STUN_LENGTH = 20;
+    private static final int STUN_LENGTH = 30;
 
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event)
@@ -111,18 +111,18 @@ public class ServerViltrumiteEvents {
         if(event.getEntity().level().isClientSide) return;
         if(event.isWasDeath() && event.getEntity().level() instanceof ServerLevel level && event.getOriginal().getData(ModDataAttachments.POWER_TYPE).equals("Viltrumite"))
         {
-            //perm strength 1
-            event.getEntity().addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, MobEffectInstance.INFINITE_DURATION, 0, false, true,true));
-            PacketDistributor.sendToPlayer((ServerPlayer)event.getEntity(),new PotionLevelPayload(MobEffects.DAMAGE_BOOST,0,MobEffectInstance.INFINITE_DURATION));
-            //perm speed 1
-            event.getEntity().addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, MobEffectInstance.INFINITE_DURATION, 0, false, true,true));
-            PacketDistributor.sendToPlayer((ServerPlayer)event.getEntity(),new PotionLevelPayload(MobEffects.MOVEMENT_SPEED,0,MobEffectInstance.INFINITE_DURATION));
             //drops held entity
             if(event.getOriginal().hasData(ModDataAttachments.ENTITY_HELD) && event.getOriginal().getData(ModDataAttachments.ENTITY_HELD).hasUUID("UUID"))
             {
                 Objects.requireNonNull(level.getEntity(event.getOriginal().getData(ModDataAttachments.ENTITY_HELD).getUUID("UUID"))).setNoGravity(false);
             }
         }
+        //perm strength 1
+        event.getEntity().addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, MobEffectInstance.INFINITE_DURATION, 0, false, true,true));
+        PacketDistributor.sendToPlayer((ServerPlayer)event.getEntity(),new PotionLevelPayload(MobEffects.DAMAGE_BOOST,0,MobEffectInstance.INFINITE_DURATION));
+        //perm speed 1
+        event.getEntity().addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, MobEffectInstance.INFINITE_DURATION, 0, false, true,true));
+        PacketDistributor.sendToPlayer((ServerPlayer)event.getEntity(),new PotionLevelPayload(MobEffects.MOVEMENT_SPEED,0,MobEffectInstance.INFINITE_DURATION));
     }
 
     @SubscribeEvent
@@ -131,7 +131,6 @@ public class ServerViltrumiteEvents {
         if(event.getEntity().level().isClientSide) return;
         if(event.getEntity().level() instanceof ServerLevel level && event.getEntity().getData(ModDataAttachments.POWER_TYPE).equals("Viltrumite"))
         {
-
             if(event.getEntity().hasData(ModDataAttachments.ENTITY_HELD) && event.getEntity().getData(ModDataAttachments.ENTITY_HELD).hasUUID("UUID"))
             {
                 Objects.requireNonNull(level.getEntity(event.getEntity().getData(ModDataAttachments.ENTITY_HELD).getUUID("UUID"))).setNoGravity(false);

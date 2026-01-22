@@ -195,6 +195,15 @@ public class PayloadRegister {
                 )
         );
 
+        registrar.playBidirectional(
+                SpeedsterLightningSync.TYPE,
+                SpeedsterLightningSync.STREAM_CODEC,
+                new DirectionalPayloadHandler<>(
+                        ClientSpeedsterLightningHandler::handle,
+                        ServerSpeedsterLightningHandler::handle
+                )
+        );
+
         registrar.playToServer(
                 PotionTogglePayload.TYPE,
                 PotionTogglePayload.STREAM_CODEC,

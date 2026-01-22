@@ -115,6 +115,14 @@ public class ModMappings {
             GLFW.GLFW_KEY_G,
             "key.categories.misc"
     ));
+    //Speedster
+    public static final Lazy<KeyMapping> SPEEDSTER_LIGHTNING_MAPPING = Lazy.of(() -> new KeyMapping(
+            "key.identitiesmod.adaptation.lightning",
+            KeyConflictContext.UNIVERSAL,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_R,
+            "key.categories.misc"
+    ));
 
     // Event is on the mod event bus only on the physical client
     @SubscribeEvent
@@ -140,6 +148,9 @@ public class ModMappings {
 
         //Kyle
         event.register(KYLE_WORTH_MAPPING.get());
+
+        //Speedster
+        event.register(SPEEDSTER_LIGHTNING_MAPPING.get());
     }
 }
 
