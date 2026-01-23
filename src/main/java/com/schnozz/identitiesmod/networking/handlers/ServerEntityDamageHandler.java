@@ -13,7 +13,7 @@ public class ServerEntityDamageHandler {
     {
         ServerPlayer player = (ServerPlayer) context.player();
         ServerLevel serverLevel = (ServerLevel) player.level();
-        Entity hurtEntity = player.level().getEntity(payload.hurtEntityID());
+        Entity hurtEntity = serverLevel.getEntity(payload.hurtEntityID());
 
         if(hurtEntity != null) {
             DamageSource dSource = new DamageSource(payload.dType(),serverLevel.getEntity(payload.attackerEntityID()),serverLevel.getEntity(payload.hurtEntityID()));

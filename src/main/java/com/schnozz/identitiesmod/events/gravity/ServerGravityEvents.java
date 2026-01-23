@@ -27,14 +27,6 @@ import net.neoforged.neoforge.event.tick.EntityTickEvent;
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME)
 public class ServerGravityEvents {
     @SubscribeEvent
-    public static void onKnockback(LivingKnockBackEvent event) {
-        DamageSource source = event.getEntity().getLastDamageSource();
-        if(source == null) return;
-        if (source.is(ModDamageTypes.GRAVITY_POWER_DAMAGE)) {
-            event.setCanceled(true);
-        }
-    }
-    @SubscribeEvent
     public static void onFall(LivingFallEvent event) {
         Entity entity = event.getEntity();
         if(entity.getData(ModDataAttachments.POWER_TYPE).equals("Gravity")) {
