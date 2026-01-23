@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -75,7 +76,9 @@ public class ClientGravityEvents {
             //cyclone
             else if(GRAVITY_CYCLONE_MAPPING.get().consumeClick() && !gravityPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "cyclone_cd"),0)) {
                 cycloneProgress = 0;
-                //PacketDistributor.sendToServer(new SoundPayload(ModSounds.CYCLONE_SOUND.get(),10F));
+                //NOT WORKING
+                level.playSound(null, gravityPlayer.getOnPos(), ModSounds.CYCLONE_SOUND.get(), SoundSource.PLAYERS, 10F,1F);
+                PacketDistributor.sendToServer(new SoundPayload(ModSounds.CYCLONE_SOUND.get(),10F));
 
                 long currentTime = Minecraft.getInstance().level.getGameTime();
 
@@ -89,8 +92,6 @@ public class ClientGravityEvents {
             //arrow
             else if(GRAVITY_ARROW_MAPPING.get().consumeClick() && !gravityPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "gravity_arrow_cd"),0))
             {
-                //PacketDistributor.sendToServer(new SoundPayload(ModSounds.ARROW_RELEASE_SOUND.get(),10F));
-
                 long currentTime = Minecraft.getInstance().level.getGameTime();
                 CooldownAttachment atachment = new CooldownAttachment();
                 atachment.getAllCooldowns().putAll(gravityPlayer.getData(ModDataAttachments.COOLDOWN).getAllCooldowns());

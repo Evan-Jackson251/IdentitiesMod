@@ -9,6 +9,7 @@ import com.schnozz.identitiesmod.networking.payloads.EntityDamagePayload;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.CooldownSyncPayload;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.TimeStopSyncPayload;
 import com.schnozz.identitiesmod.screen.icon.CooldownIcon;
+import com.schnozz.identitiesmod.util.EntitySnapshot;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
@@ -24,10 +25,11 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-import java.util.Iterator;
 import java.util.Map;
+import java.util.jar.Attributes;
 
 import static com.schnozz.identitiesmod.events.time_lord.ServerTimeLordEvents.Time_Stop_Damage;
+import static com.schnozz.identitiesmod.keymapping.ModMappings.REWIND_MAPPING;
 import static com.schnozz.identitiesmod.keymapping.ModMappings.TIME_STOP_MAPPING;
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
@@ -36,6 +38,8 @@ public class ClientTimeLordEvents {
     private static int timeCounter = 0;
     private static final CooldownIcon TIME_STOP_COOLDOWN_ICON = new CooldownIcon(10, 10, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/clock_icon.png"));
     private static final int TIME_STOP_CD = 1300;
+    private static boolean rewindStored = false;
+    private static EntitySnapshot snap;
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
         LocalPlayer timePlayer = Minecraft.getInstance().player;
@@ -57,6 +61,23 @@ public class ClientTimeLordEvents {
                 timePlayer.setData(ModDataAttachments.COOLDOWN, atachment);
                 PacketDistributor.sendToServer(new CooldownSyncPayload(new Cooldown(currentTime, TIME_STOP_CD), ResourceLocation.fromNamespaceAndPath("identitiesmod", "time_stop_cd"), false));
                 TIME_STOP_COOLDOWN_ICON.setCooldown(new Cooldown(currentTime, TIME_STOP_CD));
+            }
+            if(REWIND_MAPPING.get().consumeClick())
+            {
+                if(timePlayer.getData(ModDataAttachments.TIME_STOP_STATE) == 0)
+                {
+                    if(!rewindStored)
+                    {
+                        snap = new EntitySnapshot(timePlayer);
+                        rewindStored = true;
+                    }
+                    else
+                    {
+                        snap.applySnapshot();
+                        snap = null;
+                        rewindStored = false;
+                    }
+                }
             }
 
             if(timePlayer.getData(ModDataAttachments.TIME_STOP_STATE) == 1)

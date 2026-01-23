@@ -128,6 +128,13 @@ public class ModMappings {
             "key.identitiesmod.time_lord.time_stop",
             KeyConflictContext.UNIVERSAL,
             InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_G,
+            "key.categories.misc"
+    ));
+    public static final Lazy<KeyMapping> REWIND_MAPPING = Lazy.of(() -> new KeyMapping(
+            "key.identitiesmod.time_lord.rewind",
+            KeyConflictContext.UNIVERSAL,
+            InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_R,
             "key.categories.misc"
     ));
@@ -162,6 +169,7 @@ public class ModMappings {
 
         //Time Lord
         event.register(TIME_STOP_MAPPING.get());
+        event.register(REWIND_MAPPING.get());
     }
 }
 
