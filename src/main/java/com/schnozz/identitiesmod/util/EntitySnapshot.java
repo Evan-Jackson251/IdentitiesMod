@@ -3,16 +3,21 @@ package com.schnozz.identitiesmod.util;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.TicketType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.RelativeMovement;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.EnumSet;
@@ -41,10 +46,10 @@ public class EntitySnapshot {
     }
     public static EntitySnapshot fromEntity(Player entity) {
         int dim = 0;
-        if(entity.level().dimension().toString().equals("Nether")){
+        if(entity.level().dimension().equals(Level.NETHER)){
             dim = 1;
         }
-        else if(entity.level().dimension().toString().equals("End")){
+        else if(entity.level().dimension().equals(Level.END)){
             dim = 2;
         }
         return new EntitySnapshot(
@@ -90,33 +95,60 @@ public class EntitySnapshot {
     public void applySnapshot(Level level)
     {
         ServerPlayer entity = (ServerPlayer)level.getEntity(entityId);
+        ServerLevel dimensionLevel;
 
-        ServerLevel dimensionLevel = entity.getServer().getLevel(Level.OVERWORLD);
-        if(dimension == 1)
+        ResourceKey<Level> currentDim = entity.level().dimension();
+        System.out.println("TPING");
+        if(dimension == 0){
+            dimensionLevel = entity.getServer().getLevel(Level.OVERWORLD);
+            if(currentDim.equals(Level.OVERWORLD))
+            {
+                entity.teleportTo(dimensionLevel, pos.x, pos.y, pos.z, EnumSet.noneOf(RelativeMovement.class), yRot, xRot);
+
+            }
+            else{
+                entity.teleportTo(dimensionLevel, pos.x, pos.y, pos.z, EnumSet.noneOf(RelativeMovement.class), yRot, xRot);
+            }
+        }
+        else if(dimension == 1)
         {
+            System.out.println("IN NETHER");
+
             dimensionLevel = entity.getServer().getLevel(Level.NETHER);
+            if(currentDim.equals(Level.NETHER))
+            {
+                System.out.println("INTRA-NETHER TRANSPORT");
+                entity.teleportTo(dimensionLevel, pos.x, pos.y, pos.z, EnumSet.noneOf(RelativeMovement.class), yRot, xRot);
+            }
+            else{
+                DimensionTransition transition = new DimensionTransition(dimensionLevel,pos,velocity,xRot,yRot,DimensionTransition.DO_NOTHING);
+                entity.changeDimension(transition);
+            }
         }
         else if(dimension == 2)
         {
             dimensionLevel = entity.getServer().getLevel(Level.END);
-        }
-
-        if(entity != null) {
-            entity.teleportTo(dimensionLevel,pos.x,pos.y,pos.z, EnumSet.noneOf(RelativeMovement.class),yRot,xRot);
-//            entity.setPos(pos);
-//            entity.setDeltaMovement(velocity);
-//            entity.setYRot(yRot);
-//            entity.setXRot(xRot);
-            entity.setHealth(health);
-            entity.removeAllEffects();
-            for(MobEffectInstance inst : effectMap.values())
+            if(currentDim.equals(Level.END))
             {
-                entity.addEffect(new MobEffectInstance(inst));
-            }
-            entity.getFoodData().setFoodLevel(foodLevel);
-            entity.getFoodData().setExhaustion(exhaustionLevel);
-            entity.getFoodData().setSaturation(saturationLevel);
+                entity.teleportTo(dimensionLevel, pos.x, pos.y, pos.z, EnumSet.noneOf(RelativeMovement.class), yRot, xRot);
 
+            }
+            else{
+                DimensionTransition transition = new DimensionTransition(dimensionLevel,pos,velocity,xRot,yRot,DimensionTransition.DO_NOTHING);
+                entity.changeDimension(transition);
+            }
         }
+
+
+        entity.setHealth(health);
+        entity.removeAllEffects();
+        for (MobEffectInstance inst : effectMap.values()) {
+            entity.addEffect(new MobEffectInstance(inst));
+        }
+        entity.getFoodData().setFoodLevel(foodLevel);
+        entity.getFoodData().setExhaustion(exhaustionLevel);
+        entity.getFoodData().setSaturation(saturationLevel);
+
+
     }
 }

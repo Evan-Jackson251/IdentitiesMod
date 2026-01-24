@@ -72,6 +72,10 @@ public class ClientTimeLordEvents {
                 TIME_STOP_COOLDOWN_ICON.setCooldown(new Cooldown(currentTime, TIME_STOP_CD));
             }
             if(SNAPSHOT_MAPPING.get().consumeClick()) {
+//                if(level.dimension() != Level.OVERWORLD)
+//                {
+//                    return;
+//                }
                 snap = snap.fromEntity(timePlayer);
 
                 rewindStored = true;
