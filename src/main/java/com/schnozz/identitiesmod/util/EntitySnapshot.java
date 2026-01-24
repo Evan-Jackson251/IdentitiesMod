@@ -3,19 +3,16 @@ package com.schnozz.identitiesmod.util;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.level.TicketType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.RelativeMovement;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
@@ -98,7 +95,7 @@ public class EntitySnapshot {
         ServerLevel dimensionLevel;
 
         ResourceKey<Level> currentDim = entity.level().dimension();
-        System.out.println("TPING");
+
         if(dimension == 0){
             dimensionLevel = entity.getServer().getLevel(Level.OVERWORLD);
             if(currentDim.equals(Level.OVERWORLD))
@@ -112,12 +109,9 @@ public class EntitySnapshot {
         }
         else if(dimension == 1)
         {
-            System.out.println("IN NETHER");
-
             dimensionLevel = entity.getServer().getLevel(Level.NETHER);
             if(currentDim.equals(Level.NETHER))
             {
-                System.out.println("INTRA-NETHER TRANSPORT");
                 entity.teleportTo(dimensionLevel, pos.x, pos.y, pos.z, EnumSet.noneOf(RelativeMovement.class), yRot, xRot);
             }
             else{

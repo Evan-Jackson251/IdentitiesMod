@@ -44,7 +44,7 @@ public class ClientTimeLordEvents {
     private static final CooldownIcon REWIND_COOLDOWN_ICON = new CooldownIcon(10, 50, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/rewind_icon.png"));
 
     private static final int TIME_STOP_CD = 1500;
-    private static final int REWIND_CD = 100; //800
+    private static final int REWIND_CD = 1000;
 
     private static boolean rewindStored = false;
     private static EntitySnapshot snap;
