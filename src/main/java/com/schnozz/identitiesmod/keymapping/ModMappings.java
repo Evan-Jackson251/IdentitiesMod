@@ -138,6 +138,13 @@ public class ModMappings {
             GLFW.GLFW_KEY_R,
             "key.categories.misc"
     ));
+    public static final Lazy<KeyMapping> SNAPSHOT_MAPPING = Lazy.of(() -> new KeyMapping(
+            "key.identitiesmod.time_lord.snapshot",
+            KeyConflictContext.UNIVERSAL,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_C,
+            "key.categories.misc"
+    ));
 
     // Event is on the mod event bus only on the physical client
     @SubscribeEvent
@@ -169,6 +176,7 @@ public class ModMappings {
 
         //Time Lord
         event.register(TIME_STOP_MAPPING.get());
+        event.register(SNAPSHOT_MAPPING.get());
         event.register(REWIND_MAPPING.get());
     }
 }

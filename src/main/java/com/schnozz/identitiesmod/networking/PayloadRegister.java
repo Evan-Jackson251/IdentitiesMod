@@ -153,8 +153,11 @@ public class PayloadRegister {
                 ServerChaosParticleHandler::handle
         );
 
-
-
+        registrar.playToServer(
+                SnapShotSyncPayload.TYPE,
+                SnapShotSyncPayload.STREAM_CODEC,
+                ServerSnapShotSyncHandler::handle
+        );
 
         registrar.playToServer(
                 EntityBoxPayload.TYPE,

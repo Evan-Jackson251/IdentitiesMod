@@ -70,7 +70,7 @@ public class ModCommands {
                                         PacketDistributor.sendToPlayer(target,new PotionLevelPayload(MobEffects.DIG_SPEED,1,MobEffectInstance.INFINITE_DURATION));
                                     }
                                     else{
-                                        target.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(1);
+                                        target.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(0);
                                     }
                                     return Command.SINGLE_SUCCESS;
                                 }))));
