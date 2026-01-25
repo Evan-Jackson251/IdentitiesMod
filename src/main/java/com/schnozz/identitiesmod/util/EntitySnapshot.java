@@ -7,6 +7,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
@@ -26,6 +27,7 @@ public class EntitySnapshot {
     private Vec3 pos,velocity;
     private Float yRot,xRot,health,exhaustionLevel,saturationLevel;
     private Map<MobEffect, MobEffectInstance> effectMap;
+
 
     public EntitySnapshot(int dimension, int foodLevel, Float exhaustionLevel, Float saturationLevel, int entityId, Vec3 pos, Vec3 velocity, Float yRot, Float xRot, Float health, Map<MobEffect, MobEffectInstance> effectMap)
     {
@@ -49,6 +51,9 @@ public class EntitySnapshot {
         else if(entity.level().dimension().equals(Level.END)){
             dim = 2;
         }
+
+        int ticks = entity.getRemainingFireTicks();
+
         return new EntitySnapshot(
                 dim,
                 entity.getFoodData().getFoodLevel(),
@@ -101,7 +106,6 @@ public class EntitySnapshot {
             if(currentDim.equals(Level.OVERWORLD))
             {
                 entity.teleportTo(dimensionLevel, pos.x, pos.y, pos.z, EnumSet.noneOf(RelativeMovement.class), yRot, xRot);
-
             }
             else{
                 entity.teleportTo(dimensionLevel, pos.x, pos.y, pos.z, EnumSet.noneOf(RelativeMovement.class), yRot, xRot);
@@ -125,14 +129,12 @@ public class EntitySnapshot {
             if(currentDim.equals(Level.END))
             {
                 entity.teleportTo(dimensionLevel, pos.x, pos.y, pos.z, EnumSet.noneOf(RelativeMovement.class), yRot, xRot);
-
             }
             else{
                 DimensionTransition transition = new DimensionTransition(dimensionLevel,pos,velocity,xRot,yRot,DimensionTransition.DO_NOTHING);
                 entity.changeDimension(transition);
             }
         }
-
 
         entity.setHealth(health);
         entity.removeAllEffects();
@@ -143,6 +145,6 @@ public class EntitySnapshot {
         entity.getFoodData().setExhaustion(exhaustionLevel);
         entity.getFoodData().setSaturation(saturationLevel);
 
-
+        entity.clearFire();
     }
 }
