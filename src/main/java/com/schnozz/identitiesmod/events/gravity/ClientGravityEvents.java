@@ -6,6 +6,7 @@ import com.schnozz.identitiesmod.cooldown.CooldownAttachment;
 import com.schnozz.identitiesmod.cooldown.Cooldown;
 import com.schnozz.identitiesmod.networking.payloads.*;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.CooldownSyncPayload;
+import com.schnozz.identitiesmod.screen.icon.ChargeIcon;
 import com.schnozz.identitiesmod.screen.icon.CooldownIcon;
 import com.schnozz.identitiesmod.sounds.ModSounds;
 import net.minecraft.client.Minecraft;
@@ -42,6 +43,7 @@ public class ClientGravityEvents {
     private static final CooldownIcon CYCLONE_COOLDOWN_ICON = new CooldownIcon(10, 10, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/cyclone.png"));
     private static final CooldownIcon DRIPSTONE_COOLDOWN_ICON = new CooldownIcon(10, 30, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/dripstone.png"));
     private static final CooldownIcon ARROW_COOLDOWN_ICON = new CooldownIcon(10, 50, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/arrow_icon.png"));
+    private static final ChargeIcon ChargeIcon = new ChargeIcon(332,259,32,ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/meteor_icon.png"),0);
     //final cooldown values
     private static final int DRIPSTONE_CD = 600;
     private static final int CYCLONE_CD = 300;
@@ -158,7 +160,8 @@ public class ClientGravityEvents {
 
     @SubscribeEvent
     public static void onRenderOverlay(RenderGuiEvent.Post event) {
-        if(!Minecraft.getInstance().player.getData(ModDataAttachments.POWER_TYPE).equals("Gravity"))
+        Player p = Minecraft.getInstance().player;
+        if(!p.getData(ModDataAttachments.POWER_TYPE).equals("Gravity"))
         {
             return;
         }
@@ -168,6 +171,9 @@ public class ClientGravityEvents {
         CYCLONE_COOLDOWN_ICON.render(graphics, gameTime);
         DRIPSTONE_COOLDOWN_ICON.render(graphics, gameTime);
         ARROW_COOLDOWN_ICON.render(graphics, gameTime);
+
+        ChargeIcon.setCharge(p.getData(ModDataAttachments.CHARGE));
+        ChargeIcon.render(graphics);
     }
 
 }

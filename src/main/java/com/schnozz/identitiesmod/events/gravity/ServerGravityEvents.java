@@ -3,8 +3,10 @@ package com.schnozz.identitiesmod.events.gravity;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.damage_sources.ModDamageTypes;
 import com.schnozz.identitiesmod.IdentitiesMod;
+import com.schnozz.identitiesmod.networking.payloads.sync_payloads.ChargeSyncPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -23,6 +25,7 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingKnockBackEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME)
 public class ServerGravityEvents {
@@ -43,6 +46,16 @@ public class ServerGravityEvents {
     @SubscribeEvent
     public static void onLivingDamage(LivingIncomingDamageEvent event)
     {
+        if(event.getSource().getEntity() instanceof ServerPlayer p)
+        {
+            double currentCharge = p.getData(ModDataAttachments.CHARGE);
+            double increase = (double)event.getAmount()/3;
+            double newCharge = currentCharge + increase;
+            newCharge = Math.round(newCharge*100.0)/100.0;
+            if(newCharge>100){newCharge=100;}
+            p.setData(ModDataAttachments.CHARGE,newCharge);
+            PacketDistributor.sendToPlayer(p, new ChargeSyncPayload(newCharge));
+        }
         if(event.getSource().is(DamageTypes.ARROW))
         {
             if(event.getSource().getDirectEntity().getTags().contains("Gravity Arrow")) {

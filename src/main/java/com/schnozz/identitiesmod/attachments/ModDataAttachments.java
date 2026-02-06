@@ -29,6 +29,10 @@ public class ModDataAttachments {
             "time_stop_state", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).build()
     );
 
+    public static final Supplier<AttachmentType<Double>> CHARGE = ATTACHMENT_TYPES.register(
+            "charge", () -> AttachmentType.builder(() -> 0.0).serialize(Codec.DOUBLE).build()
+    );
+
     public static final Supplier<AttachmentType<String>> POWER_TYPE = ATTACHMENT_TYPES.register(
             "power_type", () -> AttachmentType.builder(() -> "").serialize(Codec.STRING).copyOnDeath().build()
     );

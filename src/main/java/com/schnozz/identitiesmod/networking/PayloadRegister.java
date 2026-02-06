@@ -60,6 +60,15 @@ public class PayloadRegister {
                 )
         );
 
+        registrar.playBidirectional(
+                ChargeSyncPayload.TYPE,
+                ChargeSyncPayload.STREAM_CODEC,
+                new DirectionalPayloadHandler<>(
+                        ClientChargeSyncHandler::handle,
+                        ServerChargeSyncHandler::handle
+                )
+        );
+
         registrar.playToClient(
                 CDPayload.TYPE,
                 CDPayload.STREAM_CODEC,

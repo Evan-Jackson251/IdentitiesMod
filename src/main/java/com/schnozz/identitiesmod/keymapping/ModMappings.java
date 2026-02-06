@@ -145,6 +145,14 @@ public class ModMappings {
             GLFW.GLFW_KEY_C,
             "key.categories.misc"
     ));
+    //Dragon
+    public static final Lazy<KeyMapping> DRAGON_SHIFT = Lazy.of(() -> new KeyMapping(
+            "key.identitiesmod.time_lord.dragon_shift",
+            KeyConflictContext.UNIVERSAL,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_R,
+            "key.categories.misc"
+    ));
 
     // Event is on the mod event bus only on the physical client
     @SubscribeEvent
@@ -178,6 +186,9 @@ public class ModMappings {
         event.register(TIME_STOP_MAPPING.get());
         event.register(SNAPSHOT_MAPPING.get());
         event.register(REWIND_MAPPING.get());
+
+        //Dragon
+        event.register(DRAGON_SHIFT.get());
     }
 }
 
