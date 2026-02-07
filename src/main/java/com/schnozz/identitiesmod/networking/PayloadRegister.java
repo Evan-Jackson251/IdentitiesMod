@@ -1,8 +1,10 @@
 package com.schnozz.identitiesmod.networking;
 
 import com.schnozz.identitiesmod.IdentitiesMod;
-import com.schnozz.identitiesmod.events.parry.ClientParryEvents;
-import com.schnozz.identitiesmod.events.viltrumite.ClientViltrumiteEvents;
+import com.schnozz.identitiesmod.entities.ModEntities;
+import com.schnozz.identitiesmod.entities.custom_entities.PlayerCloneEntity;
+import com.schnozz.identitiesmod.events.power_events.parry.ClientParryEvents;
+import com.schnozz.identitiesmod.events.power_events.viltrumite.ClientViltrumiteEvents;
 import com.schnozz.identitiesmod.networking.handlers.*;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.networking.payloads.*;
@@ -11,9 +13,11 @@ import com.schnozz.identitiesmod.networking.payloads.CDPARRYPayload;
 import com.schnozz.identitiesmod.networking.payloads.CDPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -117,6 +121,29 @@ public class PayloadRegister {
                     int currentHealthNeeded = p.getData(ModDataAttachments.HEALTH_NEEDED);
                     p.setData(ModDataAttachments.HEALTH_NEEDED, currentHealthNeeded - payload.cost());
                     p.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20 + p.getData(ModDataAttachments.HEALTH_NEEDED));
+                }
+        );
+
+        registrar.playToServer(
+                ClonePayload.TYPE,
+                ClonePayload.STREAM_CODEC,
+                (payload, context) -> {
+                    Level level = context.player().level();
+                    ServerPlayer clonePlayer = (ServerPlayer) level.getEntity(payload.userID());
+                    if (clonePlayer == null) return;
+
+                    PlayerCloneEntity clone = ModEntities.PLAYER_CLONE.value().create(level);
+                    if (clone == null) return;
+                    clone.moveTo(
+                            clonePlayer.getX(),
+                            clonePlayer.getY(),
+                            clonePlayer.getZ(),
+                            clonePlayer.getYRot(),
+                            clonePlayer.getXRot()
+                    );
+
+                    clone.copyIdentityFrom(clonePlayer);
+                    level.addFreshEntity(clone);
                 }
         );
 

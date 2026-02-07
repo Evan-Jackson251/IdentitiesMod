@@ -14,13 +14,19 @@ import org.lwjgl.glfw.GLFW;
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ModMappings {
-
+    //Clone
+    public static final Lazy<KeyMapping> CLONE_MAPPING = Lazy.of(() -> new KeyMapping(
+            "key.identitiesmod.viltrmuite.clone",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_C,
+            "key.categories.misc"
+    ));
     //Viltrumite
     public static final Lazy<KeyMapping> VILTRUMITE_GRAB_MAPPING = Lazy.of(() -> new KeyMapping(
             "key.identitiesmod.viltrmuite.grab", // Will be localized using this translation key
             InputConstants.Type.KEYSYM, // Default mapping is on the keyboard
-            GLFW.GLFW_KEY_G, // Default key is G
-            "key.categories.misc" // Mapping will be in the misc category
+            GLFW.GLFW_KEY_G,
+            "key.categories.misc"
     ));
     public static final Lazy<KeyMapping> VILTRUMITE_DASH_MAPPING = Lazy.of(() -> new KeyMapping(
             "key.identitiesmod.viltrumite.choke",
@@ -189,6 +195,9 @@ public class ModMappings {
 
         //Dragon
         event.register(DRAGON_SHIFT.get());
+
+        //Clone
+        event.register(CLONE_MAPPING.get());
     }
 }
 

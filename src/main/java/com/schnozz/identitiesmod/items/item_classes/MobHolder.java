@@ -3,7 +3,7 @@ package com.schnozz.identitiesmod.items.item_classes;
 import com.schnozz.identitiesmod.datacomponent.ChargeRecord;
 import com.schnozz.identitiesmod.datacomponent.CompoundTagListRecord;
 import com.schnozz.identitiesmod.datacomponent.ModDataComponentRegistry;
-import com.schnozz.identitiesmod.entities.ThrownMobHolder;
+import com.schnozz.identitiesmod.entities.custom_entities.ThrownMobHolder;
 import com.schnozz.identitiesmod.leveldata.UUIDSavedData;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import net.minecraft.core.BlockPos;

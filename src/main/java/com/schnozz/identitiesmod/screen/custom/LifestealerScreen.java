@@ -5,7 +5,7 @@ import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.buttons.lifestealer_screen_buttons.BuffButtons.*;
 import com.schnozz.identitiesmod.buttons.lifestealer_screen_buttons.ToggleButtons.*;
 import com.schnozz.identitiesmod.IdentitiesMod;
-import com.schnozz.identitiesmod.events.lifestealer.ServerScreenEvents;
+import com.schnozz.identitiesmod.events.power_events.lifestealer.ServerScreenEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
