@@ -1,26 +1,31 @@
 package com.schnozz.identitiesmod.entities.custom_entities;
 
 import com.mojang.authlib.GameProfile;
+import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import java.util.UUID;
 
+/*
+GOALS:
+    fix no knockback with infire (works with onfire)
+    Change AI/targeting based on clone player commands
+    Parkour hardcore
+*/
 public class PlayerCloneEntity extends PathfinderMob {
-
+    private double range = 3.0;
     // Synced data
     private static final EntityDataAccessor<String> PROFILE_UUID =
             SynchedEntityData.defineId(PlayerCloneEntity.class, EntityDataSerializers.STRING);
@@ -36,33 +41,58 @@ public class PlayerCloneEntity extends PathfinderMob {
 
     public PlayerCloneEntity(EntityType<? extends PathfinderMob> type, Level level) {
         super(type, level);
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            this.setDropChance(slot, 0.0f);
+        }
+        ((GroundPathNavigation)this.getNavigation()).setCanOpenDoors(true);
     }
 
     @Override
     protected void registerGoals()
     {
+        //normal goals
         this.goalSelector.addGoal(0,new FloatGoal(this));
-        this.goalSelector.addGoal(1,new MeleeAttackGoal(this,0,true));
-        this.targetSelector.addGoal(2, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this,Player.class,false));
+        this.goalSelector.addGoal(1,new MeleeAttackGoal(this,2F,true));
+        this.goalSelector.addGoal(2, new OpenDoorGoal(this,true));
+
+        //target selection
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this,Player.class,false));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Mob.class,false));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Animal.class,false));
+
+
     }
     @Override
     public boolean canAttack(LivingEntity target) {
-        return true;
-                //!target.getData(ModDataAttachments.POWER_TYPE).equals("clone") && (target instanceof Player || super.canAttack(target));
+        return
+                !target.getData(ModDataAttachments.POWER_TYPE).equals("clone")
+                && !(target instanceof PlayerCloneEntity);
     }
+
     public static AttributeSupplier.Builder createAttributes()
     {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH,20F)
-                .add(Attributes.ATTACK_DAMAGE,2F)
+                .add(Attributes.ATTACK_DAMAGE,1F)
                 .add(Attributes.GRAVITY,0.08F)
-                .add(Attributes.ATTACK_SPEED,2.6F)
-                .add(Attributes.MOVEMENT_SPEED,0.13F);
+                .add(Attributes.ATTACK_SPEED, 4F)
+                .add(Attributes.ARMOR, 0F)
+                .add(Attributes.MOVEMENT_SPEED, 0.18F);
+
+    }
+    @Override
+    public boolean isWithinMeleeAttackRange(LivingEntity entity)
+    {
+        return this.getBbWidth() * 2.0F * this.getBbWidth() * 2.0F + entity.getBbWidth() <= this.range;
     }
 
 
-
+    public void copyEquipmentFrom(Player player) {
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            this.setItemSlot(slot, player.getItemBySlot(slot).copy());
+        }
+    }
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {

@@ -4,75 +4,69 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.schnozz.identitiesmod.entities.custom_entities.PlayerCloneEntity;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.model.PlayerModel;
+import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
+import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
-public class PlayerCloneRenderer extends EntityRenderer<PlayerCloneEntity> {
+import java.util.concurrent.CompletableFuture;
 
-    private final PlayerRenderer steveRenderer;
-    private final PlayerRenderer alexRenderer;
+@OnlyIn(Dist.CLIENT)
+public class PlayerCloneRenderer
+        extends HumanoidMobRenderer<PlayerCloneEntity, PlayerModel<PlayerCloneEntity>> {
+
+    private static final ResourceLocation DEFAULT_STEVE =
+            ResourceLocation.fromNamespaceAndPath("minecraft","textures/entity/player/wide/steve.png");
+
+    private final PlayerModel<PlayerCloneEntity> wideModel;
+    private final PlayerModel<PlayerCloneEntity> slimModel;
 
     public PlayerCloneRenderer(EntityRendererProvider.Context context) {
-        super(context);
-
-        this.steveRenderer = new PlayerRenderer(
+        super(
                 context,
-                //new PlayerModel<>(context.bakeLayer(ModelLayers.PLAYER), false),
+                new PlayerModel<>(context.bakeLayer(ModelLayers.PLAYER), false),
+                0.5F
+        );
+
+        this.wideModel = new PlayerModel<>(
+                context.bakeLayer(ModelLayers.PLAYER),
                 false
         );
-        this.alexRenderer = new PlayerRenderer(
-                context,
-                //new PlayerModel<>(context.bakeLayer(ModelLayers.PLAYER_SLIM), true),
-                false
+        this.slimModel = new PlayerModel<>(
+                context.bakeLayer(ModelLayers.PLAYER_SLIM),
+                true
         );
     }
 
     @Override
     public void render(
             PlayerCloneEntity entity,
-            float yaw,
+            float entityYaw,
             float partialTicks,
             PoseStack poseStack,
             MultiBufferSource buffer,
-            int light
+            int packedLight
     ) {
-        GameProfile profile = entity.getGameProfile();
-        if (profile == null) return; // profile not set yet
-
-        // Decide model type (Alex/Steve) based on a boolean stored in the entity
-        boolean slimModel = entity.isSlim(); // you need to add this getter in your entity
-
-        // Create a fake player to hold the skin
-        AbstractClientPlayer fakePlayer = new AbstractClientPlayer(
-                (ClientLevel) Minecraft.getInstance().level,
-                profile
-        ) {};
-        fakePlayer.setYRot(entity.getYRot());
-        fakePlayer.setXRot(entity.getXRot());
-
-        fakePlayer.yBodyRot = entity.yBodyRot;
-        fakePlayer.yBodyRotO = entity.yBodyRotO;
-        fakePlayer.yHeadRot = entity.yHeadRot;
-        fakePlayer.yHeadRotO = entity.yHeadRotO;
-        fakePlayer.xRotO = entity.xRotO;
-
-        fakePlayer.tickCount = entity.tickCount;
-
-        // Delegate to the correct renderer
-        (slimModel ? alexRenderer : steveRenderer)
-                .render(fakePlayer, yaw, partialTicks, poseStack, buffer, light);
+        this.model = entity.isSlim() ? slimModel : wideModel;
+        super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
     }
 
     @Override
     public ResourceLocation getTextureLocation(PlayerCloneEntity entity) {
-        return null; // handled internally by PlayerRenderer
+        GameProfile profile = entity.getGameProfile();
+        if (profile == null) {
+            return DEFAULT_STEVE;
+        }
+
+        CompletableFuture<PlayerSkin> future =
+                Minecraft.getInstance().getSkinManager().getOrLoad(profile);
+
+        PlayerSkin skin = future.getNow(null);
+        return skin != null ? skin.texture() : DEFAULT_STEVE;
     }
 }

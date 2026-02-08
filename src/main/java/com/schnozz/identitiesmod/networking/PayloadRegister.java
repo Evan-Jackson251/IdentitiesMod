@@ -13,6 +13,7 @@ import com.schnozz.identitiesmod.networking.payloads.CDPARRYPayload;
 import com.schnozz.identitiesmod.networking.payloads.CDPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -141,8 +142,12 @@ public class PayloadRegister {
                             clonePlayer.getYRot(),
                             clonePlayer.getXRot()
                     );
-
                     clone.copyIdentityFrom(clonePlayer);
+                    clone.copyEquipmentFrom(clonePlayer);
+
+                    clone.setCustomName(clonePlayer.getName());
+                    clone.setCustomNameVisible(true);
+
                     level.addFreshEntity(clone);
                 }
         );
