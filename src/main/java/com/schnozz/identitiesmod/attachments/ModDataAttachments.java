@@ -58,6 +58,14 @@ public class ModDataAttachments {
                             .build()
             );
 
+    public static final Supplier<AttachmentType<CloneAttachment>> CLONES =
+            ATTACHMENT_TYPES.register("clones", () ->
+                    AttachmentType.builder(CloneAttachment::new)
+                            .serialize(CloneAttachment.CODEC)
+                            .copyOnDeath()
+                            .build()
+            );
+
     public static final Supplier<AttachmentType<LifestealerBuffsAttachment>> LIFESTEALER_BUFFS =
             ATTACHMENT_TYPES.register("lifestealer_buffs", () ->
                     AttachmentType.builder(LifestealerBuffsAttachment::new)

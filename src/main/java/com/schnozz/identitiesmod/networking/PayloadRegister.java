@@ -21,6 +21,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
 import net.neoforged.neoforge.network.registration.HandlerThread;
@@ -53,6 +54,14 @@ public class PayloadRegister {
                 new DirectionalPayloadHandler<>(
                         ClientAdaptationSyncHandler::handle,
                         ServerAdaptationSyncHandler::handle
+                )
+        );
+        registrar.playBidirectional(
+                ClonesSyncPayload.TYPE,
+                ClonesSyncPayload.STREAM_CODEC,
+                new DirectionalPayloadHandler<>(
+                        ClientClonesSyncHandler::handle,
+                        ServerClonesSyncHandler::handle
                 )
         );
 
@@ -147,8 +156,17 @@ public class PayloadRegister {
 
                     clone.setCustomName(clonePlayer.getName());
                     clone.setCustomNameVisible(true);
+                    clone.setCreatorId(clonePlayer.getId());
+
+                    //clone.followPlayer(clonePlayer);
 
                     level.addFreshEntity(clone);
+
+                    level.getServer().execute(() -> {
+                        clonePlayer.getData(ModDataAttachments.CLONES)
+                                .addClone(clone.getId());
+                        PacketDistributor.sendToPlayer(clonePlayer,new ClonesSyncPayload(clonePlayer.getData(ModDataAttachments.CLONES)));
+                    });
                 }
         );
 
@@ -156,6 +174,11 @@ public class PayloadRegister {
                 VelocityPayload.TYPE,
                 VelocityPayload.STREAM_CODEC,
                 ServerVelocityHandler::handle
+        );
+        registrar.playToServer(
+                CloneCommandPayload.TYPE,
+                CloneCommandPayload.STREAM_CODEC,
+                ServerCloneCommandHandler::handle
         );
 
         registrar.playToServer(

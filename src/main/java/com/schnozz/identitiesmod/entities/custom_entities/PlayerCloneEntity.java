@@ -2,10 +2,13 @@ package com.schnozz.identitiesmod.entities.custom_entities;
 
 import com.mojang.authlib.GameProfile;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
+import com.schnozz.identitiesmod.entities.custom_goals.TargetEntityGoal;
+import com.schnozz.identitiesmod.goals.FollowEntityAtDistanceGoal;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -20,11 +23,11 @@ import java.util.UUID;
 
 /*
 GOALS:
-    fix no knockback with infire (works with onfire)
-    Change AI/targeting based on clone player commands
-    Parkour hardcore
+    Fix entityId changing on relog for CLONES
+    Parkour hardcore (let it place cobblestone!!!)
 */
 public class PlayerCloneEntity extends PathfinderMob {
+    private int creatorId;
     private double range = 3.0;
     // Synced data
     private static final EntityDataAccessor<String> PROFILE_UUID =
@@ -53,7 +56,8 @@ public class PlayerCloneEntity extends PathfinderMob {
         //normal goals
         this.goalSelector.addGoal(0,new FloatGoal(this));
         this.goalSelector.addGoal(1,new MeleeAttackGoal(this,2F,true));
-        this.goalSelector.addGoal(2, new OpenDoorGoal(this,true));
+        this.goalSelector.addGoal(3, new OpenDoorGoal(this,true));
+        this.goalSelector.addGoal(4,new RandomSwimmingGoal(this,2F,120));//mob,speed,how often it changes direction
 
         //target selection
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
@@ -66,7 +70,7 @@ public class PlayerCloneEntity extends PathfinderMob {
     @Override
     public boolean canAttack(LivingEntity target) {
         return
-                !target.getData(ModDataAttachments.POWER_TYPE).equals("clone")
+                !target.getData(ModDataAttachments.POWER_TYPE).equals("Clone")
                 && !(target instanceof PlayerCloneEntity);
     }
 
@@ -77,16 +81,60 @@ public class PlayerCloneEntity extends PathfinderMob {
                 .add(Attributes.ATTACK_DAMAGE,1F)
                 .add(Attributes.GRAVITY,0.08F)
                 .add(Attributes.ATTACK_SPEED, 4F)
-                .add(Attributes.ARMOR, 0F)
+                //.add(Attributes.ARMOR)
                 .add(Attributes.MOVEMENT_SPEED, 0.18F);
 
     }
     @Override
     public boolean isWithinMeleeAttackRange(LivingEntity entity)
     {
-        return this.getBbWidth() * 2.0F * this.getBbWidth() * 2.0F + entity.getBbWidth() <= this.range;
+        return this.distanceToSqr(entity) <= (this.range*this.range);
     }
+    public void followPlayer(Player player) {
+        this.goalSelector.addGoal(2, new FollowEntityAtDistanceGoal(this,player,2.3F,3F));
+        //undoAttackTarget();
+        System.out.println("FOLLOWING PLAYER");
+    }
+    public void attackTarget(LivingEntity entity) {
+        this.targetSelector.addGoal(0,new TargetEntityGoal(this,entity,2F));
+        System.out.println("ATTACK TARGETING");
+    }
+    public void undoAttackTarget()
+    {
+        this.targetSelector.getAvailableGoals().forEach(wrappedGoal -> {
+            if(wrappedGoal.getGoal() instanceof TargetEntityGoal) {
+                this.targetSelector.removeGoal(wrappedGoal.getGoal());
+            }
+        });
+        System.out.println("UNDO ATTACK TARGETING");
+    }
+    public void peacefulTargeting() {//GIVING NULL EXCEPTION ERROR AFTER REMOVING TARGET SELECTOR
+        this.setTarget(null);
+        this.getNavigation().stop();
 
+        this.goalSelector.getAvailableGoals().forEach(wrapped -> {
+            if (wrapped.getGoal() instanceof MeleeAttackGoal) {
+                wrapped.stop();
+            }
+        });
+        this.goalSelector.removeAllGoals(goal ->
+                goal instanceof MeleeAttackGoal
+        );
+
+//        this.targetSelector.removeAllGoals(goal ->
+//                goal instanceof NearestAttackableTargetGoal ||
+//                        goal instanceof HurtByTargetGoal
+//        );
+        System.out.println("SET TARGETING TO PEACEFUL");
+    }
+    public void aggressiveTargeting(){
+        boolean hasAttackGoal = this.goalSelector.getAvailableGoals().stream()
+                .anyMatch(wrappedGoal -> wrappedGoal.getGoal() instanceof MeleeAttackGoal);
+        if(!hasAttackGoal) {
+            this.goalSelector.addGoal(2,new MeleeAttackGoal(this,2F,true));
+        }
+        System.out.println("SET TARGETING TO AGGRESIVE");
+    }
 
     public void copyEquipmentFrom(Player player) {
         for (EquipmentSlot slot : EquipmentSlot.values()) {
@@ -109,6 +157,15 @@ public class PlayerCloneEntity extends PathfinderMob {
 
     public void setSlim(boolean slim) {
         this.entityData.set(SLIM, slim);
+    }
+
+    public void setCreatorId(int creatorId) //should honestly be in the constructor
+    {
+        this.creatorId = creatorId;
+    }
+    public int getCreatorId()
+    {
+        return creatorId;
     }
 
     public void copyIdentityFrom(Player player) {
@@ -156,5 +213,16 @@ public class PlayerCloneEntity extends PathfinderMob {
         this.entityData.set(PROFILE_NAME, tag.getString("ProfileName"));
         this.entityData.set(SLIM, tag.getBoolean("Slim"));
         this.cachedProfile = null;
+    }
+
+    @Override
+    public boolean killedEntity(ServerLevel level, LivingEntity entity) {
+        boolean killedEntity = super.killedEntity(level, entity);
+
+        this.setLastHurtMob(null);
+        this.setTarget(null);
+        this.targetSelector.tick();
+
+        return killedEntity;
     }
 }

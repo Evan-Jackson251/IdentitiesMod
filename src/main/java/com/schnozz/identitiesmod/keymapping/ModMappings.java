@@ -16,11 +16,42 @@ import org.lwjgl.glfw.GLFW;
 public class ModMappings {
     //Clone
     public static final Lazy<KeyMapping> CLONE_MAPPING = Lazy.of(() -> new KeyMapping(
-            "key.identitiesmod.viltrmuite.clone",
+            "key.identitiesmod.clone.clone",
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_C,
             "key.categories.misc"
     ));
+    public static final Lazy<KeyMapping> TARGET_ENTITY_MAPPING = Lazy.of(() -> new KeyMapping(
+            "key.identitiesmod.clone.target_entity",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_F,
+            "key.categories.misc"
+    ));
+    public static final Lazy<KeyMapping> UNTARGET_ENTITY_MAPPING = Lazy.of(() -> new KeyMapping(
+            "key.identitiesmod.clone.untarget_entity",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_G,
+            "key.categories.misc"
+    ));
+    public static final Lazy<KeyMapping> AGGRESIVE_MODE_MAPPING = Lazy.of(() -> new KeyMapping(
+            "key.identitiesmod.clone.aggresive_mode",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_R,
+            "key.categories.misc"
+    ));
+    public static final Lazy<KeyMapping> PEACEFUL_MODE_MAPPING = Lazy.of(() -> new KeyMapping(
+            "key.identitiesmod.clone.peaceful_mode",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_V,
+            "key.categories.misc"
+    ));
+    public static final Lazy<KeyMapping> FOLLOW_MAPPING = Lazy.of(() -> new KeyMapping(
+            "key.identitiesmod.clone.follow",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_Z,
+            "key.categories.misc"
+    ));
+
     //Viltrumite
     public static final Lazy<KeyMapping> VILTRUMITE_GRAB_MAPPING = Lazy.of(() -> new KeyMapping(
             "key.identitiesmod.viltrmuite.grab", // Will be localized using this translation key
@@ -43,6 +74,7 @@ public class ModMappings {
             "key.categories.misc"
     ));
 
+    //Trapper
     public static final Lazy<KeyMapping> TRAPPER_MAPPING = Lazy.of(() -> new KeyMapping(
             "key.identitiesmod.trapper.invisible",
             KeyConflictContext.UNIVERSAL,
@@ -59,6 +91,7 @@ public class ModMappings {
             GLFW.GLFW_KEY_H,
             "key.categories.misc"
     ));
+
     //Necromancer
     public static final Lazy<KeyMapping> NECROMANCER_MAPPING = Lazy.of(() -> new KeyMapping(
             "key.identitiesmod.necromancer.remove_target",
@@ -198,6 +231,11 @@ public class ModMappings {
 
         //Clone
         event.register(CLONE_MAPPING.get());
+        event.register(TARGET_ENTITY_MAPPING.get());
+        event.register(UNTARGET_ENTITY_MAPPING.get());
+        event.register(AGGRESIVE_MODE_MAPPING.get());
+        event.register(PEACEFUL_MODE_MAPPING.get());
+        event.register(FOLLOW_MAPPING.get());
     }
 }
 
