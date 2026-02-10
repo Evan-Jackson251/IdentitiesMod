@@ -37,45 +37,50 @@ public class ClientCloneEvents {
                 PacketDistributor.sendToServer(new ClonePayload(clonePlayer.getId()));
                 System.out.println("CLONES: " + clonePlayer.getData(ModDataAttachments.CLONES).getClones());
             }
-            if(TARGET_ENTITY_MAPPING.get().consumeClick())
+            if(TELEPORT_CLONE_MAPPING.get().consumeClick())
             {
                 for(Integer cloneId: clonePlayer.getData(ModDataAttachments.CLONES).getClones())
                 {
-                    if(level.getEntity(cloneId) == null) {return;}
-                    //PacketDistributor.sendToServer(new CloneCommandPayload(1,cloneId,));
+                    if(level.getEntity(cloneId) != null) {
+                        PacketDistributor.sendToServer(new CloneCommandPayload(1,cloneId,clonePlayer.position()));
+                    }
                 }
             }
-            if(UNTARGET_ENTITY_MAPPING.get().consumeClick())
+            if(KILL_CLONE_MAPPING.get().consumeClick())
             {
                 for(Integer cloneId: clonePlayer.getData(ModDataAttachments.CLONES).getClones())
                 {
-                    if(level.getEntity(cloneId) == null) {return;}
-                    PacketDistributor.sendToServer(new CloneCommandPayload(2,cloneId,-1));
-                }
-            }
-            if(AGGRESIVE_MODE_MAPPING.get().consumeClick())
-            {
-                for(Integer cloneId: clonePlayer.getData(ModDataAttachments.CLONES).getClones())
-                {
-                    if(level.getEntity(cloneId) == null) {return;}
-                    PacketDistributor.sendToServer(new CloneCommandPayload(4,cloneId,-1));
+                    if(level.getEntity(cloneId) != null) {
+                        PacketDistributor.sendToServer(new CloneCommandPayload(2,cloneId,clonePlayer.position()));
+                    }
                 }
             }
             if(PEACEFUL_MODE_MAPPING.get().consumeClick())
             {
                 for(Integer cloneId: clonePlayer.getData(ModDataAttachments.CLONES).getClones())
                 {
-                    if(level.getEntity(cloneId) == null) {return;}
-                    PacketDistributor.sendToServer(new CloneCommandPayload(3,cloneId,-1));
+                    if(level.getEntity(cloneId) != null) {
+                        PacketDistributor.sendToServer(new CloneCommandPayload(3,cloneId,clonePlayer.position()));
+                    }
                 }
                 System.out.println("CLONES: " + clonePlayer.getData(ModDataAttachments.CLONES).getClones());
+            }
+            if(AGGRESIVE_MODE_MAPPING.get().consumeClick())
+            {
+                for(Integer cloneId: clonePlayer.getData(ModDataAttachments.CLONES).getClones())
+                {
+                    if(level.getEntity(cloneId) != null) {
+                        PacketDistributor.sendToServer(new CloneCommandPayload(4,cloneId,clonePlayer.position()));
+                    }
+                }
             }
             if(FOLLOW_MAPPING.get().consumeClick())
             {
                 for(Integer cloneId: clonePlayer.getData(ModDataAttachments.CLONES).getClones())
                 {
-                    if(level.getEntity(cloneId) == null) {return;}
-                    PacketDistributor.sendToServer(new CloneCommandPayload(5,cloneId,-1));
+                    if(level.getEntity(cloneId) != null) {
+                        PacketDistributor.sendToServer(new CloneCommandPayload(5,cloneId,clonePlayer.position()));
+                    }
                 }
             }
         }

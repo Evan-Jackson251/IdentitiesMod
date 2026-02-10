@@ -4,13 +4,11 @@ import com.mojang.authlib.GameProfile;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.entities.custom_goals.TargetEntityGoal;
 import com.schnozz.identitiesmod.goals.FollowEntityAtDistanceGoal;
-import com.schnozz.identitiesmod.networking.payloads.sync_payloads.ClonesSyncPayload;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -21,20 +19,19 @@ import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.UUID;
 
 /*
 GOALS:
-    Fix entityId changing on relog for CLONES
+    Delete targeting function and instead add kill all and teleport all clone function
     Parkour hardcore (let it place cobblestone!!!)
     Infire knockback
 */
 public class PlayerCloneEntity extends PathfinderMob {
     private UUID creatorId;
-    private double range = 3.0;
-    private boolean relog = false;
+    private double range = 2.8;
     // Synced data
     private static final EntityDataAccessor<String> PROFILE_UUID =
             SynchedEntityData.defineId(PlayerCloneEntity.class, EntityDataSerializers.STRING);
@@ -87,9 +84,9 @@ public class PlayerCloneEntity extends PathfinderMob {
                 .add(Attributes.ATTACK_DAMAGE,1F)
                 .add(Attributes.GRAVITY,0.08F)
                 .add(Attributes.ATTACK_SPEED, 4F)
-                //.add(Attributes.ARMOR)
+                .add(Attributes.KNOCKBACK_RESISTANCE,0F)
+                .add(Attributes.ATTACK_KNOCKBACK,1F)
                 .add(Attributes.MOVEMENT_SPEED, 0.18F);
-
     }
 
     @Override
@@ -102,18 +99,14 @@ public class PlayerCloneEntity extends PathfinderMob {
         //undoAttackTarget();
         System.out.println("FOLLOWING PLAYER");
     }
-    public void attackTarget(LivingEntity entity) {
-        this.targetSelector.addGoal(0,new TargetEntityGoal(this,entity,2F));
-        System.out.println("ATTACK TARGETING");
-    }
-    public void undoAttackTarget()
+
+    public void teleportClone(Vec3 pos)
     {
-        this.targetSelector.getAvailableGoals().forEach(wrappedGoal -> {
-            if(wrappedGoal.getGoal() instanceof TargetEntityGoal) {
-                this.targetSelector.removeGoal(wrappedGoal.getGoal());
-            }
-        });
-        System.out.println("UNDO ATTACK TARGETING");
+        this.setPos(pos);
+    }
+    public void killClone()
+    {
+        this.kill();
     }
     public void peacefulTargeting() {//GIVING NULL EXCEPTION ERROR AFTER REMOVING TARGET SELECTOR
         this.setTarget(null);

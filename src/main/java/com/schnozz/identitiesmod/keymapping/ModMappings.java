@@ -21,16 +21,16 @@ public class ModMappings {
             GLFW.GLFW_KEY_C,
             "key.categories.misc"
     ));
-    public static final Lazy<KeyMapping> TARGET_ENTITY_MAPPING = Lazy.of(() -> new KeyMapping(
-            "key.identitiesmod.clone.target_entity",
-            InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_F,
-            "key.categories.misc"
-    ));
-    public static final Lazy<KeyMapping> UNTARGET_ENTITY_MAPPING = Lazy.of(() -> new KeyMapping(
-            "key.identitiesmod.clone.untarget_entity",
+    public static final Lazy<KeyMapping> TELEPORT_CLONE_MAPPING = Lazy.of(() -> new KeyMapping(
+            "key.identitiesmod.clone.teleport_clone",
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_G,
+            "key.categories.misc"
+    ));
+    public static final Lazy<KeyMapping> KILL_CLONE_MAPPING = Lazy.of(() -> new KeyMapping(
+            "key.identitiesmod.clone.kill_clone",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_X,
             "key.categories.misc"
     ));
     public static final Lazy<KeyMapping> AGGRESIVE_MODE_MAPPING = Lazy.of(() -> new KeyMapping(
@@ -231,8 +231,8 @@ public class ModMappings {
 
         //Clone
         event.register(CLONE_MAPPING.get());
-        event.register(TARGET_ENTITY_MAPPING.get());
-        event.register(UNTARGET_ENTITY_MAPPING.get());
+        event.register(TELEPORT_CLONE_MAPPING.get());
+        event.register(KILL_CLONE_MAPPING.get());
         event.register(AGGRESIVE_MODE_MAPPING.get());
         event.register(PEACEFUL_MODE_MAPPING.get());
         event.register(FOLLOW_MAPPING.get());
