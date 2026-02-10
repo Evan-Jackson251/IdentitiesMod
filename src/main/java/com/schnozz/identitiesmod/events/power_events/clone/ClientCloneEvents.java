@@ -14,6 +14,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+import java.util.UUID;
+
 import static com.schnozz.identitiesmod.keymapping.ModMappings.*;
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
@@ -32,44 +34,47 @@ public class ClientCloneEvents {
             //CLONE MAPPING
             if(CLONE_MAPPING.get().consumeClick())
             {
-                System.out.println("CLONES: " + clonePlayer.getData(ModDataAttachments.CLONES).getClones());
                 PacketDistributor.sendToServer(new ClonePayload(clonePlayer.getId()));
+                System.out.println("CLONES: " + clonePlayer.getData(ModDataAttachments.CLONES).getClones());
             }
             if(TARGET_ENTITY_MAPPING.get().consumeClick())
             {
-
-                for(int cloneId: clonePlayer.getData(ModDataAttachments.CLONES).getClones())
+                for(Integer cloneId: clonePlayer.getData(ModDataAttachments.CLONES).getClones())
                 {
+                    if(level.getEntity(cloneId) == null) {return;}
                     //PacketDistributor.sendToServer(new CloneCommandPayload(1,cloneId,));
                 }
             }
             if(UNTARGET_ENTITY_MAPPING.get().consumeClick())
             {
-                for(int cloneId: clonePlayer.getData(ModDataAttachments.CLONES).getClones())
+                for(Integer cloneId: clonePlayer.getData(ModDataAttachments.CLONES).getClones())
                 {
+                    if(level.getEntity(cloneId) == null) {return;}
                     PacketDistributor.sendToServer(new CloneCommandPayload(2,cloneId,-1));
                 }
             }
             if(AGGRESIVE_MODE_MAPPING.get().consumeClick())
             {
-                for(int cloneId: clonePlayer.getData(ModDataAttachments.CLONES).getClones())
+                for(Integer cloneId: clonePlayer.getData(ModDataAttachments.CLONES).getClones())
                 {
+                    if(level.getEntity(cloneId) == null) {return;}
                     PacketDistributor.sendToServer(new CloneCommandPayload(4,cloneId,-1));
                 }
             }
             if(PEACEFUL_MODE_MAPPING.get().consumeClick())
             {
-                for(int cloneId: clonePlayer.getData(ModDataAttachments.CLONES).getClones())
+                for(Integer cloneId: clonePlayer.getData(ModDataAttachments.CLONES).getClones())
                 {
+                    if(level.getEntity(cloneId) == null) {return;}
                     PacketDistributor.sendToServer(new CloneCommandPayload(3,cloneId,-1));
-                    System.out.println("RAN CLONE PEACEFUL METHOD");
                 }
                 System.out.println("CLONES: " + clonePlayer.getData(ModDataAttachments.CLONES).getClones());
             }
             if(FOLLOW_MAPPING.get().consumeClick())
             {
-                for(int cloneId: clonePlayer.getData(ModDataAttachments.CLONES).getClones())
+                for(Integer cloneId: clonePlayer.getData(ModDataAttachments.CLONES).getClones())
                 {
+                    if(level.getEntity(cloneId) == null) {return;}
                     PacketDistributor.sendToServer(new CloneCommandPayload(5,cloneId,-1));
                 }
             }

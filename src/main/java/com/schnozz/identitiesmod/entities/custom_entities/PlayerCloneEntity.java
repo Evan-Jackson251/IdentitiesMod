@@ -4,11 +4,13 @@ import com.mojang.authlib.GameProfile;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.entities.custom_goals.TargetEntityGoal;
 import com.schnozz.identitiesmod.goals.FollowEntityAtDistanceGoal;
+import com.schnozz.identitiesmod.networking.payloads.sync_payloads.ClonesSyncPayload;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -19,16 +21,20 @@ import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.network.PacketDistributor;
+
 import java.util.UUID;
 
 /*
 GOALS:
     Fix entityId changing on relog for CLONES
     Parkour hardcore (let it place cobblestone!!!)
+    Infire knockback
 */
 public class PlayerCloneEntity extends PathfinderMob {
-    private int creatorId;
+    private UUID creatorId;
     private double range = 3.0;
+    private boolean relog = false;
     // Synced data
     private static final EntityDataAccessor<String> PROFILE_UUID =
             SynchedEntityData.defineId(PlayerCloneEntity.class, EntityDataSerializers.STRING);
@@ -85,6 +91,7 @@ public class PlayerCloneEntity extends PathfinderMob {
                 .add(Attributes.MOVEMENT_SPEED, 0.18F);
 
     }
+
     @Override
     public boolean isWithinMeleeAttackRange(LivingEntity entity)
     {
@@ -120,11 +127,6 @@ public class PlayerCloneEntity extends PathfinderMob {
         this.goalSelector.removeAllGoals(goal ->
                 goal instanceof MeleeAttackGoal
         );
-
-//        this.targetSelector.removeAllGoals(goal ->
-//                goal instanceof NearestAttackableTargetGoal ||
-//                        goal instanceof HurtByTargetGoal
-//        );
         System.out.println("SET TARGETING TO PEACEFUL");
     }
     public void aggressiveTargeting(){
@@ -159,11 +161,12 @@ public class PlayerCloneEntity extends PathfinderMob {
         this.entityData.set(SLIM, slim);
     }
 
-    public void setCreatorId(int creatorId) //should honestly be in the constructor
+    public void setCreatorId(UUID creatorId)
     {
         this.creatorId = creatorId;
+        System.out.println("CREATOR UUID: " + creatorId);
     }
-    public int getCreatorId()
+    public UUID getCreatorId()
     {
         return creatorId;
     }
@@ -201,6 +204,9 @@ public class PlayerCloneEntity extends PathfinderMob {
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
+        if (creatorId != null) {
+            tag.putUUID("CreatorId", creatorId);
+        }
         tag.putString("ProfileUUID", this.entityData.get(PROFILE_UUID));
         tag.putString("ProfileName", this.entityData.get(PROFILE_NAME));
         tag.putBoolean("Slim", this.entityData.get(SLIM));
@@ -209,6 +215,9 @@ public class PlayerCloneEntity extends PathfinderMob {
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
+        if (tag.hasUUID("CreatorId")) {
+            this.creatorId = tag.getUUID("CreatorId");
+        }
         this.entityData.set(PROFILE_UUID, tag.getString("ProfileUUID"));
         this.entityData.set(PROFILE_NAME, tag.getString("ProfileName"));
         this.entityData.set(SLIM, tag.getBoolean("Slim"));

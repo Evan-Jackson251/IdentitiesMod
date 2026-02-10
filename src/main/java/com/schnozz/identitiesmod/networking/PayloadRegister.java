@@ -156,9 +156,7 @@ public class PayloadRegister {
 
                     clone.setCustomName(clonePlayer.getName());
                     clone.setCustomNameVisible(true);
-                    clone.setCreatorId(clonePlayer.getId());
-
-                    //clone.followPlayer(clonePlayer);
+                    clone.setCreatorId(clonePlayer.getUUID());
 
                     level.addFreshEntity(clone);
 

@@ -18,6 +18,7 @@ public class CloneAttachment {
     {
         CLONES.remove(cloneId);
     }
+    public void clearClones(){CLONES.clear();}
 
     private static final Codec<ArrayList<Integer>> CLONE_LIST_CODEC =
             Codec.INT.listOf().xmap(ArrayList::new, list -> list);
