@@ -28,6 +28,7 @@ import java.util.UUID;
 
 /*
 GOALS:
+    Clone list still not working on relog
     Parkour hardcore (let it place cobblestone!!!)
 */
 public class PlayerCloneEntity extends PathfinderMob {
