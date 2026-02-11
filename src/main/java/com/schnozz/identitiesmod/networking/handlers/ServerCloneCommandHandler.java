@@ -25,5 +25,8 @@ public record ServerCloneCommandHandler() {
         else if(payload.command() == 5){//Follow Player
             clone.followPlayer(context.player());
         }
+        else if(payload.command() == 6){//Follow Player
+            clone.unfollowPlayer();
+        }
     }
 }

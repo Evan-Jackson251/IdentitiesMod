@@ -2,7 +2,6 @@ package com.schnozz.identitiesmod.events.power_events.clone;
 
 import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
-import com.schnozz.identitiesmod.entities.custom_entities.PlayerCloneEntity;
 import com.schnozz.identitiesmod.networking.payloads.CloneCommandPayload;
 import com.schnozz.identitiesmod.networking.payloads.ClonePayload;
 import net.minecraft.client.Minecraft;
@@ -13,8 +12,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
-
-import java.util.UUID;
 
 import static com.schnozz.identitiesmod.keymapping.ModMappings.*;
 
@@ -35,7 +32,6 @@ public class ClientCloneEvents {
             if(CLONE_MAPPING.get().consumeClick())
             {
                 PacketDistributor.sendToServer(new ClonePayload(clonePlayer.getId()));
-                System.out.println("CLONES: " + clonePlayer.getData(ModDataAttachments.CLONES).getClones());
             }
             if(TELEPORT_CLONE_MAPPING.get().consumeClick())
             {
@@ -80,6 +76,15 @@ public class ClientCloneEvents {
                 {
                     if(level.getEntity(cloneId) != null) {
                         PacketDistributor.sendToServer(new CloneCommandPayload(5,cloneId,clonePlayer.position()));
+                    }
+                }
+            }
+            if(UNFOLLOW_MAPPING.get().consumeClick())
+            {
+                for(Integer cloneId: clonePlayer.getData(ModDataAttachments.CLONES).getClones())
+                {
+                    if(level.getEntity(cloneId) != null) {
+                        PacketDistributor.sendToServer(new CloneCommandPayload(6,cloneId,clonePlayer.position()));
                     }
                 }
             }

@@ -51,6 +51,12 @@ public class ModMappings {
             GLFW.GLFW_KEY_Z,
             "key.categories.misc"
     ));
+    public static final Lazy<KeyMapping> UNFOLLOW_MAPPING = Lazy.of(() -> new KeyMapping(
+            "key.identitiesmod.clone.unfollow",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_T,
+            "key.categories.misc"
+    ));
 
     //Viltrumite
     public static final Lazy<KeyMapping> VILTRUMITE_GRAB_MAPPING = Lazy.of(() -> new KeyMapping(
@@ -236,6 +242,7 @@ public class ModMappings {
         event.register(AGGRESIVE_MODE_MAPPING.get());
         event.register(PEACEFUL_MODE_MAPPING.get());
         event.register(FOLLOW_MAPPING.get());
+        event.register(UNFOLLOW_MAPPING.get());
     }
 }
 
