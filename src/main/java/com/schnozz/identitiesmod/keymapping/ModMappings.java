@@ -60,7 +60,7 @@ public class ModMappings {
 
     //Viltrumite
     public static final Lazy<KeyMapping> VILTRUMITE_GRAB_MAPPING = Lazy.of(() -> new KeyMapping(
-            "key.identitiesmod.viltrmuite.grab", // Will be localized using this translation key
+            "key.identitiesmod.viltrumite.grab", // Will be localized using this translation key
             InputConstants.Type.KEYSYM, // Default mapping is on the keyboard
             GLFW.GLFW_KEY_G,
             "key.categories.misc"
@@ -80,15 +80,6 @@ public class ModMappings {
             "key.categories.misc"
     ));
 
-    //Trapper
-    public static final Lazy<KeyMapping> TRAPPER_MAPPING = Lazy.of(() -> new KeyMapping(
-            "key.identitiesmod.trapper.invisible",
-            KeyConflictContext.UNIVERSAL,
-            InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_R,
-            "key.categories.misc"
-    ));
-
     //Lifestealer Screen
     public static final Lazy<KeyMapping> LIFESTEALER_MAPPING = Lazy.of(() -> new KeyMapping(
             "key.identitiesmod.lifestealer.screen",
@@ -98,14 +89,6 @@ public class ModMappings {
             "key.categories.misc"
     ));
 
-    //Necromancer
-    public static final Lazy<KeyMapping> NECROMANCER_MAPPING = Lazy.of(() -> new KeyMapping(
-            "key.identitiesmod.necromancer.remove_target",
-            KeyConflictContext.UNIVERSAL,
-            InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_H,
-            "key.categories.misc"
-    ));
     //Gravity
     public static final Lazy<KeyMapping> GRAVITY_METEOR_MAPPING = Lazy.of(() -> new KeyMapping(
             "key.identitiesmod.gravity.anvil",
@@ -192,16 +175,26 @@ public class ModMappings {
     ));
     //Dragon
     public static final Lazy<KeyMapping> DRAGON_SHIFT = Lazy.of(() -> new KeyMapping(
-            "key.identitiesmod.time_lord.dragon_shift",
+            "key.identitiesmod.dragon.dragon_shift",
             KeyConflictContext.UNIVERSAL,
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_R,
+            "key.categories.misc"
+    ));
+    //POWER CHOOSING SCREEN
+    public static final Lazy<KeyMapping> POWER_SCREEN = Lazy.of(() -> new KeyMapping(
+            "key.identitiesmod.general.power_screen",
+            KeyConflictContext.UNIVERSAL,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_J,
             "key.categories.misc"
     ));
 
     // Event is on the mod event bus only on the physical client
     @SubscribeEvent
     public static void registerBindings(RegisterKeyMappingsEvent event) {
+        //POWER CHOOSING SCREEN
+        event.register(POWER_SCREEN.get());
         //Viltrumite mappings
         event.register(VILTRUMITE_GRAB_MAPPING.get());
         event.register(VILTRUMITE_DASH_MAPPING.get());
@@ -211,30 +204,22 @@ public class ModMappings {
         event.register(GRAVITY_CYCLONE_MAPPING.get());
         event.register(GRAVITY_ARROW_MAPPING.get());
         event.register(GRAVITY_METEOR_MAPPING.get());
-
         //Adaptation mapping
         event.register(ADAPTATION_SWITCH_MAPPING.get());
-
         //Parry mapping
         event.register(PARRY_MAPPING.get());
-
         //Lifestealer mapping
         event.register(LIFESTEALER_MAPPING.get());
-
         //Kyle
         event.register(KYLE_WORTH_MAPPING.get());
-
         //Speedster
         event.register(SPEEDSTER_LIGHTNING_MAPPING.get());
-
         //Time Lord
         event.register(TIME_STOP_MAPPING.get());
         event.register(SNAPSHOT_MAPPING.get());
         event.register(REWIND_MAPPING.get());
-
         //Dragon
         event.register(DRAGON_SHIFT.get());
-
         //Clone
         event.register(CLONE_MAPPING.get());
         event.register(TELEPORT_CLONE_MAPPING.get());

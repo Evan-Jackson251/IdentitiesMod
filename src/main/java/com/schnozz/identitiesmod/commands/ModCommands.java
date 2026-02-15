@@ -72,6 +72,8 @@ public class ModCommands {
                                     else{
                                         target.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(0);
                                     }
+                                    target.setData(ModDataAttachments.LIVES,0);
+
                                     return Command.SINGLE_SUCCESS;
                                 }))));
 

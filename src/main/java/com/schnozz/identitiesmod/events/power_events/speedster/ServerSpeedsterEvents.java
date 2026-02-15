@@ -15,6 +15,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -49,6 +50,15 @@ public class ServerSpeedsterEvents {
                 EntityType.LIGHTNING_BOLT.spawn(level, event.getEntity().getOnPos(), MobSpawnType.TRIGGERED);
             }
         }
+        DamageSource source = event.getSource();
+        DamageType type = source.type();
+        String typeString = type.msgId();
+        if(event.getEntity().getData(ModDataAttachments.POWER_TYPE).equals("Speedster")) {
+            if(typeString.equals("minecraft:player"))
+            {
+                event.setAmount(event.getOriginalAmount()*1.3F);
+            }
+        }
     }
     //Permanent effect refresh on death and spawn
     @SubscribeEvent
@@ -64,18 +74,13 @@ public class ServerSpeedsterEvents {
             }
         }
     }
-    //Extra damage taken by players for Speedster weakness
     @SubscribeEvent
-    public static void onDamage(LivingIncomingDamageEvent event) {
+    public static void onFall(LivingFallEvent event) {
         Entity entity = event.getEntity();
-        DamageSource source = event.getSource();
-        DamageType type = source.type();
-        String typeString = type.msgId();
-
         if(entity.getData(ModDataAttachments.POWER_TYPE).equals("Speedster")) {
-            if(typeString.equals("minecraft:player"))
+            if(event.getDistance() <= 8)
             {
-                event.setAmount(event.getOriginalAmount()*1.8F);
+                event.setCanceled(true);
             }
         }
     }

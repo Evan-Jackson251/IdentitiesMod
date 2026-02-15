@@ -27,7 +27,7 @@ public class DragonEntity extends Animal {
     {
         return Animal.createLivingAttributes()
                 .add(Attributes.MAX_HEALTH,35F)
-                .add(Attributes.MOVEMENT_SPEED,2F)
+                .add(Attributes.MOVEMENT_SPEED,1F)
                 .add(Attributes.ARMOR,10)
                 .add(Attributes.ARMOR_TOUGHNESS,4)
                 .add(Attributes.STEP_HEIGHT,3)

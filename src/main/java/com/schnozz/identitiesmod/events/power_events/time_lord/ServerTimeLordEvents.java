@@ -67,6 +67,9 @@ public class ServerTimeLordEvents {
             }
             event.setCanceled(true);
         }
+        if(event.getEntity().getData(ModDataAttachments.POWER_TYPE).equals("Time Lord")) {
+            event.setAmount(event.getOriginalAmount()*1.3F);
+        }
     }
 
     public static void timeStopDamage(Level level, int timeID)

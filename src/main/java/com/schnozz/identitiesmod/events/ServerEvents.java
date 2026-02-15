@@ -7,6 +7,7 @@ import com.schnozz.identitiesmod.cooldown.Cooldown;
 import com.schnozz.identitiesmod.cooldown.CooldownAttachment;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.CooldownSyncPayload;
 import com.schnozz.identitiesmod.sounds.ModSounds;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -22,8 +23,10 @@ import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import net.neoforged.neoforge.common.util.LogicalSidedProvider;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.entity.player.AdvancementEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -32,9 +35,9 @@ import java.util.Random;
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.DEDICATED_SERVER)
 public class ServerEvents {
-
     private static long tickCounter = 0;
 
+    //teleport combat tracking
     @SubscribeEvent
     public static void onEntityDamage(LivingIncomingDamageEvent event)
     {
@@ -88,6 +91,7 @@ public class ServerEvents {
         }
     }
 
+    //Scoreboard displays
     @SubscribeEvent
     public static void onServerStarted(ServerStartedEvent event) {
 
@@ -129,8 +133,7 @@ public class ServerEvents {
         scoreboard.setDisplayObjective(DisplaySlot.LIST, objective);
     }
 
-
-    // Coordinate System
+    //Cord broadcast logic and timing
     @SubscribeEvent
     public static void onServerTick(ServerTickEvent.Post event)
     {
@@ -152,7 +155,16 @@ public class ServerEvents {
         }
 
     }
-
+    //Auto AFK removal
+    @SubscribeEvent
+    private static void playerMove(MovementInputUpdateEvent event)
+    {
+        if(event.getEntity().getTags().contains(Component.literal("AFK"))){
+            event.getEntity().removeTag("AFK");
+            event.getEntity().sendSystemMessage(Component.literal("NO LONGER AFK"));
+        }
+    }
+    //Cords broadcast
     private static void sendBroadcast(String message, MinecraftServer server) {
         // Loop through all server players and send chat
         if (server != null) {
@@ -164,6 +176,4 @@ public class ServerEvents {
             }
         }
     }
-
-
 }

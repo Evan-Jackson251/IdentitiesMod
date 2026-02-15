@@ -1,9 +1,10 @@
-package com.schnozz.identitiesmod.events.power_events.lifestealer;
+package com.schnozz.identitiesmod.events;
 
 import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.keymapping.ModMappings;
 import com.schnozz.identitiesmod.screen.custom.LifestealerScreen;
+import com.schnozz.identitiesmod.screen.custom.PowerScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -13,25 +14,22 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
-public class ServerScreenEvents {
-    private static boolean lifeScreenOpen = false;
+public class ClientAdvancementEvents {
+    private static boolean powerScreenOpen = false;
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event)
     {
         Player p = event.getEntity();
-        if(p == null || !p.level().isClientSide() || !p.hasData(ModDataAttachments.POWER_TYPE)) return;
+        if(p == null || !p.level().isClientSide()) return;
         String power = p.getData(ModDataAttachments.POWER_TYPE);
-        if(power.equals("Lifestealer") && !lifeScreenOpen && ModMappings.LIFESTEALER_MAPPING.get().consumeClick()) {
-            LifestealerScreen newLifeScreen = new LifestealerScreen(Component.literal("Lifestealer Screen"));
-            Minecraft.getInstance().setScreen(newLifeScreen);
-            lifeScreenOpen = true;
+        if(ModMappings.POWER_SCREEN.get().consumeClick()) {
+            PowerScreen newPowerScreen = new PowerScreen(Component.literal("Power Screen"));
+            Minecraft.getInstance().setScreen(newPowerScreen);
+            powerScreenOpen = true;
         }
     }
-
-    public static void resetLifeScreen()
+    public static void resetPowerScreen()
     {
-        lifeScreenOpen = false;
+        powerScreenOpen = false;
     }
-
 }
-

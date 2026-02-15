@@ -53,7 +53,6 @@ public class ServerLifestealerEvents {
         Entity entity = event.getEntity();
         if(entity instanceof ServerPlayer player && player.getData(ModDataAttachments.POWER_TYPE).equals("Lifestealer") && (event.getItemStack().getItem() == Items.POTION || event.getItemStack().getItem() == Items.SPLASH_POTION || event.getItemStack().getItem() == Items.LINGERING_POTION))
         {
-            System.out.println("FUCK YOU");
             event.setCanceled(true);
         }
     }

@@ -111,6 +111,18 @@ public class PayloadRegister {
                 }
         );
 
+        registrar.playToClient(
+                LivesSyncPayload.TYPE,
+                LivesSyncPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    // Schedule work on the main client thread
+                    Minecraft.getInstance().execute(() -> {
+                        LocalPlayer player = Minecraft.getInstance().player;
+                        player.setData(ModDataAttachments.LIVES, payload.lives());
+                    });
+                }
+        );
+
         registrar.playToServer(
                 SoundPayload.TYPE,
                 SoundPayload.STREAM_CODEC,

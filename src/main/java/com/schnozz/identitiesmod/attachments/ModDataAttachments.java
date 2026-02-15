@@ -11,6 +11,7 @@ import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
+import java.util.ArrayList;
 import java.util.function.Supplier;
 
 public class ModDataAttachments {
@@ -31,6 +32,10 @@ public class ModDataAttachments {
 
     public static final Supplier<AttachmentType<Double>> CHARGE = ATTACHMENT_TYPES.register(
             "charge", () -> AttachmentType.builder(() -> 0.0).serialize(Codec.DOUBLE).build()
+    );
+
+    public static final Supplier<AttachmentType<Integer>> LIVES = ATTACHMENT_TYPES.register(
+            "lives", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).copyOnDeath().build()
     );
 
     public static final Supplier<AttachmentType<String>> POWER_TYPE = ATTACHMENT_TYPES.register(
@@ -55,6 +60,14 @@ public class ModDataAttachments {
             ATTACHMENT_TYPES.register("adaption", () ->
                     AttachmentType.builder(AdaptationAttachment::new)
                             .serialize(AdaptationAttachment.CODEC)
+                            .build()
+            );
+
+    public static final Supplier<AttachmentType<AvailablePowersAttachment>> AVAILABLE_POWERS =
+            ATTACHMENT_TYPES.register("available_powers", () ->
+                    AttachmentType.builder(AvailablePowersAttachment::new)
+                            .serialize(AvailablePowersAttachment.CODEC)
+                            .copyOnDeath()
                             .build()
             );
 

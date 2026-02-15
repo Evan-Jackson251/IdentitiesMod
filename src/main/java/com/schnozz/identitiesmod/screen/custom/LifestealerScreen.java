@@ -5,7 +5,7 @@ import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.buttons.lifestealer_screen_buttons.BuffButtons.*;
 import com.schnozz.identitiesmod.buttons.lifestealer_screen_buttons.ToggleButtons.*;
 import com.schnozz.identitiesmod.IdentitiesMod;
-import com.schnozz.identitiesmod.events.power_events.lifestealer.ServerScreenEvents;
+import com.schnozz.identitiesmod.events.power_events.lifestealer.ClientScreenEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -52,7 +52,7 @@ public class LifestealerScreen extends Screen {
     public void onClose()
     {
         super.onClose();
-        ServerScreenEvents.resetLifeScreen();
+        ClientScreenEvents.resetLifeScreen();
     }
 
     public void addButtons() //creates and registers all LifestealerScreen buff and toggle renderable widgets
@@ -178,5 +178,4 @@ public class LifestealerScreen extends Screen {
         NightVisionToggle nightVisionToggle = new NightVisionToggle(dynamicX,dynamicY,bWidth,bHeight,message,Button::onPress,createNarration);
         this.addRenderableWidget(nightVisionToggle);
     }
-
 }
