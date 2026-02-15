@@ -35,18 +35,12 @@ import java.util.ArrayList;
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME)
 public class ServerNecroEvents {
 
-
-
-
-
     @SubscribeEvent
     public static void onEntityDeath(LivingDeathEvent event)
     {
         if(event.getEntity().level().isClientSide) {return;}
         MinecraftServer server = event.getEntity().getServer();
         UUIDSavedData command_list = UUIDSavedData.get(server);
-
-
 
         if(event.getEntity().level() instanceof ServerLevel level && event.getEntity() instanceof Monster monster && event.getSource().getDirectEntity() instanceof Player p && p.getData(ModDataAttachments.POWER_TYPE).equals("Necromancer") && command_list.getUUIDList().size() < 10 && !command_list.getUUIDList().contains(monster.getUUID()))
         {
@@ -68,7 +62,7 @@ public class ServerNecroEvents {
                 newMonster.targetSelector.removeAllGoals(goal -> true);
                 newMonster.setTarget(null);
                 //set new data here for entity - not chat skibidi
-
+                //sure buddy, a comment that isn't chat. I believe you
                 command_list.addUUID(newMonster.getUUID());
                 level.addFreshEntity(newMonster);
                 newMonster.setCanPickUpLoot(true);
@@ -76,8 +70,6 @@ public class ServerNecroEvents {
                 newMonster.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(newMonster.getAttributeBaseValue(Attributes.MOVEMENT_SPEED) * 1.2);
                 newMonster.heal(500);
             }
-
-
         }
 
         if(event.getEntity() instanceof Monster monster && command_list.getUUIDList().contains(monster.getUUID()))
@@ -120,9 +112,6 @@ public class ServerNecroEvents {
 
 
     }
-
-
-
 
     @SubscribeEvent
     public static void onSetAttackTarget(LivingChangeTargetEvent event)

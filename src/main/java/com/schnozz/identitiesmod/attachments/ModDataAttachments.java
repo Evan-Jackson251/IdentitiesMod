@@ -87,6 +87,14 @@ public class ModDataAttachments {
                             .build()
             );
 
+    public static final Supplier<AttachmentType<PowerRequirementsAttachment>> POWER_REQS =
+            ATTACHMENT_TYPES.register("power_requirements", () ->
+                    AttachmentType.builder(PowerRequirementsAttachment::new)
+                            .serialize(PowerRequirementsAttachment.CODEC)
+                            .copyOnDeath()
+                            .build()
+            );
+
     public static final Supplier<AttachmentType<BlockPos>> HOME_POS = ATTACHMENT_TYPES.register(
             "home_pos", () -> AttachmentType.builder(() -> BlockPos.ZERO).serialize(BlockPos.CODEC).copyOnDeath().build()
     );

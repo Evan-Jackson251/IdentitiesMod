@@ -26,6 +26,7 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
 import net.neoforged.neoforge.network.registration.HandlerThread;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+import org.apache.logging.log4j.core.jmx.Server;
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class PayloadRegister {
@@ -56,6 +57,7 @@ public class PayloadRegister {
                         ServerAdaptationSyncHandler::handle
                 )
         );
+
         registrar.playBidirectional(
                 ClonesSyncPayload.TYPE,
                 ClonesSyncPayload.STREAM_CODEC,
@@ -312,6 +314,24 @@ public class PayloadRegister {
                 GrabSyncPayload.TYPE,
                 GrabSyncPayload.STREAM_CODEC,
                 ClientGrabSyncPayloadHandler::handle
+        );
+
+        registrar.playToClient(
+                PowersTakenSyncPayload.TYPE,
+                PowersTakenSyncPayload.STREAM_CODEC,
+                ClientPowersTakenSyncHandler::handle
+        );
+
+        registrar.playToClient(
+                AvailablePowersSyncPayload.TYPE,
+                AvailablePowersSyncPayload.STREAM_CODEC,
+                ClientAvailablePowersSyncHandler::handle
+        );
+
+        registrar.playToServer(
+                PowerTakenPayload.TYPE,
+                PowerTakenPayload.STREAM_CODEC,
+                ServerPowerTakenHandler::handle
         );
     }
 }

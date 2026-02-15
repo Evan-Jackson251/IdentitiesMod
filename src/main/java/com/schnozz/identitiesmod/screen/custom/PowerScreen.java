@@ -7,6 +7,8 @@ import com.schnozz.identitiesmod.buttons.lifestealer_screen_buttons.BuffButtons.
 import com.schnozz.identitiesmod.buttons.lifestealer_screen_buttons.ToggleButtons.*;
 import com.schnozz.identitiesmod.buttons.power_screen_buttons.SetPowerButton;
 import com.schnozz.identitiesmod.events.ClientAdvancementEvents;
+import com.schnozz.identitiesmod.leveldata.PowerSavedData;
+import com.schnozz.identitiesmod.util.ClientPowerTakenData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -15,8 +17,10 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 
+import java.util.ArrayList;
 import java.util.function.Supplier;
 
 public class PowerScreen extends Screen {
@@ -79,8 +83,9 @@ public class PowerScreen extends Screen {
             }
         };
 
+        ArrayList<String> powerList = getPowerList(player.getData(ModDataAttachments.AVAILABLE_POWERS).getAvailablePowers());
         //adds buttons
-        for(String power: player.getData(ModDataAttachments.AVAILABLE_POWERS).getAvailablePowers())
+        for(String power: powerList)
         {
             Component message = Component.literal(power);
             SetPowerButton adaptationButton = new SetPowerButton(originX,originY,bWidth,bHeight,message,Button::onPress,createNarration,power);
@@ -90,5 +95,19 @@ public class PowerScreen extends Screen {
             //dynamicX = bWidth + scaledWidth/5;
             originY+=bHeight+5;
         }
+    }
+    public ArrayList<String> getPowerList(ArrayList<String> availablePowers)
+    {
+        ArrayList<String> powerList = new ArrayList<>();
+        ArrayList<String> takenList = ClientPowerTakenData.getPowers();
+
+        for(String power: availablePowers)
+        {
+            if(!takenList.contains(power)){
+                powerList.add(power);
+            }
+        }
+
+        return powerList;
     }
 }
