@@ -40,18 +40,18 @@ public class ServerImmortalEvent {
                 immortalPlayer.addEffect(new MobEffectInstance(MobEffects.GLOWING,60,0));
                 PacketDistributor.sendToPlayer(immortalPlayer,new PotionLevelPayload(MobEffects.GLOWING,0, 60));
 
-                if(immortalPlayer.getData(ModDataAttachments.LIVES) == 1)
+                if(immortalPlayer.getData(ModDataAttachments.LIVES) == 1)//resistance
                 {
                     PacketDistributor.sendToServer(new PotionTogglePayload(MobEffects.FIRE_RESISTANCE,0));
                     immortalPlayer.setHealth(10F);
                     immortalPlayer.getAttribute(Attributes.MAX_HEALTH).setBaseValue(10F);
                 }
-                else if(immortalPlayer.getData(ModDataAttachments.LIVES) == 2)
+                else if(immortalPlayer.getData(ModDataAttachments.LIVES) == 2)//ice
                 {
                     immortalPlayer.setHealth(10F);
                     immortalPlayer.getAttribute(Attributes.MAX_HEALTH).setBaseValue(10F);
                 }
-                else if(immortalPlayer.getData(ModDataAttachments.LIVES) == 3)
+                else if(immortalPlayer.getData(ModDataAttachments.LIVES) == 3)//darkness
                 {
                     immortalPlayer.setHealth(10F);
                     immortalPlayer.getAttribute(Attributes.MAX_HEALTH).setBaseValue(10F);
@@ -141,6 +141,13 @@ public class ServerImmortalEvent {
             immortalPlayer.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE,MobEffectInstance.INFINITE_DURATION,0));
             //client payloads
             PacketDistributor.sendToPlayer(immortalPlayer,new PotionLevelPayload(MobEffects.FIRE_RESISTANCE,0, MobEffectInstance.INFINITE_DURATION));
+        }
+        if(immortalPlayer.getData(ModDataAttachments.LIVES) == 3)
+        {
+            //server side effects
+            immortalPlayer.addEffect(new MobEffectInstance(MobEffects.SATURATION,100,0));
+            //client payloads
+            PacketDistributor.sendToPlayer(immortalPlayer,new PotionLevelPayload(MobEffects.SATURATION,0, 100));
         }
     }
 }

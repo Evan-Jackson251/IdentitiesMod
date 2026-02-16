@@ -1,7 +1,6 @@
 package com.schnozz.identitiesmod.buttons.power_screen_buttons;
 
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
-import com.schnozz.identitiesmod.leveldata.PowerSavedData;
 import com.schnozz.identitiesmod.networking.payloads.PowerTakenPayload;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.PowerSyncPayload;
 import net.minecraft.client.Minecraft;
@@ -21,9 +20,25 @@ public class SetPowerButton extends Button{
     {
         Player p = Minecraft.getInstance().player;
         if(p == null){return;}
-
+        if(!p.getData(ModDataAttachments.POWER_TYPE).equals("")){return;}
         p.setData(ModDataAttachments.POWER_TYPE, power);
-        PacketDistributor.sendToServer(new PowerSyncPayload("Time Lord"));
+        PacketDistributor.sendToServer(new PowerSyncPayload(power));
         PacketDistributor.sendToServer(new PowerTakenPayload(power));
+
+        if(power.equals("Adaptation"))
+        {
+            p.sendSystemMessage(Component.literal("You can now Adapt").withColor(0x1495e5));
+        }
+        else if(power.equals("Parry"))
+        {
+            p.sendSystemMessage(Component.literal("You can now Parry").withColor(0x1495e5));
+        }
+        else if(power.equals("Gravity"))
+        {
+            p.sendSystemMessage(Component.literal("You can now control Gravity").withColor(0x1495e5));
+        }
+        else {
+            p.sendSystemMessage(Component.literal("You are now the " + power).withColor(0x1495e5));
+        }
     }
 }

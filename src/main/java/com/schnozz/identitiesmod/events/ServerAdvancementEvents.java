@@ -5,6 +5,8 @@ import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.leveldata.PowerSavedData;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.AvailablePowersSyncPayload;
 import com.schnozz.identitiesmod.util.ClientPowerTakenData;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -145,6 +147,7 @@ public class ServerAdvancementEvents {
             {
                 player.getData(ModDataAttachments.AVAILABLE_POWERS).addPower(power);
                 PacketDistributor.sendToPlayer(player, new AvailablePowersSyncPayload(player.getData(ModDataAttachments.AVAILABLE_POWERS)));
+                sendBroadcast(player.getName().getString() + " has unlocked " + power,player.server);
             }
         }
     }
@@ -156,5 +159,12 @@ public class ServerAdvancementEvents {
 
         PowerSavedData powersTaken = PowerSavedData.get(player.serverLevel());
         ClientPowerTakenData.setPowers(powersTaken.getPowersTaken());
+    }
+    private static void sendBroadcast(String message, MinecraftServer server) {
+        if (server != null) {
+            for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+                player.sendSystemMessage(Component.literal("[SERVER BROADCAST] " + message).withColor(0x1495e5));
+            }
+        }
     }
 }
