@@ -35,18 +35,13 @@ public class PayloadRegister {
     public static void register(final RegisterPayloadHandlersEvent event) {
         final PayloadRegistrar registrar = event.registrar("1").executesOn(HandlerThread.NETWORK); // Replace "1" with your network protocol version
 
-        registrar.playToClient(
+        registrar.playBidirectional(
                 PowerSyncPayload.TYPE,
                 PowerSyncPayload.STREAM_CODEC,
-                (payload, context) -> {
-                    // Schedule work on the main client thread
-                    Minecraft.getInstance().execute(() -> {
-                        LocalPlayer player = Minecraft.getInstance().player;
-                        if (player != null) {
-                            player.setData(ModDataAttachments.POWER_TYPE.get(), payload.power());
-                        }
-                    });
-                }
+                new DirectionalPayloadHandler<>(
+                        ClientPowerSyncHandler::handle,
+                        ServerPowerSyncHandler::handle
+                )
         );
 
         registrar.playBidirectional(

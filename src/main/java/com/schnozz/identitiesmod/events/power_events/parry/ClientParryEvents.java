@@ -6,7 +6,7 @@ import com.schnozz.identitiesmod.cooldown.Cooldown;
 import com.schnozz.identitiesmod.cooldown.CooldownAttachment;
 import com.schnozz.identitiesmod.networking.payloads.ParryParticlePayload;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.CooldownSyncPayload;
-import com.schnozz.identitiesmod.screen.icon.CooldownIcon;
+import com.schnozz.identitiesmod.icons.CooldownIcon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;

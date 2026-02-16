@@ -1,4 +1,4 @@
-package com.schnozz.identitiesmod.screen.custom;
+package com.schnozz.identitiesmod.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;

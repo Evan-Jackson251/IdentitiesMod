@@ -11,7 +11,10 @@ public class ServerPowerTakenHandler {
     public static void handle(PowerTakenPayload payload, IPayloadContext context) {
         ServerLevel level = (ServerLevel)context.player().level();
         PowerSavedData powersTaken = PowerSavedData.get(level);
-        powersTaken.addPowerTaken(payload.power());
-        PacketDistributor.sendToAllPlayers(new PowersTakenSyncPayload(powersTaken.getPowersTaken()));
+        if(!powersTaken.getPowersTaken().contains(payload.power()))
+        {
+            powersTaken.addPowerTaken(payload.power());
+            PacketDistributor.sendToAllPlayers(new PowersTakenSyncPayload(powersTaken.getPowersTaken()));
+        }
     }
 }

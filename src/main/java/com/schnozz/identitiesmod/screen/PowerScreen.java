@@ -1,4 +1,4 @@
-package com.schnozz.identitiesmod.screen.custom;
+package com.schnozz.identitiesmod.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.schnozz.identitiesmod.IdentitiesMod;
@@ -70,11 +70,9 @@ public class PowerScreen extends Screen {
 
         int bHeight = 14;
 
-        int originX = bWidth - scaledWidth/25;
-        int originY = scaledHeight/4 + bHeight;
-
-        //int dynamicX = originX - scaledWidth/10;
-        //int dynamicY = originY;
+        //int originX = bWidth - scaledWidth/25;
+        int originX = scaledWidth/3;
+        int originY = scaledHeight/3 + bHeight;
 
         Button.CreateNarration createNarration = new Button.CreateNarration() {
             @Override
@@ -84,16 +82,22 @@ public class PowerScreen extends Screen {
         };
 
         ArrayList<String> powerList = getPowerList(player.getData(ModDataAttachments.AVAILABLE_POWERS).getAvailablePowers());
+        int count = 1;
         //adds buttons
         for(String power: powerList)
         {
+            if(count==7)
+            {
+                originX+=scaledWidth/5;
+                originY = scaledHeight/3 + bHeight;
+            }
             Component message = Component.literal(power);
+            bWidth = message.getString().length()*6 + 3;
             SetPowerButton adaptationButton = new SetPowerButton(originX,originY,bWidth,bHeight,message,Button::onPress,createNarration,power);
             this.addRenderableWidget(adaptationButton);
-            //increases position for next button and adjusts width based on characters
-            bWidth = (int) (message.getString().length()*6);
-            //dynamicX = bWidth + scaledWidth/5;
+
             originY+=bHeight+5;
+            count++;
         }
     }
     public ArrayList<String> getPowerList(ArrayList<String> availablePowers)
@@ -107,6 +111,10 @@ public class PowerScreen extends Screen {
                 powerList.add(power);
             }
         }
+
+        System.out.println("POWER LIST: " + powerList);
+        System.out.println("AVAILABLE POWERS: " + availablePowers);
+        System.out.println("TAKEN LIST: " + takenList);
 
         return powerList;
     }

@@ -1,10 +1,8 @@
-package com.schnozz.identitiesmod.screen.icon;
+package com.schnozz.identitiesmod.icons;
 
 import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.cooldown.Cooldown;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class CooldownIcon {

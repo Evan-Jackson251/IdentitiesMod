@@ -3,6 +3,7 @@ package com.schnozz.identitiesmod.buttons.power_screen_buttons;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.leveldata.PowerSavedData;
 import com.schnozz.identitiesmod.networking.payloads.PowerTakenPayload;
+import com.schnozz.identitiesmod.networking.payloads.sync_payloads.PowerSyncPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
@@ -22,6 +23,7 @@ public class SetPowerButton extends Button{
         if(p == null){return;}
 
         p.setData(ModDataAttachments.POWER_TYPE, power);
+        PacketDistributor.sendToServer(new PowerSyncPayload("Time Lord"));
         PacketDistributor.sendToServer(new PowerTakenPayload(power));
     }
 }

@@ -1,4 +1,4 @@
-package com.schnozz.identitiesmod.screen.icon;
+package com.schnozz.identitiesmod.icons;
 
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import net.minecraft.client.Minecraft;

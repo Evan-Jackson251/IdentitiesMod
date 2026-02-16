@@ -23,13 +23,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class EntitySnapshot {
-    private int entityId,foodLevel,dimension; //0 overworld, 1 nether, 2 end
+    private int entityId,foodLevel,dimension,freezeTicks; //0 overworld, 1 nether, 2 end
     private Vec3 pos,velocity;
     private Float yRot,xRot,health,exhaustionLevel,saturationLevel;
     private Map<MobEffect, MobEffectInstance> effectMap;
 
 
-    public EntitySnapshot(int dimension, int foodLevel, Float exhaustionLevel, Float saturationLevel, int entityId, Vec3 pos, Vec3 velocity, Float yRot, Float xRot, Float health, Map<MobEffect, MobEffectInstance> effectMap)
+    public EntitySnapshot(int dimension, int foodLevel, Float exhaustionLevel, Float saturationLevel, int entityId, Vec3 pos, Vec3 velocity, Float yRot, Float xRot, Float health, Map<MobEffect, MobEffectInstance> effectMap, int freezeTicks)
     {
         this.dimension = dimension;
         this.foodLevel = foodLevel;
@@ -42,6 +42,7 @@ public class EntitySnapshot {
         this.xRot = xRot;
         this.health = health;
         this.effectMap = effectMap;
+        this.freezeTicks = freezeTicks;
     }
     public static EntitySnapshot fromEntity(Player entity) {
         int dim = 0;
@@ -51,8 +52,6 @@ public class EntitySnapshot {
         else if(entity.level().dimension().equals(Level.END)){
             dim = 2;
         }
-
-        int ticks = entity.getRemainingFireTicks();
 
         return new EntitySnapshot(
                 dim,
@@ -69,7 +68,8 @@ public class EntitySnapshot {
                         .collect(Collectors.toMap(
                                 e -> e.getKey().value(),               // unwrap Holder<MobEffect> → MobEffect
                                 e -> new MobEffectInstance(e.getValue())
-                        ))
+                        )),
+                entity.getTicksFrozen()
 
         );
     }
@@ -88,7 +88,8 @@ public class EntitySnapshot {
                     Codec.unboundedMap(
                             BuiltInRegistries.MOB_EFFECT.byNameCodec(),
                             MobEffectInstance.CODEC
-                    ).fieldOf("effects").forGetter(s -> s.effectMap)
+                    ).fieldOf("effects").forGetter(s -> s.effectMap),
+                    Codec.INT.fieldOf("freeze_ticks").forGetter(s -> s.freezeTicks)
             ).apply(instance, EntitySnapshot::new));
 
     public static final StreamCodec<ByteBuf, EntitySnapshot> STREAM_CODEC =
@@ -144,6 +145,7 @@ public class EntitySnapshot {
         entity.getFoodData().setFoodLevel(foodLevel);
         entity.getFoodData().setExhaustion(exhaustionLevel);
         entity.getFoodData().setSaturation(saturationLevel);
+        entity.setTicksFrozen(freezeTicks);
 
         entity.clearFire();
     }

@@ -2,7 +2,7 @@ package com.schnozz.identitiesmod.events.power_events.immortal;
 
 import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
-import com.schnozz.identitiesmod.screen.icon.CooldownIcon;
+import com.schnozz.identitiesmod.icons.CooldownIcon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;

@@ -9,7 +9,7 @@ import com.schnozz.identitiesmod.networking.payloads.EntityDamagePayload;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.CooldownSyncPayload;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.SnapShotSyncPayload;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.TimeStopSyncPayload;
-import com.schnozz.identitiesmod.screen.icon.CooldownIcon;
+import com.schnozz.identitiesmod.icons.CooldownIcon;
 import com.schnozz.identitiesmod.util.EntitySnapshot;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -41,7 +41,7 @@ public class ClientTimeLordEvents {
     private static final CooldownIcon REWIND_COOLDOWN_ICON = new CooldownIcon(10, 50, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/rewind_icon.png"));
 
     private static final int TIME_STOP_CD = 1500;
-    private static final int REWIND_CD = 10;
+    private static final int REWIND_CD = 1200;//1200
 
     private static boolean rewindStored = false;
     private static EntitySnapshot snap;

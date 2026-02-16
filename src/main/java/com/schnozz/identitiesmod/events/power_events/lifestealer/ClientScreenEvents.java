@@ -3,7 +3,7 @@ package com.schnozz.identitiesmod.events.power_events.lifestealer;
 import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.keymapping.ModMappings;
-import com.schnozz.identitiesmod.screen.custom.LifestealerScreen;
+import com.schnozz.identitiesmod.screen.LifestealerScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
