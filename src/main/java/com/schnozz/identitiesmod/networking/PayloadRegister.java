@@ -124,7 +124,6 @@ public class PayloadRegister {
                 SoundPayload.TYPE,
                 SoundPayload.STREAM_CODEC,
                 (payload, context) -> {
-                    // Schedule work on the main client thread
                     Player player = context.player();
                     if (player != null) {
                         player.level().playSound(null, player.getOnPos(), payload.sound(), SoundSource.PLAYERS, payload.volume(),1F);

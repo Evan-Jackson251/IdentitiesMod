@@ -31,7 +31,7 @@ public class ServerGravityArrowHandler {
             arrow.addTag("Gravity Arrow");
             arrow.setPos(gravPlayer.getEyePosition());
             arrow.setNoGravity(true);
-            arrow.shootFromRotation(gravPlayer, pitch, yaw, 0f, 10f, 0f);
+            arrow.shootFromRotation(gravPlayer, pitch, yaw, 0f, 7f, 0f);
             gravPlayer.level().addFreshEntity(arrow);
         }
 

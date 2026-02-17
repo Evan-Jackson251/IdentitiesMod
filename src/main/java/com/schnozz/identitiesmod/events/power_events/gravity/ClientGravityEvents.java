@@ -13,7 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -34,7 +34,7 @@ import static com.schnozz.identitiesmod.keymapping.ModMappings.*;
 
 /*
 Gravity power plan:
-    1. Add meteor ult (charged by dealing damage with other abilities)
+    1. Add meteor
 */
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
@@ -79,9 +79,6 @@ public class ClientGravityEvents {
             //cyclone
             else if(GRAVITY_CYCLONE_MAPPING.get().consumeClick() && !gravityPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "cyclone_cd"),0)) {
                 cycloneProgress = 0;
-                //NOT WORKING
-                level.playSound(null, gravityPlayer.getOnPos(), ModSounds.CYCLONE_SOUND.get(), SoundSource.PLAYERS, 10F,1F);
-                PacketDistributor.sendToServer(new SoundPayload(ModSounds.CYCLONE_SOUND.get(),10F));
 
                 long currentTime = Minecraft.getInstance().level.getGameTime();
 
@@ -91,6 +88,8 @@ public class ClientGravityEvents {
                 gravityPlayer.setData(ModDataAttachments.COOLDOWN, atachment);
                 PacketDistributor.sendToServer(new CooldownSyncPayload(new Cooldown(currentTime, CYCLONE_CD), ResourceLocation.fromNamespaceAndPath("identitiesmod", "cyclone_cd"), false));
                 CYCLONE_COOLDOWN_ICON.setCooldown(new Cooldown(currentTime, CYCLONE_CD));
+
+                PacketDistributor.sendToServer(new SoundPayload(ModSounds.WIND_BLOWING_SOUND.get(),10F));
             }
             //arrow
             else if(GRAVITY_ARROW_MAPPING.get().consumeClick() && !gravityPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "gravity_arrow_cd"),0))
@@ -102,10 +101,12 @@ public class ClientGravityEvents {
                 gravityPlayer.setData(ModDataAttachments.COOLDOWN, atachment);
                 PacketDistributor.sendToServer(new CooldownSyncPayload(new Cooldown(currentTime, ARROW_CD), ResourceLocation.fromNamespaceAndPath("identitiesmod", "gravity_arrow_cd"), false));
                 ARROW_COOLDOWN_ICON.setCooldown(new Cooldown(currentTime, ARROW_CD));
+
                 arrow(gravityPlayer);
+                PacketDistributor.sendToServer(new SoundPayload(SoundEvents.ARROW_SHOOT,20F));
             }
             //meteor creation and set both position and movement
-            else if(GRAVITY_METEOR_MAPPING.get().consumeClick()) //EVAN THIS NEEDS COOLDOWN
+            else if(GRAVITY_METEOR_MAPPING.get().consumeClick())
             {
                 //MeteorEntity newMeteor = new MeteorEntity(,level);
             }

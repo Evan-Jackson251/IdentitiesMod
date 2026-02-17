@@ -6,8 +6,10 @@ import com.schnozz.identitiesmod.cooldown.Cooldown;
 import com.schnozz.identitiesmod.cooldown.CooldownAttachment;
 import com.schnozz.identitiesmod.networking.payloads.CloneCommandPayload;
 import com.schnozz.identitiesmod.networking.payloads.ClonePayload;
+import com.schnozz.identitiesmod.networking.payloads.SoundPayload;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.CooldownSyncPayload;
 import com.schnozz.identitiesmod.icons.CooldownIcon;
+import com.schnozz.identitiesmod.sounds.ModSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
@@ -53,6 +55,9 @@ public class ClientCloneEvents {
                 clonePlayer.setData(ModDataAttachments.COOLDOWN, atachment);
                 PacketDistributor.sendToServer(new CooldownSyncPayload(new Cooldown(currentTime, CLONE_COOLDOWN), ResourceLocation.fromNamespaceAndPath("identitiesmod", "clone_cd"), false));
                 CLONE_COOLDOWN_ICON.setCooldown(new Cooldown(currentTime, CLONE_COOLDOWN));
+
+                //STILL NOT WORKING
+                PacketDistributor.sendToServer(new SoundPayload(ModSounds.SWOOSH_SOUND.get(),10F));
             }
             if(TELEPORT_CLONE_MAPPING.get().consumeClick())
             {

@@ -1,6 +1,8 @@
 package com.schnozz.identitiesmod.events.power_events.viltrumite;
 
 import com.schnozz.identitiesmod.IdentitiesMod;
+import com.schnozz.identitiesmod.items.item_classes.FastPowerGauntlet;
+import com.schnozz.identitiesmod.items.item_classes.StrongPowerGauntlet;
 import com.schnozz.identitiesmod.mob_effects.ModEffects;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.cooldown.Cooldown;
@@ -67,7 +69,7 @@ public class ServerViltrumiteEvents {
 
                 target.setNoGravity(true);
                 //sets mob aggro to viltrumite
-                if(!(target instanceof Player) && target instanceof Mob mob)
+                if(target instanceof Mob mob)
                 {
                     mob.setTarget(event.getEntity());
                 }
@@ -80,22 +82,24 @@ public class ServerViltrumiteEvents {
         if(event.getEntity().getData(ModDataAttachments.POWER_TYPE).equals("Viltrumite")) {
             Player viltrumitePlayer = event.getEntity();
             ItemStack stack = event.getItemStack();
-
-            if(event.getEntity().level() instanceof ServerLevel level && !viltrumitePlayer.getData(ModDataAttachments.ENTITY_HELD).isEmpty())
+            if(stack.getItem() instanceof FastPowerGauntlet || stack.getItem() instanceof StrongPowerGauntlet)
             {
-                //add stun
-                LivingEntity target = (LivingEntity) level.getEntity(viltrumitePlayer.getData(ModDataAttachments.ENTITY_HELD).getUUID("UUID"));
-                target.addEffect(new MobEffectInstance(ModEffects.STUN, STUN_LENGTH, 0,false,true,true));
-                //let go
-                target.setNoGravity(false);;
-                viltrumitePlayer.setData(ModDataAttachments.ENTITY_HELD.get(), new CompoundTag());//sends an empty tag
-                long startTime = level.getGameTime();
-                Cooldown cd = new Cooldown(startTime, GRAB_CD);
-                CooldownAttachment cdAttach = viltrumitePlayer.getData(ModDataAttachments.COOLDOWN);
-                ResourceLocation key = ResourceLocation.fromNamespaceAndPath("identitiesmod", "grab_cd");
-                ClientViltrumiteEvents.setIconCooldown(cd);
-                cdAttach.setCooldown(key, startTime, GRAB_CD);
-                PacketDistributor.sendToPlayer((ServerPlayer) viltrumitePlayer, new CooldownSyncPayload(cd,key, false  ));
+                if(event.getEntity().level() instanceof ServerLevel level && !viltrumitePlayer.getData(ModDataAttachments.ENTITY_HELD).isEmpty())
+                {
+                    //add stun
+                    LivingEntity target = (LivingEntity) level.getEntity(viltrumitePlayer.getData(ModDataAttachments.ENTITY_HELD).getUUID("UUID"));
+                    target.addEffect(new MobEffectInstance(ModEffects.STUN, STUN_LENGTH, 0,false,true,true));
+                    //let go
+                    target.setNoGravity(false);;
+                    viltrumitePlayer.setData(ModDataAttachments.ENTITY_HELD.get(), new CompoundTag());//sends an empty tag
+                    long startTime = level.getGameTime();
+                    Cooldown cd = new Cooldown(startTime, GRAB_CD);
+                    CooldownAttachment cdAttach = viltrumitePlayer.getData(ModDataAttachments.COOLDOWN);
+                    ResourceLocation key = ResourceLocation.fromNamespaceAndPath("identitiesmod", "grab_cd");
+                    ClientViltrumiteEvents.setIconCooldown(cd);
+                    cdAttach.setCooldown(key, startTime, GRAB_CD);
+                    PacketDistributor.sendToPlayer((ServerPlayer) viltrumitePlayer, new CooldownSyncPayload(cd,key, false  ));
+                }
             }
         }
     }

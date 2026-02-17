@@ -56,6 +56,8 @@ public class ClientSpeedsterEvents {
                 PacketDistributor.sendToServer(new PotionLevelPayload(MobEffects.MOVEMENT_SPEED,5,STATE_DURATION));
                 speedPlayer.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED,STATE_DURATION,3,false,true,true));
                 PacketDistributor.sendToServer(new PotionLevelPayload(MobEffects.DIG_SPEED,3,STATE_DURATION));
+
+                //SOUND EFFECT
             }
             //Turns off lightning state
             if(speedPlayer.getData(ModDataAttachments.SPEEDSTER_LIGHTNING) == 1)

@@ -21,8 +21,6 @@ public class ModDataComponentRegistry {
                     
     );
 
-
-
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTagListRecord>> HELD_LIST = REGISTRAR.registerComponentType(
             "held_list",
             builder -> builder

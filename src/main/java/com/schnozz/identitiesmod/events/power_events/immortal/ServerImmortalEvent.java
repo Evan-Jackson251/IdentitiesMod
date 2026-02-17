@@ -5,8 +5,11 @@ import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.networking.payloads.PotionLevelPayload;
 import com.schnozz.identitiesmod.networking.payloads.PotionTogglePayload;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.LivesSyncPayload;
+import com.schnozz.identitiesmod.sounds.ModSounds;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -60,6 +63,8 @@ public class ServerImmortalEvent {
                 immortalPlayer.setData(ModDataAttachments.LIVES,immortalPlayer.getData(ModDataAttachments.LIVES)-1);
                 PacketDistributor.sendToPlayer(immortalPlayer,new LivesSyncPayload(immortalPlayer.getData(ModDataAttachments.LIVES)));
                 immortalPlayer.clearFire();
+
+                immortalPlayer.serverLevel().playSound(null, immortalPlayer.getOnPos(), SoundEvents.TOTEM_USE, SoundSource.PLAYERS, 10,1F);
             }
             else{
                 immortalPlayer.getAttribute(Attributes.MAX_HEALTH).setBaseValue(17F);
@@ -79,6 +84,7 @@ public class ServerImmortalEvent {
 
                 immortalPlayer.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20F);
                 immortalPlayer.setHealth(20F);
+
             }
         }
     }

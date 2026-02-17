@@ -2,6 +2,9 @@ package com.schnozz.identitiesmod.events.power_events.viltrumite;
 
 import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.items.BoundingBoxVisualizer;
+import com.schnozz.identitiesmod.items.ItemRegistry;
+import com.schnozz.identitiesmod.items.item_classes.FastPowerGauntlet;
+import com.schnozz.identitiesmod.items.item_classes.StrongPowerGauntlet;
 import com.schnozz.identitiesmod.mob_effects.ModEffects;
 import com.schnozz.identitiesmod.networking.payloads.*;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
@@ -64,9 +67,9 @@ public class ClientViltrumiteEvents {
             //key presses
             if(VILTRUMITE_GRAB_MAPPING.get().consumeClick() && !viltrumitePlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "grab_cd"), 0))
             {
-                //if(viltrumitePlayer.getMainHandItem().getItem() == ItemRegistry.FAST_POWER_GAUNTLET || viltrumitePlayer.getMainHandItem().getItem() == ItemRegistry.STRONG_POWER_GAUNTLET) {
+                if(viltrumitePlayer.getMainHandItem().getItem() instanceof StrongPowerGauntlet || viltrumitePlayer.getMainHandItem().getItem() instanceof FastPowerGauntlet) {
                     findEntity(Minecraft.getInstance().player);
-                //}
+                }
             }
             if(VILTRUMITE_DASH_MAPPING.get().consumeClick() && !viltrumitePlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "dash_cd"), 0))
             {

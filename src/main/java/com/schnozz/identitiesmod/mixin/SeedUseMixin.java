@@ -55,11 +55,8 @@ public abstract class SeedUseMixin {
 
                     }
                 }
+                cir.setReturnValue(InteractionResult.SUCCESS); // cancel vanilla and run your logic
             }
-
-
-
-            cir.setReturnValue(InteractionResult.SUCCESS); // cancel vanilla and run your logic
         }
     }
 

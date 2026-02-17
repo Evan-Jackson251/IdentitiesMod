@@ -6,10 +6,12 @@ import com.schnozz.identitiesmod.cooldown.Cooldown;
 import com.schnozz.identitiesmod.cooldown.CooldownAttachment;
 import com.schnozz.identitiesmod.damage_sources.ModDamageTypes;
 import com.schnozz.identitiesmod.networking.payloads.EntityDamagePayload;
+import com.schnozz.identitiesmod.networking.payloads.SoundPayload;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.CooldownSyncPayload;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.SnapShotSyncPayload;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.TimeStopSyncPayload;
 import com.schnozz.identitiesmod.icons.CooldownIcon;
+import com.schnozz.identitiesmod.sounds.ModSounds;
 import com.schnozz.identitiesmod.util.EntitySnapshot;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -67,6 +69,8 @@ public class ClientTimeLordEvents {
                 timePlayer.setData(ModDataAttachments.COOLDOWN, atachment);
                 PacketDistributor.sendToServer(new CooldownSyncPayload(new Cooldown(currentTime, TIME_STOP_CD), ResourceLocation.fromNamespaceAndPath("identitiesmod", "time_stop_cd"), false));
                 TIME_STOP_COOLDOWN_ICON.setCooldown(new Cooldown(currentTime, TIME_STOP_CD));
+
+                PacketDistributor.sendToServer(new SoundPayload(ModSounds.TIME_STOP_SOUND.get(),10F));
             }
             if(SNAPSHOT_MAPPING.get().consumeClick()) {
 //                if(level.dimension() != Level.OVERWORLD)

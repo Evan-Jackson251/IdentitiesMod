@@ -25,6 +25,8 @@ public class ServerLifestealerEvents {
                 int h = Math.min(10, player.getData(ModDataAttachments.HEALTH_NEEDED) + 2);
                 player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20 + h);
                 player.setData(ModDataAttachments.HEALTH_NEEDED, h);
+
+                //SOUND EFFECT
         }
 
         // for when lifestealer dies to a player lose 1 heart
