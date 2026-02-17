@@ -151,6 +151,13 @@ public class ModMappings {
             GLFW.GLFW_KEY_R,
             "key.categories.misc"
     ));
+    public static final Lazy<KeyMapping> SPEEDSTER_WATER_WALK_MAPPING = Lazy.of(() -> new KeyMapping(
+            "key.identitiesmod.speedster.water_walk",
+            KeyConflictContext.UNIVERSAL,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_C,
+            "key.categories.misc"
+    ));
     //Time Lord
     public static final Lazy<KeyMapping> TIME_STOP_MAPPING = Lazy.of(() -> new KeyMapping(
             "key.identitiesmod.time_lord.time_stop",
@@ -214,6 +221,7 @@ public class ModMappings {
         event.register(KYLE_WORTH_MAPPING.get());
         //Speedster
         event.register(SPEEDSTER_LIGHTNING_MAPPING.get());
+        event.register(SPEEDSTER_WATER_WALK_MAPPING.get());
         //Time Lord
         event.register(TIME_STOP_MAPPING.get());
         event.register(SNAPSHOT_MAPPING.get());

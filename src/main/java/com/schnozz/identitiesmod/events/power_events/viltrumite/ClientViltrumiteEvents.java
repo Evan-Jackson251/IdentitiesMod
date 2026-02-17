@@ -120,9 +120,9 @@ public class ClientViltrumiteEvents {
         }
     }
 
-    private static final CooldownIcon cooldownIcon = new CooldownIcon(10, 10, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/viltrumitegrabcd_icon.png"));
-    private static final CooldownIcon DASH_CDICON = new CooldownIcon(10, 30, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/viltrumite_choke_dash_cd_icon.png"));
-    private static final CooldownIcon BLOCK_ICON = new CooldownIcon(10, 50, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/shield_icon.png"));
+    private static final CooldownIcon cooldownIcon = new CooldownIcon(108,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/viltrumitegrabcd_icon.png"));
+    private static final CooldownIcon DASH_CDICON = new CooldownIcon(128,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/viltrumite_choke_dash_cd_icon.png"));
+    private static final CooldownIcon BLOCK_ICON = new CooldownIcon(88,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/shield_icon.png"));
     //fix grab with ridable entities by preventing ride function
     private static boolean findEntity (Player player)
     {

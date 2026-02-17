@@ -38,9 +38,9 @@ public class ClientTimeLordEvents {
     private static final int STOP_DURATION = 100;
     private static int timeCounter = 0;
 
-    private static final CooldownIcon TIME_STOP_COOLDOWN_ICON = new CooldownIcon(10, 10, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/clock_icon.png"));
-    private static CooldownIcon SNAPSHOT_COOLDOWN_ICON = new CooldownIcon(10, 30, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/open_chest_icon.png"));
-    private static final CooldownIcon REWIND_COOLDOWN_ICON = new CooldownIcon(10, 50, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/rewind_icon.png"));
+    private static final CooldownIcon TIME_STOP_COOLDOWN_ICON = new CooldownIcon(128,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/clock_icon.png"));
+    private static CooldownIcon SNAPSHOT_COOLDOWN_ICON = new CooldownIcon(88,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/open_chest_icon.png"));
+    private static final CooldownIcon REWIND_COOLDOWN_ICON = new CooldownIcon(108,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/rewind_icon.png"));
 
     private static final int TIME_STOP_CD = 1500;
     private static final int REWIND_CD = 1200;//1200
@@ -80,7 +80,7 @@ public class ClientTimeLordEvents {
                 snap = snap.fromEntity(timePlayer);
 
                 rewindStored = true;
-                SNAPSHOT_COOLDOWN_ICON = new CooldownIcon(10, 30, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/chest_icon.png"));
+                SNAPSHOT_COOLDOWN_ICON = new CooldownIcon(88,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/chest_icon.png"));
             }
             if(REWIND_MAPPING.get().consumeClick() && !timePlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "rewind_cd"),0))
             {
@@ -100,7 +100,7 @@ public class ClientTimeLordEvents {
                         PacketDistributor.sendToServer(new CooldownSyncPayload(new Cooldown(currentTime, REWIND_CD), ResourceLocation.fromNamespaceAndPath("identitiesmod", "rewind_cd"), false));
                         REWIND_COOLDOWN_ICON.setCooldown(new Cooldown(currentTime, REWIND_CD));
 
-                        SNAPSHOT_COOLDOWN_ICON = new CooldownIcon(10, 30, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/open_chest_icon.png"));
+                        SNAPSHOT_COOLDOWN_ICON = new CooldownIcon(88,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/open_chest_icon.png"));
                     }
                 }
             }

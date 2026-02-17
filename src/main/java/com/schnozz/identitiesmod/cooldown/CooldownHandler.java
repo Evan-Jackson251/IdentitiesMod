@@ -17,17 +17,14 @@ import java.util.*;
 public class CooldownHandler {
 
     @SubscribeEvent
-    public static void onPlayerTick(PlayerTickEvent.Pre event)
-    {
-        if(event.getEntity().level() instanceof ServerLevel level && event.getEntity() instanceof ServerPlayer player)
-        {
+    public static void onPlayerTick(PlayerTickEvent.Pre event) {
+        if (event.getEntity().level() instanceof ServerLevel level && event.getEntity() instanceof ServerPlayer player) {
             long currentTime = level.getGameTime();
             CooldownAttachment cdMapAttached = player.getData(ModDataAttachments.COOLDOWN);
             CooldownAttachment newAttachment = new CooldownAttachment();
             newAttachment.getAllCooldowns().putAll(cdMapAttached.getAllCooldowns());
 
-            if(!cdMapAttached.getAllCooldowns().isEmpty())
-            {
+            if (!cdMapAttached.getAllCooldowns().isEmpty()) {
                 List<ResourceLocation> toRemove = new ArrayList<>();
 
                 for (Map.Entry<ResourceLocation, Cooldown> entry : cdMapAttached.getAllCooldowns().entrySet()) {
@@ -43,8 +40,6 @@ public class CooldownHandler {
 
                 player.setData(ModDataAttachments.COOLDOWN, newAttachment);
             }
-
-
         }
     }
 }

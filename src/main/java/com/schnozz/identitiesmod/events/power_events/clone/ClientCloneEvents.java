@@ -29,7 +29,7 @@ import static com.schnozz.identitiesmod.keymapping.ModMappings.*;
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ClientCloneEvents {
-    private static final CooldownIcon CLONE_COOLDOWN_ICON = new CooldownIcon(10, 10, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/clone_icon.png"));
+    private static final CooldownIcon CLONE_COOLDOWN_ICON = new CooldownIcon(128,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/clone_icon.png"));
     private static final int CLONE_COOLDOWN = 500;
     private static int cloneLimit = 2;
     @SubscribeEvent

@@ -17,7 +17,7 @@ import net.neoforged.neoforge.client.event.RenderGuiEvent;
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ClientImmortalEvents {
-    private static CooldownIcon Immortal_Icon = new CooldownIcon(10, 10, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/totem_icon.png"));
+    private static CooldownIcon Immortal_Icon = new CooldownIcon(128,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/totem_icon.png"));
 
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
@@ -29,16 +29,16 @@ public class ClientImmortalEvents {
         if(immortalPlayer.getData(ModDataAttachments.POWER_TYPE).equals("Immortal")){
 
             if(immortalPlayer.getData(ModDataAttachments.LIVES) == 3){
-                Immortal_Icon = new CooldownIcon(10, 10, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/totem_icon.png"));
+                Immortal_Icon = new CooldownIcon(128,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/totem_icon.png"));
             }
             if(immortalPlayer.getData(ModDataAttachments.LIVES) == 2){
-                Immortal_Icon = new CooldownIcon(10, 10, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/dark_cave_icon.png"));
+                Immortal_Icon = new CooldownIcon(128,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/dark_cave_icon.png"));
             }
             if(immortalPlayer.getData(ModDataAttachments.LIVES) == 1){
-                Immortal_Icon = new CooldownIcon(10, 10, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/ice_icon.png"));
+                Immortal_Icon = new CooldownIcon(128,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/ice_icon.png"));
             }
             if(immortalPlayer.getData(ModDataAttachments.LIVES) == 0){
-                Immortal_Icon = new CooldownIcon(10, 10, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/hangman_icon.png"));
+                Immortal_Icon = new CooldownIcon(128,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/hangman_icon.png"));
             }
         }
     }

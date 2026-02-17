@@ -14,24 +14,32 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
+import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import static com.schnozz.identitiesmod.keymapping.ModMappings.SPEEDSTER_LIGHTNING_MAPPING;
+import static com.schnozz.identitiesmod.keymapping.ModMappings.SPEEDSTER_WATER_WALK_MAPPING;
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ClientSpeedsterEvents {
     //countdown variable for lightning state
     private static int stateCount = -1;
     private static final int STATE_DURATION = 120;
+    //countdown variable for water walking
+    private static boolean walkOn = false;
     //cd final variables
-    private static CooldownIcon LIGHTNING_STATE_ICON = new CooldownIcon(10, 10, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/lightning_icon.png"));
+    private static CooldownIcon LIGHTNING_STATE_ICON = new CooldownIcon(128,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/lightning_icon.png"));
     private static final int LIGHTNING_STATE_CD = 600;
+    private static CooldownIcon WATER_ICON = new CooldownIcon(108,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/water_icon.png"));
 
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
@@ -39,7 +47,6 @@ public class ClientSpeedsterEvents {
         if (speedPlayer == null) return;
         Level level = speedPlayer.level();
         if(!level.isClientSide()) return;
-
 
         String power = speedPlayer.getData(ModDataAttachments.POWER_TYPE);
         if(power.equals("Speedster"))
@@ -50,14 +57,29 @@ public class ClientSpeedsterEvents {
                 speedPlayer.setData(ModDataAttachments.SPEEDSTER_LIGHTNING,1);
                 PacketDistributor.sendToServer(new SpeedsterLightningSync(1));
                 stateCount = 0;
-                LIGHTNING_STATE_ICON = new CooldownIcon(10, 10, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/blue_lightning_icon.png"));
+                LIGHTNING_STATE_ICON = new CooldownIcon(128,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/blue_lightning_icon.png"));
 
-                speedPlayer.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED,STATE_DURATION,5,false,true,true));
-                PacketDistributor.sendToServer(new PotionLevelPayload(MobEffects.MOVEMENT_SPEED,5,STATE_DURATION));
+                speedPlayer.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED,STATE_DURATION,7,false,true,true));
+                PacketDistributor.sendToServer(new PotionLevelPayload(MobEffects.MOVEMENT_SPEED,7,STATE_DURATION));
                 speedPlayer.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED,STATE_DURATION,3,false,true,true));
-                PacketDistributor.sendToServer(new PotionLevelPayload(MobEffects.DIG_SPEED,3,STATE_DURATION));
+                PacketDistributor.sendToServer(new PotionLevelPayload(MobEffects.DIG_SPEED,5,STATE_DURATION));
 
                 //SOUND EFFECT
+            }
+            //Water walk
+            if(SPEEDSTER_WATER_WALK_MAPPING.get().consumeClick())
+            {
+                walkOn = !walkOn;
+            }
+            //water walk state
+            if(walkOn)
+            {
+                WATER_ICON = new CooldownIcon(108,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/jesus_icon.png"));
+                waterWalk(speedPlayer);
+            }
+            else{
+                WATER_ICON = new CooldownIcon(108,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/water_icon.png"));
+                speedPlayer.setNoGravity(false);
             }
             //Turns off lightning state
             if(speedPlayer.getData(ModDataAttachments.SPEEDSTER_LIGHTNING) == 1)
@@ -69,7 +91,7 @@ public class ClientSpeedsterEvents {
                     speedPlayer.setData(ModDataAttachments.SPEEDSTER_LIGHTNING,0);
                     PacketDistributor.sendToServer(new SpeedsterLightningSync(0));
 
-                    LIGHTNING_STATE_ICON = new CooldownIcon(10, 10, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/lightning_icon.png"));
+                    LIGHTNING_STATE_ICON = new CooldownIcon(128,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/lightning_icon.png"));
 
                     long currentTime = Minecraft.getInstance().level.getGameTime();
                     CooldownAttachment atachment = new CooldownAttachment();
@@ -82,6 +104,41 @@ public class ClientSpeedsterEvents {
             }
         }
     }
+    public static void waterWalk(Player speedPlayer)
+    {
+        Level level = speedPlayer.level();
+        //on water
+        if(speedPlayer.getBlockStateOn().equals(Blocks.WATER.defaultBlockState()))
+        {
+            //not in water
+            if(!speedPlayer.isInWater())
+            {
+                speedPlayer.setNoGravity(true);
+                speedPlayer.setOnGround(true);
+
+                Vec3 velocity = speedPlayer.getDeltaMovement();
+                speedPlayer.setDeltaMovement(velocity.x,0,velocity.z);
+            }
+            else{
+                speedPlayer.setNoGravity(false);
+            }
+        }
+        else{
+            speedPlayer.setNoGravity(false);
+        }
+    }
+    @SubscribeEvent
+    public static void jumpEvent(LivingEvent.LivingJumpEvent event)
+    {
+        if(event.getEntity() instanceof Player speedPlayer && speedPlayer.getData(ModDataAttachments.POWER_TYPE).equals("Speedster"))
+        {
+            if(walkOn && speedPlayer.getBlockStateOn().equals(Blocks.WATER.defaultBlockState()))
+            {
+                Vec3 velocity = speedPlayer.getDeltaMovement();
+                speedPlayer.setDeltaMovement(velocity.x,0,velocity.z);
+            }
+        }
+    }
     @SubscribeEvent
     public static void onRenderOverlay(RenderGuiEvent.Post event) {
         if(!Minecraft.getInstance().player.getData(ModDataAttachments.POWER_TYPE).equals("Speedster"))
@@ -90,6 +147,8 @@ public class ClientSpeedsterEvents {
         }
         long gameTime = Minecraft.getInstance().level.getGameTime();
         GuiGraphics graphics = event.getGuiGraphics();
+
         LIGHTNING_STATE_ICON.render(graphics, gameTime);
+        WATER_ICON.render(graphics,gameTime);
     }
 }

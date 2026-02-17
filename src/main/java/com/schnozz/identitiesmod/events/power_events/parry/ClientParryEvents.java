@@ -46,7 +46,7 @@ public class ClientParryEvents {
         }
     }
 
-    private static final CooldownIcon cooldownIcon = new CooldownIcon(10, 10, 16, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/parrycd_icon.png"));
+    private static final CooldownIcon cooldownIcon = new CooldownIcon(128,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/parrycd_icon.png"));
 
     private static void parry(long currentTime, LocalPlayer player) {
         CooldownAttachment newAtachment = new CooldownAttachment();
