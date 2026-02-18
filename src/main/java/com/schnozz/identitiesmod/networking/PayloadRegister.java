@@ -18,6 +18,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -286,8 +287,19 @@ public class PayloadRegister {
                 (payload, context) -> {
                     Player player = context.player();
                     ServerLevel level = (ServerLevel)player.level();
-
+                    if(level.getEntity(payload.entityID()) == null){return;}
                     level.getEntity(payload.entityID()).setNoGravity(payload.noGravity());
+                }
+        );
+
+        registrar.playToServer(
+                KillPayload.TYPE,
+                KillPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    Player player = context.player();
+                    ServerLevel level = (ServerLevel)player.level();
+                    if(level.getEntity(payload.entityID()) == null){return;}
+                    level.getEntity(payload.entityID()).kill();
                 }
         );
 
@@ -295,6 +307,15 @@ public class PayloadRegister {
                 EntityDamagePayload.TYPE,
                 EntityDamagePayload.STREAM_CODEC,
                 ServerEntityDamageHandler::handle
+        );
+
+        registrar.playToServer(
+                PotionNoVisPayload.TYPE,
+                PotionNoVisPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    Player player = context.player();
+                    player.addEffect(new MobEffectInstance(payload.effect(), payload.duration(), payload.level(), false, false,false));
+                }
         );
 
         registrar.playBidirectional(

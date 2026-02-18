@@ -188,6 +188,13 @@ public class ModMappings {
             GLFW.GLFW_KEY_R,
             "key.categories.misc"
     ));
+    public static final Lazy<KeyMapping> DRAGON_BREATH = Lazy.of(() -> new KeyMapping(
+            "key.identitiesmod.dragon.dragon_breath",
+            KeyConflictContext.UNIVERSAL,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_C,
+            "key.categories.misc"
+    ));
     //POWER CHOOSING SCREEN
     public static final Lazy<KeyMapping> POWER_SCREEN = Lazy.of(() -> new KeyMapping(
             "key.identitiesmod.general.power_screen",
@@ -228,6 +235,7 @@ public class ModMappings {
         event.register(REWIND_MAPPING.get());
         //Dragon
         event.register(DRAGON_SHIFT.get());
+        event.register(DRAGON_BREATH.get());
         //Clone
         event.register(CLONE_MAPPING.get());
         event.register(TELEPORT_CLONE_MAPPING.get());
