@@ -33,7 +33,7 @@ GOALS:
 */
 public class PlayerCloneEntity extends PathfinderMob {
     private UUID creatorId;
-    private double range = 2.8;
+    private final double range = 2.8;
     private int attackCooldownTicks = 0;
     private final int SWORD_COOLDOWN = 12;
     private final int NETHERITE_AXE_COOLDOWN = 20;
@@ -129,7 +129,7 @@ public class PlayerCloneEntity extends PathfinderMob {
     }
 
     @Override
-    protected AABB getAttackBoundingBox() { //seems to work, try pvp
+    protected AABB getAttackBoundingBox() {
         Entity entity = this.getVehicle();
         AABB aabb;
         if (entity != null) {

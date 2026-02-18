@@ -19,16 +19,39 @@ import static com.schnozz.identitiesmod.keymapping.ModMappings.DRAGON_SHIFT;
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ClientDragonEvents {
+    private static final int BITE_ATTACK_CD = 50;
+    private static int biteAttackCounter = -1;
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
         LocalPlayer dragonPlayer = Minecraft.getInstance().player;
         if (dragonPlayer == null) return;
         Level level = dragonPlayer.level();
+        Minecraft mc = Minecraft.getInstance();
 
         if(dragonPlayer.getData(ModDataAttachments.POWER_TYPE).equals("Dragon")){
             //spawn dragon
             if(DRAGON_SHIFT.get().consumeClick()){
                 PacketDistributor.sendToServer(new DragonSpawnPayload(dragonPlayer.getId()));
+            }
+        }
+        //riding dragon
+        if(dragonPlayer.isPassenger() && dragonPlayer.getVehicle() instanceof DragonEntity dragon)
+        {
+            if(mc.options.keyAttack.isDown())
+            {
+                if(biteAttackCounter < 0)
+                {
+                    biteAttackCounter = BITE_ATTACK_CD;
+                    dragon.biteAttack(dragonPlayer);
+                }
+                else{
+                    biteAttackCounter--;
+                }
+            }
+            //easy rework into flight, use hwat you learned from speedster water walk
+            if(mc.options.keyJump.consumeClick())
+            {
+                dragon.jumpFromGround();
             }
         }
     }
