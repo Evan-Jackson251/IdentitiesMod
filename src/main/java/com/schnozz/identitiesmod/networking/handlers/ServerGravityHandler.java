@@ -14,9 +14,6 @@ public class ServerGravityHandler {
 
         Entity entity = player.level().getEntity(payload.entityID());
         if(entity == null) return;
-        if(entity instanceof Player) {
-            System.out.println("PLAYER BEING PUSHED/PULLED");
-        }
         entity.push(payload.fx(),payload.fy(),payload.fz());
     }
 }

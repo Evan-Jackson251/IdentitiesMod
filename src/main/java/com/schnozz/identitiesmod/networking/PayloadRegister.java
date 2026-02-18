@@ -197,14 +197,6 @@ public class PayloadRegister {
                     );
                     level.addFreshEntity(dragon);
 
-//                    ModEntities.DRAGON.get().spawn(level,
-//                            null,
-//                            dragonPlayer,
-//                            dragonPlayer.getOnPos(),
-//                            MobSpawnType.COMMAND,
-//                            false,
-//                            false);
-
                     dragonPlayer.startRiding(dragon);
                 }
         );
@@ -275,6 +267,28 @@ public class PayloadRegister {
                 GravityPayload.TYPE,
                 GravityPayload.STREAM_CODEC,
                     ServerGravityHandler::handle
+        );
+
+        registrar.playToServer(
+                GroundedPayload.TYPE,
+                GroundedPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    Player player = context.player();
+                    ServerLevel level = (ServerLevel)player.level();
+
+                    level.getEntity(payload.entityID()).setOnGround(payload.grounded());
+                }
+        );
+
+        registrar.playToServer(
+                SetNoGravityPayload.TYPE,
+                SetNoGravityPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    Player player = context.player();
+                    ServerLevel level = (ServerLevel)player.level();
+
+                    level.getEntity(payload.entityID()).setNoGravity(payload.noGravity());
+                }
         );
 
         registrar.playToServer(
