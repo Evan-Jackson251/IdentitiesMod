@@ -23,7 +23,7 @@ public class ModEntities {
 
     public static final Supplier<EntityType<DragonEntity>> DRAGON =
             ENTITY_TYPES.register("dragon",() -> EntityType.Builder.<DragonEntity>of(DragonEntity::new, MobCategory.MISC)
-                    .sized(5f, 3f).build("dragon"));
+                    .sized(10f, 6f).build("dragon"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<PlayerCloneEntity>> PLAYER_CLONE =
             ENTITY_TYPES.register(

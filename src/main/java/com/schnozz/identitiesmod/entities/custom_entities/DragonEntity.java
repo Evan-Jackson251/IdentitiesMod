@@ -12,8 +12,6 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 public class DragonEntity extends Animal {
-    //public final AnimationState idleAnimationState = new AnimationState();
-
     @Override
     protected void registerGoals()
     {
@@ -26,26 +24,21 @@ public class DragonEntity extends Animal {
     public static AttributeSupplier.Builder createAttributes()
     {
         return Animal.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH,35F)
+                .add(Attributes.MAX_HEALTH,40F)
                 .add(Attributes.MOVEMENT_SPEED,1F)
-                .add(Attributes.ARMOR,10)
-                .add(Attributes.ARMOR_TOUGHNESS,4)
-                .add(Attributes.STEP_HEIGHT,3)
-                .add(Attributes.GRAVITY,0)
-                .add(Attributes.ATTACK_KNOCKBACK,4)
-                .add(Attributes.BURNING_TIME,0)
-                .add(Attributes.KNOCKBACK_RESISTANCE,5);
+                .add(Attributes.ATTACK_DAMAGE,8F)
+                .add(Attributes.FOLLOW_RANGE)
+                .add(Attributes.ARMOR,15F)
+                .add(Attributes.ARMOR_TOUGHNESS,8F)
+                .add(Attributes.STEP_HEIGHT,3F)
+                .add(Attributes.ATTACK_KNOCKBACK,4F)
+                .add(Attributes.KNOCKBACK_RESISTANCE,5F);
     }
 
     @Override
     public void tick() {
         super.tick();
         this.setNoAi(true);
-
-//        if(this.level().isClientSide())
-//        {
-//            this.setupAnimationStates();
-//        }
     }
 
     @Override
@@ -88,13 +81,9 @@ public class DragonEntity extends Animal {
     public boolean isFood(ItemStack itemStack) {
         return false;
     }
+
     @Override
     public @Nullable AgeableMob getBreedOffspring(ServerLevel serverLevel, AgeableMob ageableMob) {
         return null;
-    }
-
-    private void setupAnimationStates()
-    {
-        //this.idleAnimationState.start(this.tickCount);
     }
 }

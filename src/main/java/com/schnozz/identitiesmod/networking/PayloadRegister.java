@@ -2,6 +2,7 @@ package com.schnozz.identitiesmod.networking;
 
 import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.entities.ModEntities;
+import com.schnozz.identitiesmod.entities.custom_entities.DragonEntity;
 import com.schnozz.identitiesmod.entities.custom_entities.PlayerCloneEntity;
 import com.schnozz.identitiesmod.events.power_events.parry.ClientParryEvents;
 import com.schnozz.identitiesmod.events.power_events.viltrumite.ClientViltrumiteEvents;
@@ -14,8 +15,10 @@ import com.schnozz.identitiesmod.networking.payloads.CDPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -173,6 +176,36 @@ public class PayloadRegister {
                                 .addClone(clone.getId());
                         PacketDistributor.sendToPlayer(clonePlayer,new ClonesSyncPayload(clonePlayer.getData(ModDataAttachments.CLONES)));
                     });
+                }
+        );
+
+        registrar.playToServer(
+                DragonSpawnPayload.TYPE,
+                DragonSpawnPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    ServerLevel level = (ServerLevel)context.player().level();
+                    ServerPlayer dragonPlayer = (ServerPlayer) level.getEntity(payload.userID());
+                    if (dragonPlayer == null) return;
+
+                    DragonEntity dragon = ModEntities.DRAGON.get().create(level);
+                    dragon.moveTo(
+                            dragonPlayer.getX(),
+                            dragonPlayer.getY(),
+                            dragonPlayer.getZ(),
+                            dragonPlayer.getYRot(),
+                            dragonPlayer.getXRot()
+                    );
+                    level.addFreshEntity(dragon);
+
+//                    ModEntities.DRAGON.get().spawn(level,
+//                            null,
+//                            dragonPlayer,
+//                            dragonPlayer.getOnPos(),
+//                            MobSpawnType.COMMAND,
+//                            false,
+//                            false);
+
+                    dragonPlayer.startRiding(dragon);
                 }
         );
 
