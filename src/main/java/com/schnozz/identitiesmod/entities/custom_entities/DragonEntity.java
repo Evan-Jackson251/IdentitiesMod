@@ -75,21 +75,17 @@ public class DragonEntity extends Animal {
     public void dragonBreath(Player dragonPlayer) {
         Level level = dragonPlayer.level();
 
-        // 1. Configuration
+        // Configuration
         float range = 30.0F;
         float coneWidth = 0.90F;
         float breathDamage = 5.0F;
         int particleCount = 15;
 
-        // --- CUSTOMIZABLE ORIGIN ---
-        // Start with the eyes, then add offsets.
-        // Example: .add(lookVec.scale(0.5)) moves the start point 0.5 blocks forward.
         Vec3 lookVec = dragonPlayer.getLookAngle().normalize();
-        //Vec3 origin = dragonPlayer.getEyePosition().add(lookVec.scale(2.5));
         Vec3 origin = this.getEyePosition().add(0,-2,0).add(this.getLookAngle().scale(4));
         // ---------------------------
 
-        // 2. Visuals: Spawn Particles
+        // Visuals: Spawn Particles
         if (level.isClientSide) {
             RandomSource rand = level.getRandom();
             double maxConeAngle = Math.acos(coneWidth);
@@ -125,8 +121,7 @@ public class DragonEntity extends Animal {
             }
         }
 
-        // 3. Logic: Hit Detection
-        // The AABB and distance checks now use 'origin' instead of eyePos
+        //Hit Detection
         Vec3 targetCenter = origin.add(lookVec.scale(range / 2));
         AABB areaOfEffect = new AABB(origin, targetCenter).inflate(range);
 
@@ -157,15 +152,28 @@ public class DragonEntity extends Animal {
         }
     }
 
-    //kill dragon on dismount
+    //kill dragon on dismount and removes player effects
     @Override
     protected void removePassenger(Entity passenger) {
-        super.removePassenger(passenger);
         Player p = (Player)passenger;
         p.removeAllEffects();
-        PacketDistributor.sendToServer(new KillPayload(passenger.getId()));
+
+        super.removePassenger(passenger);
+
         this.kill();
     }
+    //kill player on death
+//    @Override
+//    public void die(DamageSource source)
+//    {
+//        if(!this.getPassengers().isEmpty())
+//        {
+//            for(Entity entity: this.getPassengers()){
+//                PacketDistributor.sendToServer(new KillPayload(entity.getId()));
+//            }
+//        }
+//        super.die(source);
+//    }
 
     @Override
     public void tick() {
@@ -194,16 +202,20 @@ public class DragonEntity extends Animal {
     public void travel(Vec3 travelVector) {
         if (this.isVehicle() && this.getControllingPassenger() instanceof Player player) {
             this.setYRot(player.getYRot());
-            this.setXRot(player.getXRot() * 0.5F);
             this.yRotO = this.getYRot();
+            this.yHeadRot = this.getYRot();
+            this.yHeadRotO = this.getYRot();
+            this.yBodyRot = this.getYRot();
+
+            this.setXRot(player.getXRot());
             this.xRotO = this.getXRot();
 
             this.setRot(this.getYRot(), this.getXRot());
 
-            float forward = player.zza; // W/S
-            float strafe = player.xxa;  // A/D
+            float forward = player.zza;
+            float strafe = player.xxa;
 
-            this.setSpeed(0.5F); // Dragon speed
+            this.setSpeed(0.5F);
 
             super.travel(new Vec3(strafe, travelVector.y, forward));
         }

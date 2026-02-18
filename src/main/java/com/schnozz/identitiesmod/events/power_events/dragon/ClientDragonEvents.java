@@ -5,6 +5,7 @@ import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.entities.custom_entities.DragonEntity;
 import com.schnozz.identitiesmod.mob_effects.ModEffects;
 import com.schnozz.identitiesmod.networking.payloads.*;
+import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -39,6 +40,7 @@ public class ClientDragonEvents {
             if(!dragonPlayer.isPassenger() && DRAGON_SHIFT.get().consumeClick()){
                 PacketDistributor.sendToServer(new DragonSpawnPayload(dragonPlayer.getId()));
 
+                dragonPlayer.removeAllEffects();
                 PacketDistributor.sendToServer(new PotionNoVisPayload(ModEffects.SUPER_INVISIBILITY,1, MobEffectInstance.INFINITE_DURATION));
                 PacketDistributor.sendToServer(new PotionNoVisPayload(MobEffects.DAMAGE_RESISTANCE,4, MobEffectInstance.INFINITE_DURATION));
                 PacketDistributor.sendToServer(new PotionNoVisPayload(MobEffects.WEAKNESS,255, MobEffectInstance.INFINITE_DURATION));
@@ -48,6 +50,8 @@ public class ClientDragonEvents {
             //riding dragon
             if(dragonPlayer.isPassenger() && dragonPlayer.getVehicle() instanceof DragonEntity dragon)
             {
+                //third person
+                mc.options.setCameraType(CameraType.THIRD_PERSON_BACK);
                 //bite attack
                 if(mc.options.keyAttack.isDown())
                 {
@@ -87,7 +91,6 @@ public class ClientDragonEvents {
                     PacketDistributor.sendToServer(new GravityPayload(dragon.getId(),0,0.08,0));
 
                     Vec3 velocity = dragon.getDeltaMovement();
-                    System.out.println("Y VEL: " + velocity.y);
                     if(velocity.y > 1)
                     {
                         dragon.setDeltaMovement(velocity.x,1,velocity.z);
