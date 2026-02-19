@@ -35,6 +35,7 @@ public class DragonEntity extends Animal {
     }
 
     public DragonEntity(EntityType<? extends Animal> entityType, Level level) {
+
         super(entityType, level);
     }
     public static AttributeSupplier.Builder createAttributes()
@@ -47,6 +48,7 @@ public class DragonEntity extends Animal {
                 .add(Attributes.ARMOR,20F)
                 .add(Attributes.ARMOR_TOUGHNESS,10F)
                 .add(Attributes.STEP_HEIGHT,3F)
+                .add(Attributes.BURNING_TIME,0F)
                 .add(Attributes.KNOCKBACK_RESISTANCE,1F);
     }
 
@@ -160,7 +162,7 @@ public class DragonEntity extends Animal {
 
         super.removePassenger(passenger);
 
-        this.kill();
+        //this.kill();
     }
     //kill player on death
 //    @Override

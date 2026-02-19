@@ -60,71 +60,83 @@ public class DragonModel extends HierarchicalModel<DragonEntity> {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
 
-        // BODY - Central anchor
+        // BODY - Central anchor (24x24x64)
         PartDefinition body = root.addOrReplaceChild("body",
-                CubeListBuilder.create().texOffs(0, 40).addBox(-12.0F, 0.0F, -16.0F, 24, 24, 64),
+                CubeListBuilder.create().texOffs(0, 0).addBox(-12.0F, 0.0F, -16.0F, 24, 24, 64),
                 PartPose.offset(0.0F, 4.0F, 8.0F));
 
-        // NECK - Parented to BODY to prevent disconnection
-        // Offset (0, 14, -14) places it at the front-center of the body
+        // BODY SPIKES
+        for (int s = 0; s < 5; s++) {
+            body.addOrReplaceChild("body_spike_" + s,
+                    CubeListBuilder.create().texOffs(0, 0).addBox(-1.0F, -4.0F, -1.0F, 2, 4, 6),
+                    PartPose.offset(0.0F, 0.0F, -10.0F + (s * 12.0F)));
+        }
+
+        // NECK - Starts at Body Front (-16.0)
         PartDefinition lastNeck = body.addOrReplaceChild("neck_0",
-                CubeListBuilder.create().texOffs(192, 104).addBox(-5.0F, -5.0F, -5.0F, 10, 10, 10),
-                PartPose.offset(0.0F, 14.0F, -14.0F));
+                CubeListBuilder.create()
+                        .texOffs(192, 104).addBox(-5.0F, -5.0F, -10.0F, 10, 10, 10)
+                        .texOffs(48, 0).addBox(-1.0F, -9.0F, -7.0F, 2, 4, 6), // Neck Spike
+                PartPose.offset(0.0F, 12.0F, -16.0F));
 
         for (int i = 1; i < 5; i++) {
             lastNeck = lastNeck.addOrReplaceChild("neck_" + i,
-                    CubeListBuilder.create().texOffs(192, 104).addBox(-5.0F, -5.0F, -10.0F, 10, 10, 10),
-                    PartPose.offset(0.0F, 0.0F, -8.0F));
+                    CubeListBuilder.create()
+                            .texOffs(192, 104).addBox(-5.0F, -5.0F, -10.0F, 10, 10, 10)
+                            .texOffs(48, 0).addBox(-1.0F, -9.0F, -7.0F, 2, 4, 6), // Neck Spike
+                    PartPose.offset(0.0F, 0.0F, -10.0F));
         }
 
-        // HEAD - Attached to the end of the neck chain
+        // HEAD
         PartDefinition head = lastNeck.addOrReplaceChild("head",
                 CubeListBuilder.create()
-                        .texOffs(176, 44).addBox(-6.0F, -1.0F, -24.0F, 12, 5, 16) // Snout
-                        .texOffs(112, 30).addBox(-8.0F, -8.0F, -10.0F, 16, 16, 16) // Main Head
-                        .texOffs(0, 0).addBox(-5.0F, -12.0F, -4.0F, 2, 4, 6) // Left Horn
-                        .texOffs(0, 0).mirror().addBox(3.0F, -12.0F, -4.0F, 2, 4, 6), // Right Horn
+                        .texOffs(112, 30).addBox(-8.0F, -8.0F, -10.0F, 16, 16, 16)
+                        .texOffs(176, 44).addBox(-6.0F, -1.0F, -24.0F, 12, 5, 16)
+                        .texOffs(0, 0).addBox(-5.0F, -12.0F, -4.0F, 2, 4, 6)
+                        .texOffs(0, 0).mirror().addBox(3.0F, -12.0F, -4.0F, 2, 4, 6),
                 PartPose.offset(0.0F, 0.0F, -10.0F));
 
         head.addOrReplaceChild("jaw",
                 CubeListBuilder.create().texOffs(176, 65).addBox(-6.0F, 0.0F, -16.0F, 12, 4, 16),
                 PartPose.offset(0.0F, 4.0F, -8.0F));
 
-        // WINGS - Using Vanilla dragon.png mapping
-        // Left Wing
+        // WINGS
         PartDefinition leftWing = body.addOrReplaceChild("left_wing",
                 CubeListBuilder.create()
-                        .texOffs(112, 88).addBox(0.0F, -4.0F, -4.0F, 56, 8, 32) // Bone
-                        .texOffs(0, 88).addBox(0.0F, 0.0F, 2.0F, 56, 0, 56),    // Membrane
+                        .texOffs(112, 88).addBox(0.0F, -4.0F, -4.0F, 56, 8, 32)
+                        .texOffs(0, 154).addBox(0.0F, 0.0F, -4.0F, 56, 0, 32),
                 PartPose.offset(12.0F, 4.0F, 2.0F));
 
         leftWing.addOrReplaceChild("left_wing_tip",
                 CubeListBuilder.create()
-                        .texOffs(112, 0).addBox(0.0F, -2.0F, 0.0F, 56, 4, 32)   // Bone Tip
-                        .texOffs(0, 88).addBox(0.0F, 0.0F, 2.0F, 56, 0, 56),    // Membrane Tip
+                        .texOffs(112, 0).addBox(0.0F, -2.0F, 0.0F, 56, 4, 32)
+                        .texOffs(0, 154).addBox(0.0F, 0.0F, 0.0F, 56, 0, 32),
                 PartPose.offset(56.0F, 0.0F, 0.0F));
 
-        // Right Wing (Mirrored)
         PartDefinition rightWing = body.addOrReplaceChild("right_wing",
                 CubeListBuilder.create()
                         .texOffs(112, 88).mirror().addBox(-56.0F, -4.0F, -4.0F, 56, 8, 32)
-                        .texOffs(0, 88).mirror().addBox(-56.0F, 0.0F, 2.0F, 56, 0, 56),
+                        .texOffs(0, 154).mirror().addBox(-56.0F, 0.0F, -4.0F, 56, 0, 32),
                 PartPose.offset(-12.0F, 4.0F, 2.0F));
 
         rightWing.addOrReplaceChild("right_wing_tip",
                 CubeListBuilder.create()
                         .texOffs(112, 0).mirror().addBox(-56.0F, -2.0F, 0.0F, 56, 4, 32)
-                        .texOffs(0, 88).mirror().addBox(-56.0F, 0.0F, 2.0F, 56, 0, 56),
+                        .texOffs(0, 154).mirror().addBox(-56.0F, 0.0F, 0.0F, 56, 0, 32),
                 PartPose.offset(-56.0F, 0.0F, 0.0F));
 
-        // TAIL - Parented to BODY
+        // TAIL - Starts at Body Back (48.0)
         PartDefinition lastTail = body.addOrReplaceChild("tail_0",
-                CubeListBuilder.create().texOffs(192, 104).addBox(-5.0F, -5.0F, 0.0F, 10, 10, 10),
-                PartPose.offset(0.0F, 10.0F, 45.0F));
+                CubeListBuilder.create()
+                        .texOffs(192, 104).addBox(-5.0F, -5.0F, 0.0F, 10, 10, 10)
+                        .texOffs(48, 0).addBox(-1.0F, -9.0F, 2.0F, 2, 4, 6), // Tail Spike
+                PartPose.offset(0.0F, 10.0F, 48.0F));
 
         for (int i = 1; i < 12; i++) {
             lastTail = lastTail.addOrReplaceChild("tail_" + i,
-                    CubeListBuilder.create().texOffs(192, 104).addBox(-5.0F, -5.0F, 0.0F, 10, 10, 10),
+                    CubeListBuilder.create()
+                            .texOffs(192, 104).addBox(-5.0F, -5.0F, 0.0F, 10, 10, 10)
+                            .texOffs(48, 0).addBox(-1.0F, -9.0F, 2.0F, 2, 4, 6), // Tail Spike
                     PartPose.offset(0.0F, 0.0F, 10.0F));
         }
 
