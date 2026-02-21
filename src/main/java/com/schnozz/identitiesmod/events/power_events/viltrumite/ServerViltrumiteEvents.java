@@ -120,9 +120,9 @@ public class ServerViltrumiteEvents {
                         Objects.requireNonNull(level.getEntity(event.getOriginal().getData(ModDataAttachments.ENTITY_HELD).getUUID("UUID"))).setNoGravity(false);
                     }
                 }
-                //perm strength 1
-                event.getEntity().addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, MobEffectInstance.INFINITE_DURATION, 0, false, true,true));
-                PacketDistributor.sendToPlayer((ServerPlayer)event.getEntity(),new PotionLevelPayload(MobEffects.DAMAGE_BOOST,0,MobEffectInstance.INFINITE_DURATION));
+                //perm strength 2
+                event.getEntity().addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, MobEffectInstance.INFINITE_DURATION, 1, false, true,true));
+                PacketDistributor.sendToPlayer((ServerPlayer)event.getEntity(),new PotionLevelPayload(MobEffects.DAMAGE_BOOST,1,MobEffectInstance.INFINITE_DURATION));
                 //perm speed 1
                 event.getEntity().addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, MobEffectInstance.INFINITE_DURATION, 0, false, true,true));
                 PacketDistributor.sendToPlayer((ServerPlayer)event.getEntity(),new PotionLevelPayload(MobEffects.MOVEMENT_SPEED,0,MobEffectInstance.INFINITE_DURATION));

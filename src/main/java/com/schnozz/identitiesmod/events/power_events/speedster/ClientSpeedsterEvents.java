@@ -61,7 +61,7 @@ public class ClientSpeedsterEvents {
 
                 speedPlayer.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED,STATE_DURATION,7,false,true,true));
                 PacketDistributor.sendToServer(new PotionLevelPayload(MobEffects.MOVEMENT_SPEED,7,STATE_DURATION));
-                speedPlayer.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED,STATE_DURATION,3,false,true,true));
+                speedPlayer.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED,STATE_DURATION,5,false,true,true));
                 PacketDistributor.sendToServer(new PotionLevelPayload(MobEffects.DIG_SPEED,5,STATE_DURATION));
 
                 //SOUND EFFECT

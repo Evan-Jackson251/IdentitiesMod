@@ -16,7 +16,7 @@ public class ServerEntityDamageHandler {
         Entity hurtEntity = serverLevel.getEntity(payload.hurtEntityID());
 
         if(hurtEntity != null) {
-            DamageSource dSource = new DamageSource(payload.dType(),serverLevel.getEntity(payload.attackerEntityID()),serverLevel.getEntity(payload.hurtEntityID()));
+            DamageSource dSource = new DamageSource(payload.dType(),null,serverLevel.getEntity(payload.attackerEntityID()));
             hurtEntity.hurt(dSource, payload.damage());
         }
     }

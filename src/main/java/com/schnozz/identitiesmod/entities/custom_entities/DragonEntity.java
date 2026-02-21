@@ -1,8 +1,12 @@
 package com.schnozz.identitiesmod.entities.custom_entities;
 
+import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.items.BoundingBoxVisualizer;
+import com.schnozz.identitiesmod.mob_effects.ModEffects;
 import com.schnozz.identitiesmod.networking.payloads.EntityDamagePayload;
-import com.schnozz.identitiesmod.networking.payloads.KillPayload;
+import com.schnozz.identitiesmod.networking.payloads.MaxHealthPayload;
+import com.schnozz.identitiesmod.networking.payloads.PotionLevelPayload;
+import com.schnozz.identitiesmod.networking.payloads.PotionTogglePayload;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
@@ -11,6 +15,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -27,6 +33,8 @@ import java.util.List;
 
 public class DragonEntity extends Animal {
     private final float BITE_DAMAGE = 15F;
+    private final float BREATH_DAMAGE = 5.0F;
+    private final int FIRE_TICKS = 150;
 
     @Override
     protected void registerGoals()
@@ -71,7 +79,7 @@ public class DragonEntity extends Animal {
         List<Entity> entities = player.level().getEntities(player, aabb, e -> !(e == player) && !(e == this));
         for(Entity target: entities)
         {
-            PacketDistributor.sendToServer(new EntityDamagePayload(target.getId(),player.getId(),BITE_DAMAGE,damageTypeHolder));
+            PacketDistributor.sendToServer(new EntityDamagePayload(target.getId(),this.getId(),BITE_DAMAGE,damageTypeHolder));
         }
     }
     public void dragonBreath(Player dragonPlayer) {
@@ -80,7 +88,6 @@ public class DragonEntity extends Animal {
         // Configuration
         float range = 30.0F;
         float coneWidth = 0.90F;
-        float breathDamage = 5.0F;
         int particleCount = 15;
 
         Vec3 lookVec = dragonPlayer.getLookAngle().normalize();
@@ -145,33 +152,48 @@ public class DragonEntity extends Animal {
             if (dotProduct > coneWidth && distSqr < (range * range)) {
                 PacketDistributor.sendToServer(new EntityDamagePayload(
                         target.getId(),
-                        dragonPlayer.getId(),
-                        breathDamage,
+                        this.getId(),
+                        BREATH_DAMAGE,
                         damageTypeHolder
                 ));
-                target.setRemainingFireTicks(5);
+                target.setRemainingFireTicks(FIRE_TICKS);
             }
         }
     }
 
-    //kill dragon on dismount and removes player effects
+    //kill dragon on dismount and debuff player
     @Override
     protected void removePassenger(Entity passenger) {
-        Player p = (Player)passenger;
-        p.removeAllEffects();
+        if (passenger instanceof Player dragonPlayer && dragonPlayer.getData(ModDataAttachments.POWER_TYPE).equals("Dragon")) {
+            if(!dragonPlayer.level().isClientSide)
+            {
+                dragonPlayer.removeEffect(MobEffects.WEAKNESS);
+                dragonPlayer.removeEffect(MobEffects.DAMAGE_RESISTANCE);
+                dragonPlayer.removeEffect(ModEffects.SUPER_INVISIBILITY);
 
+                dragonPlayer.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
+                        MobEffectInstance.INFINITE_DURATION, 0, false, false));
+                dragonPlayer.addEffect(new MobEffectInstance(MobEffects.WEAKNESS,
+                        MobEffectInstance.INFINITE_DURATION, 0, false, false));
+
+                dragonPlayer.getAttribute(Attributes.MAX_HEALTH).setBaseValue(8.0D);
+            }
+        }
         super.removePassenger(passenger);
-
-        //this.kill();
+        this.kill();
     }
-    //kill player on death
+    //debuff player on death
 //    @Override
 //    public void die(DamageSource source)
 //    {
 //        if(!this.getPassengers().isEmpty())
 //        {
 //            for(Entity entity: this.getPassengers()){
-//                PacketDistributor.sendToServer(new KillPayload(entity.getId()));
+//                if(entity instanceof Player dragonPlayer && dragonPlayer.getData(ModDataAttachments.POWER_TYPE).equals("Dragon"))
+//                {
+//                    PacketDistributor.sendToServer(new PotionLevelPayload(MobEffects.MOVEMENT_SLOWDOWN,0,18000));
+//                    PacketDistributor.sendToServer(new PotionLevelPayload(MobEffects.WEAKNESS,0,18000));
+//                }
 //            }
 //        }
 //        super.die(source);

@@ -23,7 +23,7 @@ public class ModEntities {
 
     public static final Supplier<EntityType<DragonEntity>> DRAGON =
             ENTITY_TYPES.register("dragon",() -> EntityType.Builder.<DragonEntity>of(DragonEntity::new, MobCategory.MISC)
-                    .sized(10f, 6f)
+                    .sized(9f, 6f)//try to make viable for pvp as well
                     .fireImmune()
                     .build("dragon"));
 

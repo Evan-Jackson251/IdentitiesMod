@@ -304,6 +304,15 @@ public class PayloadRegister {
         );
 
         registrar.playToServer(
+                MaxHealthPayload.TYPE,
+                MaxHealthPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    Player player = context.player();
+                    player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(payload.maxHealth());
+                }
+        );
+
+        registrar.playToServer(
                 EntityDamagePayload.TYPE,
                 EntityDamagePayload.STREAM_CODEC,
                 ServerEntityDamageHandler::handle
