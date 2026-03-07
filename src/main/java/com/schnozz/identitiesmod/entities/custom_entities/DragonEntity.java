@@ -3,10 +3,9 @@ package com.schnozz.identitiesmod.entities.custom_entities;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.items.BoundingBoxVisualizer;
 import com.schnozz.identitiesmod.mob_effects.ModEffects;
-import com.schnozz.identitiesmod.networking.payloads.EntityDamagePayload;
-import com.schnozz.identitiesmod.networking.payloads.MaxHealthPayload;
-import com.schnozz.identitiesmod.networking.payloads.PotionLevelPayload;
-import com.schnozz.identitiesmod.networking.payloads.PotionTogglePayload;
+import com.schnozz.identitiesmod.networking.payloads.*;
+import net.minecraft.client.CameraType;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
@@ -165,18 +164,33 @@ public class DragonEntity extends Animal {
     @Override
     protected void removePassenger(Entity passenger) {
         if (passenger instanceof Player dragonPlayer && dragonPlayer.getData(ModDataAttachments.POWER_TYPE).equals("Dragon")) {
-            if(!dragonPlayer.level().isClientSide)
+//            if(!dragonPlayer.level().isClientSide)
+//            {
+//                System.out.println("SERVER SIDE DRAGON PASSENGER REMOVE");
+//                dragonPlayer.removeEffect(MobEffects.WEAKNESS);
+//                dragonPlayer.removeEffect(MobEffects.DAMAGE_RESISTANCE);
+//                dragonPlayer.removeEffect(ModEffects.SUPER_INVISIBILITY);
+//
+//                dragonPlayer.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
+//                        MobEffectInstance.INFINITE_DURATION, 0, false, false));
+//                dragonPlayer.addEffect(new MobEffectInstance(MobEffects.WEAKNESS,
+//                        MobEffectInstance.INFINITE_DURATION, 0, false, false));
+//
+//                dragonPlayer.getAttribute(Attributes.MAX_HEALTH).setBaseValue(8.0D);
+//            }
+            if(dragonPlayer.level().isClientSide)
             {
-                dragonPlayer.removeEffect(MobEffects.WEAKNESS);
-                dragonPlayer.removeEffect(MobEffects.DAMAGE_RESISTANCE);
-                dragonPlayer.removeEffect(ModEffects.SUPER_INVISIBILITY);
+                System.out.println("CLIENT SIDE DRAGON PASSENGER REMOVE");
 
-                dragonPlayer.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
-                        MobEffectInstance.INFINITE_DURATION, 0, false, false));
-                dragonPlayer.addEffect(new MobEffectInstance(MobEffects.WEAKNESS,
-                        MobEffectInstance.INFINITE_DURATION, 0, false, false));
+                Minecraft mc = Minecraft.getInstance();
+                mc.options.setCameraType(CameraType.FIRST_PERSON);
 
-                dragonPlayer.getAttribute(Attributes.MAX_HEALTH).setBaseValue(8.0D);
+                PacketDistributor.sendToServer(new RemoveEffectsPayload(dragonPlayer.getId()));
+
+                PacketDistributor.sendToServer(new PotionLevelPayload(MobEffects.MOVEMENT_SLOWDOWN,0,MobEffectInstance.INFINITE_DURATION));
+                PacketDistributor.sendToServer(new PotionLevelPayload(MobEffects.WEAKNESS,0,MobEffectInstance.INFINITE_DURATION));
+
+                PacketDistributor.sendToServer(new MaxHealthPayload(8,dragonPlayer.getId()));
             }
         }
         super.removePassenger(passenger);

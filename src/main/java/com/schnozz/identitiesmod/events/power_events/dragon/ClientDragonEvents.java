@@ -51,12 +51,13 @@ public class ClientDragonEvents {
         if (dragonPlayer == null) return;
         Minecraft mc = Minecraft.getInstance();
 
-        if (dragonPlayer.getData(ModDataAttachments.POWER_TYPE).equals("Dragon") && !dragonPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "shift_cd"),0)) {
+        if (dragonPlayer.getData(ModDataAttachments.POWER_TYPE).equals("Dragon")) {
             //spawn dragon
-            if (!dragonPlayer.isPassenger() && DRAGON_SHIFT.get().consumeClick()) {
+            if (!dragonPlayer.isPassenger() && DRAGON_SHIFT.get().consumeClick() && !dragonPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "shift_cd"),0)) {
                 PacketDistributor.sendToServer(new DragonSpawnPayload(dragonPlayer.getId()));
 
-                dragonPlayer.removeAllEffects();
+                PacketDistributor.sendToServer(new RemoveEffectsPayload(dragonPlayer.getId()));
+
                 PacketDistributor.sendToServer(new PotionNoVisPayload(ModEffects.SUPER_INVISIBILITY, 1, MobEffectInstance.INFINITE_DURATION));
                 PacketDistributor.sendToServer(new PotionNoVisPayload(MobEffects.DAMAGE_RESISTANCE, 4, MobEffectInstance.INFINITE_DURATION));
                 PacketDistributor.sendToServer(new PotionNoVisPayload(MobEffects.WEAKNESS, 255, MobEffectInstance.INFINITE_DURATION));
@@ -144,10 +145,10 @@ public class ClientDragonEvents {
                 SHIFT_ICON.setCooldown(new Cooldown(currentTime, SHIFT_CD));
             }
             //undo debuffs
-            if(dragonPlayer.getAttribute(Attributes.MAX_HEALTH).getBaseValue() == 8F)
+            if(!dragonPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "shift_cd"),0) && dragonPlayer.getAttribute(Attributes.MAX_HEALTH).getBaseValue() == 8F)
             {
                 System.out.println("RESET HEALTH AND UNDO DEBUFF");
-                PacketDistributor.sendToServer(new MaxHealthPayload(20));
+                PacketDistributor.sendToServer(new MaxHealthPayload(20,dragonPlayer.getId()));
                 PacketDistributor.sendToServer(new PotionTogglePayload(MobEffects.WEAKNESS,0));
                 PacketDistributor.sendToServer(new PotionTogglePayload(MobEffects.MOVEMENT_SLOWDOWN,0));
             }

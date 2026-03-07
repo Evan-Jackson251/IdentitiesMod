@@ -19,6 +19,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -307,8 +308,19 @@ public class PayloadRegister {
                 MaxHealthPayload.TYPE,
                 MaxHealthPayload.STREAM_CODEC,
                 (payload, context) -> {
-                    Player player = context.player();
+                    Player p = context.player();
+                    Player player = (Player)p.level().getEntity(payload.playerId());
                     player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(payload.maxHealth());
+                }
+        );
+
+        registrar.playToServer(
+                RemoveEffectsPayload.TYPE,
+                RemoveEffectsPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    Player p = (ServerPlayer)context.player().level().getEntity(payload.entityID());
+                    if(p == null){return;}
+                    p.removeAllEffects();
                 }
         );
 
