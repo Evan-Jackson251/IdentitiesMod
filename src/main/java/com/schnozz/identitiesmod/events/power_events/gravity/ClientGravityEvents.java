@@ -4,6 +4,7 @@ import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.cooldown.CooldownAttachment;
 import com.schnozz.identitiesmod.cooldown.Cooldown;
+import com.schnozz.identitiesmod.items.BoundingBoxVisualizer;
 import com.schnozz.identitiesmod.networking.payloads.*;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.CooldownSyncPayload;
 import com.schnozz.identitiesmod.icons.ChargeIcon;
@@ -12,15 +13,20 @@ import com.schnozz.identitiesmod.sounds.ModSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.*;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -28,6 +34,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+import java.util.Comparator;
 import java.util.List;
 
 import static com.schnozz.identitiesmod.keymapping.ModMappings.*;
@@ -53,6 +60,8 @@ public class ClientGravityEvents {
     //entity list within distance
     private static List<Entity> entitiesInBox;
     private static List<BlockState> blocksInBox;
+    //black hole variables
+    private static final int BLACK_HOLE_RANGE = 25;
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
         LocalPlayer gravityPlayer = Minecraft.getInstance().player;
@@ -108,8 +117,12 @@ public class ClientGravityEvents {
             //black hole
             else if(SPECIAL_MAPPING.get().consumeClick())
             {
+                Vec3 holePos = getHolePosition(gravityPlayer);
+                level.addAlwaysVisibleParticle(ParticleTypes.CLOUD,holePos.x,holePos.y,holePos.z,0,0,0);
+
+
                 /*
-                ray for potential position, then make red dot in gravityPlayer client
+                ray for potential position, then make persistent red dot in gravityPlayer client
                 left click cancels and confirming with special again creates black hole
 
                 store cords, create black hole entity at position
@@ -133,6 +146,41 @@ public class ClientGravityEvents {
                 cycloneProgress = -1;
             }
         }
+    }
+
+    public static Vec3 getHolePosition(Player gravityPlayer) //w name
+    {
+        Vec3 scaledLookAngle = gravityPlayer.getLookAngle().scale(BLACK_HOLE_RANGE);
+        Vec3 eyePos = gravityPlayer.getEyePosition();
+        Vec3 endPos = eyePos.add(scaledLookAngle);
+
+        AABB aabb = new AABB(eyePos, endPos);
+        BoundingBoxVisualizer.showAABB(gravityPlayer.level(), aabb);
+        List<Entity> entities = gravityPlayer.level().getEntities(gravityPlayer, aabb, e -> !(e == gravityPlayer));
+
+        if (!entities.isEmpty()) {
+            Entity closest = entities.stream()
+                    .min(Comparator.comparingDouble(e -> e.distanceToSqr(gravityPlayer)))
+                    .orElse(null);
+
+            if (closest != null) {
+
+                return closest.position();
+            }
+        }
+
+        BlockHitResult hit = gravityPlayer.level().clip(new ClipContext(
+                eyePos,
+                endPos,
+                ClipContext.Block.OUTLINE,
+                ClipContext.Fluid.NONE,
+                gravityPlayer
+        ));
+
+        if(hit.getType() != HitResult.Type.MISS){
+            return hit.getLocation();
+        }
+        return endPos;
     }
 
     public static void arrow(Player gravityPlayer)
@@ -167,10 +215,6 @@ public class ClientGravityEvents {
                 }
             }
         }
-    }
-    public static void meteor()
-    {
-
     }
 
     @SubscribeEvent
