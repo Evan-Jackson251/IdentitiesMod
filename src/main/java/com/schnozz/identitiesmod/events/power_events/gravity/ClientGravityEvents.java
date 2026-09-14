@@ -105,10 +105,23 @@ public class ClientGravityEvents {
                 arrow(gravityPlayer);
                 PacketDistributor.sendToServer(new SoundPayload(SoundEvents.ARROW_SHOOT,20F));
             }
-            //meteor creation and set both position and movement
-            else if(SPECIAL_MAPPING.get().consumeClick()) //or black hole :)
+            //black hole
+            else if(SPECIAL_MAPPING.get().consumeClick())
             {
-                //MeteorEntity newMeteor = new MeteorEntity(,level);
+                /*
+                ray for potential position, then make red dot in gravityPlayer client
+                left click cancels and confirming with special again creates black hole
+
+                store cords, create black hole entity at position
+                black hole entity has its internal mechanics
+                    -> life of 10 sec
+                    -> increasing pull at increasing distance
+                    -> pull depends on distance
+                    -> end of life explodes
+                        -kills everything within 1 block
+                        -does decreasing damage for distance from center
+                */
+
             }
 
             //cyclone in progress if cooldown not done
