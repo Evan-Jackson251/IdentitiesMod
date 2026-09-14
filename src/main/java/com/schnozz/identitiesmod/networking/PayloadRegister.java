@@ -3,6 +3,7 @@ package com.schnozz.identitiesmod.networking;
 import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.entities.ModEntities;
 import com.schnozz.identitiesmod.entities.custom_entities.DragonEntity;
+import com.schnozz.identitiesmod.entities.custom_entities.EmeraldGolemEntity;
 import com.schnozz.identitiesmod.entities.custom_entities.PlayerCloneEntity;
 import com.schnozz.identitiesmod.events.power_events.parry.ClientParryEvents;
 import com.schnozz.identitiesmod.events.power_events.viltrumite.ClientViltrumiteEvents;
@@ -200,6 +201,27 @@ public class PayloadRegister {
                     level.addFreshEntity(dragon);
 
                     dragonPlayer.startRiding(dragon);
+                }
+        );
+
+        registrar.playToServer(
+                EmeraldGolemSpawnPayload.TYPE,
+                EmeraldGolemSpawnPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    ServerLevel level = (ServerLevel)context.player().level();
+                    ServerPlayer golemPlayer = (ServerPlayer) level.getEntity(payload.userID());
+                    if (golemPlayer == null) return;
+
+//                    EmeraldGolemEntity golem = ModEntities.EMERLAD_GOLEM.get().create(level);
+//                    golem.moveTo(
+//                            golemPlayer.getX(),
+//                            golemPlayer.getY(),
+//                            golemPlayer.getZ(),
+//                            golemPlayer.getYRot(),
+//                            golemPlayer.getXRot()
+//                    );
+//                    level.addFreshEntity(golem);
+
                 }
         );
 

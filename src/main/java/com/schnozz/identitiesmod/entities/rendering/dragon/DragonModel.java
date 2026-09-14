@@ -12,7 +12,6 @@ import net.minecraft.util.Mth;
 
 public class DragonModel extends HierarchicalModel<DragonEntity> {
 
-    // Make sure "identities_mod" matches your actual MOD_ID in lowercase
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
             ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "dragon"), "main");
 

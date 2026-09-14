@@ -34,7 +34,7 @@ import static com.schnozz.identitiesmod.keymapping.ModMappings.*;
 
 /*
 Gravity power plan:
-    1. Add meteor
+    1. Add black hole
 */
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
@@ -64,7 +64,7 @@ public class ClientGravityEvents {
         if (power.equals("Gravity")) {
             CHARGE_ICON.setCharge(gravityPlayer.getData(ModDataAttachments.CHARGE));
             //dripstone drop
-            if(GRAVITY_DRIPSTONE_MAPPING.get().consumeClick() && !gravityPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "dripstone_cd"),0)) {
+            if(UTILITY_MAPPING.get().consumeClick() && !gravityPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "dripstone_cd"),0)) {
                 long currentTime = Minecraft.getInstance().level.getGameTime();
 
                 CooldownAttachment atachment = new CooldownAttachment();
@@ -77,7 +77,7 @@ public class ClientGravityEvents {
                 dripstoneDrop(gravityPlayer);
             }
             //cyclone
-            else if(GRAVITY_CYCLONE_MAPPING.get().consumeClick() && !gravityPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "cyclone_cd"),0)) {
+            else if(SECONDARY_MAPPING.get().consumeClick() && !gravityPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "cyclone_cd"),0)) {
                 cycloneProgress = 0;
 
                 long currentTime = Minecraft.getInstance().level.getGameTime();
@@ -92,7 +92,7 @@ public class ClientGravityEvents {
                 PacketDistributor.sendToServer(new SoundPayload(ModSounds.WIND_BLOWING_SOUND.get(),10F));
             }
             //arrow
-            else if(GRAVITY_ARROW_MAPPING.get().consumeClick() && !gravityPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "gravity_arrow_cd"),0))
+            else if(PRIMARY_MAPPING.get().consumeClick() && !gravityPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "gravity_arrow_cd"),0))
             {
                 long currentTime = Minecraft.getInstance().level.getGameTime();
                 CooldownAttachment atachment = new CooldownAttachment();
@@ -106,7 +106,7 @@ public class ClientGravityEvents {
                 PacketDistributor.sendToServer(new SoundPayload(SoundEvents.ARROW_SHOOT,20F));
             }
             //meteor creation and set both position and movement
-            else if(GRAVITY_METEOR_MAPPING.get().consumeClick())
+            else if(SPECIAL_MAPPING.get().consumeClick()) //or black hole :)
             {
                 //MeteorEntity newMeteor = new MeteorEntity(,level);
             }

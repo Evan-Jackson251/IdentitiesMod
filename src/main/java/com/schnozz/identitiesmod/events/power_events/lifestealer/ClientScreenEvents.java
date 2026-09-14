@@ -21,7 +21,7 @@ public class ClientScreenEvents {
         Player p = event.getEntity();
         if(p == null || !p.level().isClientSide() || !p.hasData(ModDataAttachments.POWER_TYPE)) return;
         String power = p.getData(ModDataAttachments.POWER_TYPE);
-        if(power.equals("Lifestealer") && !lifeScreenOpen && ModMappings.LIFESTEALER_MAPPING.get().consumeClick()) {
+        if(power.equals("Lifestealer") && !lifeScreenOpen && ModMappings.SPECIAL_MAPPING.get().consumeClick()) {
             LifestealerScreen newLifeScreen = new LifestealerScreen(Component.literal("Lifestealer Screen"));
             Minecraft.getInstance().setScreen(newLifeScreen);
             lifeScreenOpen = true;

@@ -26,8 +26,7 @@ import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-import static com.schnozz.identitiesmod.keymapping.ModMappings.SPEEDSTER_LIGHTNING_MAPPING;
-import static com.schnozz.identitiesmod.keymapping.ModMappings.SPEEDSTER_WATER_WALK_MAPPING;
+import static com.schnozz.identitiesmod.keymapping.ModMappings.*;
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ClientSpeedsterEvents {
@@ -52,7 +51,7 @@ public class ClientSpeedsterEvents {
         if(power.equals("Speedster"))
         {
             //Turns on lightning state
-            if(SPEEDSTER_LIGHTNING_MAPPING.get().consumeClick() && stateCount == -1 && !speedPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "lightning_state_cd"),0))
+            if(PRIMARY_MAPPING.get().consumeClick() && stateCount == -1 && !speedPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "lightning_state_cd"),0))
             {
                 speedPlayer.setData(ModDataAttachments.SPEEDSTER_LIGHTNING,1);
                 PacketDistributor.sendToServer(new SpeedsterLightningSync(1));
@@ -67,7 +66,7 @@ public class ClientSpeedsterEvents {
                 //SOUND EFFECT
             }
             //Water walk
-            if(SPEEDSTER_WATER_WALK_MAPPING.get().consumeClick())
+            if(SECONDARY_MAPPING.get().consumeClick())
             {
                 walkOn = !walkOn;
             }

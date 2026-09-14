@@ -57,7 +57,7 @@ public class ClientTimeLordEvents {
 
         String power = timePlayer.getData(ModDataAttachments.POWER_TYPE);
         if (power.equals("Time Lord")) {
-            if(TIME_STOP_MAPPING.get().consumeClick() && !timePlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "time_stop_cd"),0))
+            if(SPECIAL_MAPPING.get().consumeClick() && !timePlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "time_stop_cd"),0))
             {
                 timePlayer.setData(ModDataAttachments.TIME_STOP_STATE,1);
                 PacketDistributor.sendToServer(new TimeStopSyncPayload(1));
@@ -72,7 +72,7 @@ public class ClientTimeLordEvents {
 
                 PacketDistributor.sendToServer(new SoundPayload(ModSounds.TIME_STOP_SOUND.get(),10F));
             }
-            if(SNAPSHOT_MAPPING.get().consumeClick()) {
+            if(UTILITY_MAPPING.get().consumeClick()) {
 //                if(level.dimension() != Level.OVERWORLD)
 //                {
 //                    return;
@@ -82,7 +82,7 @@ public class ClientTimeLordEvents {
                 rewindStored = true;
                 SNAPSHOT_COOLDOWN_ICON = new CooldownIcon(88,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/chest_icon.png"));
             }
-            if(REWIND_MAPPING.get().consumeClick() && !timePlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "rewind_cd"),0))
+            if(PRIMARY_MAPPING.get().consumeClick() && !timePlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "rewind_cd"),0))
             {
                 if(timePlayer.getData(ModDataAttachments.TIME_STOP_STATE) == 0)
                 {

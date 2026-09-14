@@ -3,6 +3,7 @@ package com.schnozz.identitiesmod.events;
 import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.entities.ModEntities;
 import com.schnozz.identitiesmod.entities.custom_entities.DragonEntity;
+import com.schnozz.identitiesmod.entities.custom_entities.EmeraldGolemEntity;
 import com.schnozz.identitiesmod.entities.custom_entities.PlayerCloneEntity;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -15,5 +16,6 @@ public class EntityRegisterEvents {
     public static void onEntityAttributes(EntityAttributeCreationEvent event) {
         event.put(ModEntities.PLAYER_CLONE.get(), PlayerCloneEntity.createAttributes().build());
         event.put(ModEntities.DRAGON.get(), DragonEntity.createAttributes().build());
+        //event.put(ModEntities.EMERLAD_GOLEM.get(), EmeraldGolemEntity.createAttributes().build());
     }
 }

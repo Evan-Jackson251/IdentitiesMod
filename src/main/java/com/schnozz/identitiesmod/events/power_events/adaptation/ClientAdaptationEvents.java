@@ -19,8 +19,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
-
-import static com.schnozz.identitiesmod.keymapping.ModMappings.ADAPTATION_SWITCH_MAPPING;
+import static com.schnozz.identitiesmod.keymapping.ModMappings.SPECIAL_MAPPING;
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ClientAdaptationEvents {
@@ -37,7 +36,7 @@ public class ClientAdaptationEvents {
 
         if(adaptationPlayer.getData(ModDataAttachments.POWER_TYPE).equals("Adaptation"))
         {
-            if(ADAPTATION_SWITCH_MAPPING.get().consumeClick() && !adaptationPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "adaptation.switchcd"), 0))
+            if(SPECIAL_MAPPING.get().consumeClick() && !adaptationPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "adaptation.switchcd"), 0))
             {
                 switchAdaptation(adaptationPlayer);
                 switchTimer = 1;

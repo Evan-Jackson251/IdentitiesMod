@@ -29,8 +29,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-import static com.schnozz.identitiesmod.keymapping.ModMappings.DRAGON_BREATH;
-import static com.schnozz.identitiesmod.keymapping.ModMappings.DRAGON_SHIFT;
+import static com.schnozz.identitiesmod.keymapping.ModMappings.*;
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ClientDragonEvents {
@@ -53,7 +52,7 @@ public class ClientDragonEvents {
 
         if (dragonPlayer.getData(ModDataAttachments.POWER_TYPE).equals("Dragon")) {
             //spawn dragon
-            if (!dragonPlayer.isPassenger() && DRAGON_SHIFT.get().consumeClick() && !dragonPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "shift_cd"),0)) {
+            if (!dragonPlayer.isPassenger() && UTILITY_MAPPING.get().consumeClick() && !dragonPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "shift_cd"),0)) {
                 PacketDistributor.sendToServer(new DragonSpawnPayload(dragonPlayer.getId()));
 
                 PacketDistributor.sendToServer(new RemoveEffectsPayload(dragonPlayer.getId()));
@@ -86,7 +85,7 @@ public class ClientDragonEvents {
                 }
 
                 //breath attack
-                if (dragonPlayer.getData(ModDataAttachments.CHARGE) > 0 && DRAGON_BREATH.get().isDown()) {
+                if (dragonPlayer.getData(ModDataAttachments.CHARGE) > 0 && SPECIAL_MAPPING.get().isDown()) {
                     dragon.dragonBreath(dragonPlayer);
 
                     double currentCharge = dragonPlayer.getData(ModDataAttachments.CHARGE);
@@ -125,7 +124,7 @@ public class ClientDragonEvents {
                         PacketDistributor.sendToServer(new VelocityPayload(dragon.getId(), velocity.x, -1, velocity.z));
                     }
                 }
-                if (DRAGON_SHIFT.get().consumeClick() && flying) //manually stops flying
+                if (UTILITY_MAPPING.get().consumeClick() && flying) //manually stops flying
                 {
                     flying = false;
                 }

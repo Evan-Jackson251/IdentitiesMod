@@ -2,6 +2,7 @@ package com.schnozz.identitiesmod.entities;
 
 import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.entities.custom_entities.DragonEntity;
+import com.schnozz.identitiesmod.entities.custom_entities.EmeraldGolemEntity;
 import com.schnozz.identitiesmod.entities.custom_entities.PlayerCloneEntity;
 import com.schnozz.identitiesmod.entities.custom_entities.ThrownMobHolder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -35,6 +36,15 @@ public class ModEntities {
                             .sized(0.6F, 1.8F)
                             .build("player_clone")
             );
+
+//    public static final DeferredHolder<EntityType<?>, EntityType<EmeraldGolemEntity>> EMERLAD_GOLEM =
+//            ENTITY_TYPES.register(
+//                    "emerald_golem",
+//                    () -> EntityType.Builder
+//                            .of(EmeraldGolemEntity::new, MobCategory.MISC)
+//                            .sized(1F, 2F)
+//                            .build("emerald_golem")
+//            );
 
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);

@@ -19,8 +19,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
-
-import static com.schnozz.identitiesmod.keymapping.ModMappings.PARRY_MAPPING;
+import static com.schnozz.identitiesmod.keymapping.ModMappings.UTILITY_MAPPING;
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ClientParryEvents {
@@ -37,7 +36,7 @@ public class ClientParryEvents {
         if(p == null || !p.level().isClientSide() || !p.hasData(ModDataAttachments.POWER_TYPE)) return;
         String power = p.getData(ModDataAttachments.POWER_TYPE);
 
-        if (power.equals("Parry") && PARRY_MAPPING.get().consumeClick() && !p.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "parry_cd"), 0)) {
+        if (power.equals("Parry") && UTILITY_MAPPING.get().consumeClick() && !p.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "parry_cd"), 0)) {
             long currentTime = Minecraft.getInstance().level.getGameTime();
             System.out.println("Parry sent");
 

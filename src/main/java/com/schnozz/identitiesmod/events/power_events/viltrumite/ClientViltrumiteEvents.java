@@ -65,13 +65,13 @@ public class ClientViltrumiteEvents {
 
         if (power.equals("Viltrumite")) {
             //key presses
-            if(VILTRUMITE_GRAB_MAPPING.get().consumeClick() && !viltrumitePlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "grab_cd"), 0))
+            if(SECONDARY_MAPPING.get().consumeClick() && !viltrumitePlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "grab_cd"), 0))
             {
                 if(viltrumitePlayer.getMainHandItem().getItem() instanceof StrongPowerGauntlet || viltrumitePlayer.getMainHandItem().getItem() instanceof FastPowerGauntlet) {
                     findEntity(Minecraft.getInstance().player);
                 }
             }
-            if(VILTRUMITE_DASH_MAPPING.get().consumeClick() && !viltrumitePlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "dash_cd"), 0))
+            if(PRIMARY_MAPPING.get().consumeClick() && !viltrumitePlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "dash_cd"), 0))
             {
                 //if(viltrumitePlayer.getMainHandItem().getItem() == ItemRegistry.FAST_POWER_GAUNTLET || viltrumitePlayer.getMainHandItem().getItem() == ItemRegistry.STRONG_POWER_GAUNTLET) {
                     dash(viltrumitePlayer);
@@ -80,7 +80,7 @@ public class ClientViltrumiteEvents {
                     DASH_CDICON.setCooldown(new Cooldown(viltrumitePlayer.level().getGameTime(), DASH_CD));
                 //}
             }
-            if(VILTRUMITE_BLOCK_MAPPING.get().consumeClick())
+            if(UTILITY_MAPPING.get().consumeClick())
             {
                 viltrumitePlayer.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 60, 2, false, true,true));
                 PacketDistributor.sendToServer(new PotionLevelPayload(MobEffects.DAMAGE_RESISTANCE,2,60));
