@@ -1,10 +1,7 @@
 package com.schnozz.identitiesmod.entities;
 
 import com.schnozz.identitiesmod.IdentitiesMod;
-import com.schnozz.identitiesmod.entities.custom_entities.DragonEntity;
-import com.schnozz.identitiesmod.entities.custom_entities.EmeraldGolemEntity;
-import com.schnozz.identitiesmod.entities.custom_entities.PlayerCloneEntity;
-import com.schnozz.identitiesmod.entities.custom_entities.ThrownMobHolder;
+import com.schnozz.identitiesmod.entities.custom_entities.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -35,6 +32,15 @@ public class ModEntities {
                             .of(PlayerCloneEntity::new, MobCategory.MISC)
                             .sized(0.6F, 1.8F)
                             .build("player_clone")
+            );
+
+    public static final DeferredHolder<EntityType<?>, EntityType<BlackHoleEntity>> BLACK_HOLE =
+            ENTITY_TYPES.register(
+                    "black_hole",
+                    () -> EntityType.Builder
+                            .of(BlackHoleEntity::new, MobCategory.MISC)
+                            .sized(0.5F, 0.5F)
+                            .build("black_hole")
             );
 
 //    public static final DeferredHolder<EntityType<?>, EntityType<EmeraldGolemEntity>> EMERLAD_GOLEM =

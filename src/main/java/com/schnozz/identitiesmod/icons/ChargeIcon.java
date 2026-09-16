@@ -23,7 +23,7 @@ public class ChargeIcon {
     public void render(GuiGraphics guiGraphics) {
         percentFull = (float)((charge/100) * size);
         if(percentFull > 28){percentFull = 28;}
-        System.out.println("PERCENT FULL: " + percentFull);
+        //System.out.println("PERCENT FULL: " + percentFull);
 
         guiGraphics.blit(texture, x, y, 0, 0, size, size, size, size*2);
         guiGraphics.blit(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/charge_bar_outside.png"), x+size+1, y, 0, 0, size, size, size, size);

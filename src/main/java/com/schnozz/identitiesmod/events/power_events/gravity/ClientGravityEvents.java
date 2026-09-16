@@ -23,6 +23,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -55,13 +56,20 @@ public class ClientGravityEvents {
     private static final int DRIPSTONE_CD = 600;
     private static final int CYCLONE_CD = 300;
     private static final int ARROW_CD = 250;
-    //cyclone timer variable
+    //timer variables
     private static int cycloneProgress = -1;
+    private static int blackHoleProgress = -1;
+    private static final int CYCLONE_DURATION = 60;
+    private static final int BLACK_HOLE_DURATION = 200;
     //entity list within distance
     private static List<Entity> entitiesInBox;
     private static List<BlockState> blocksInBox;
-    //black hole variables
+    //range variables
     private static final int BLACK_HOLE_RANGE = 25;
+    private static final int DRIP_STONE_RANGE = 25;
+    //black hole temp variable
+    private static Vec3 holePos = null;
+
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
         LocalPlayer gravityPlayer = Minecraft.getInstance().player;
@@ -83,7 +91,9 @@ public class ClientGravityEvents {
                 PacketDistributor.sendToServer(new CooldownSyncPayload(new Cooldown(currentTime, DRIPSTONE_CD), ResourceLocation.fromNamespaceAndPath("identitiesmod", "dripstone_cd"), false));
                 DRIPSTONE_COOLDOWN_ICON.setCooldown(new Cooldown(currentTime, DRIPSTONE_CD));
 
-                dripstoneDrop(gravityPlayer);
+                Vec3 dripPos = getDripPosition(gravityPlayer);
+                level.addAlwaysVisibleParticle(ParticleTypes.CLOUD,dripPos.x,dripPos.y,dripPos.z,0,0,0);
+                dripstoneDrop(dripPos);
             }
             //cyclone
             else if(SECONDARY_MAPPING.get().consumeClick() && !gravityPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "cyclone_cd"),0)) {
@@ -117,19 +127,11 @@ public class ClientGravityEvents {
             //black hole
             else if(SPECIAL_MAPPING.get().consumeClick())
             {
-                Vec3 holePos = getHolePosition(gravityPlayer);
+                holePos = getHolePosition(gravityPlayer);
                 level.addAlwaysVisibleParticle(ParticleTypes.CLOUD,holePos.x,holePos.y,holePos.z,0,0,0);
 
-
+                blackHoleProgress = 0;
                 /*
-                ray for potential position, then make persistent red dot in gravityPlayer client
-                left click cancels and confirming with special again creates black hole
-
-                store cords, create black hole entity at position
-                black hole entity has its internal mechanics
-                    -> life of 10 sec
-                    -> increasing pull at increasing distance
-                    -> pull depends on distance
                     -> end of life explodes
                         -kills everything within 1 block
                         -does decreasing damage for distance from center
@@ -138,38 +140,37 @@ public class ClientGravityEvents {
             }
 
             //cyclone in progress if cooldown not done
-            if(cycloneProgress <= 60 && cycloneProgress>=0){
+            if(cycloneProgress <= CYCLONE_DURATION && cycloneProgress>=0){
                 cyclone(gravityPlayer);
                 cycloneProgress++;
             }
             else{
                 cycloneProgress = -1;
             }
+
+            //black hole in progress if cooldown not down
+            if(holePos != null && blackHoleProgress <= BLACK_HOLE_DURATION && blackHoleProgress>=0){
+                blackHolePull(holePos,blackHoleProgress/20.0);
+                blackHoleProgress++;
+            }
+            else{
+                blackHoleProgress = -1;
+            }
         }
     }
 
-    public static Vec3 getHolePosition(Player gravityPlayer) //w name
+    public static void arrow(Player gravityPlayer)
     {
-        Vec3 scaledLookAngle = gravityPlayer.getLookAngle().scale(BLACK_HOLE_RANGE);
+        PacketDistributor.sendToServer(new GravityArrowPayload(gravityPlayer.getId()));
+    }
+
+    public static Vec3 getDripPosition(Player gravityPlayer) //w name
+    {
+        Vec3 scaledLookAngle = gravityPlayer.getLookAngle().scale(DRIP_STONE_RANGE);
         Vec3 eyePos = gravityPlayer.getEyePosition();
         Vec3 endPos = eyePos.add(scaledLookAngle);
 
-        AABB aabb = new AABB(eyePos, endPos);
-        BoundingBoxVisualizer.showAABB(gravityPlayer.level(), aabb);
-        List<Entity> entities = gravityPlayer.level().getEntities(gravityPlayer, aabb, e -> !(e == gravityPlayer));
-
-        if (!entities.isEmpty()) {
-            Entity closest = entities.stream()
-                    .min(Comparator.comparingDouble(e -> e.distanceToSqr(gravityPlayer)))
-                    .orElse(null);
-
-            if (closest != null) {
-
-                return closest.position();
-            }
-        }
-
-        BlockHitResult hit = gravityPlayer.level().clip(new ClipContext(
+        BlockHitResult blockHit = gravityPlayer.level().clip(new ClipContext(
                 eyePos,
                 endPos,
                 ClipContext.Block.OUTLINE,
@@ -177,21 +178,17 @@ public class ClientGravityEvents {
                 gravityPlayer
         ));
 
-        if(hit.getType() != HitResult.Type.MISS){
-            return hit.getLocation();
+        if(blockHit.getType() != HitResult.Type.MISS){
+            return blockHit.getLocation();
         }
         return endPos;
     }
 
-    public static void arrow(Player gravityPlayer)
+    public static void dripstoneDrop(Vec3 pos)
     {
-        PacketDistributor.sendToServer(new GravityArrowPayload(gravityPlayer.getId()));
+        PacketDistributor.sendToServer(new DripstoneDropPayload(pos));
     }
-    public static void dripstoneDrop(Player gravityPlayer)
-    {
-        PacketDistributor.sendToServer(new DripstoneDropPayload(gravityPlayer.getId()));
 
-    }
     public static void cyclone(Player gravityPlayer)
     {
         Level level = gravityPlayer.level();
@@ -215,6 +212,46 @@ public class ClientGravityEvents {
                 }
             }
         }
+    }
+
+    public static Vec3 getHolePosition(Player gravityPlayer) //w name
+    {
+        Vec3 scaledLookAngle = gravityPlayer.getLookAngle().scale(BLACK_HOLE_RANGE);
+        Vec3 eyePos = gravityPlayer.getEyePosition();
+        Vec3 endPos = eyePos.add(scaledLookAngle);
+
+        AABB aabb = new AABB(eyePos, endPos);
+        //BoundingBoxVisualizer.showAABB(gravityPlayer.level(), aabb);
+
+        EntityHitResult entityHit = ProjectileUtil.getEntityHitResult(
+                gravityPlayer,
+                eyePos,
+                endPos,
+                aabb,
+                entity -> !entity.isSpectator(),
+                eyePos.distanceToSqr(endPos)
+        );
+        if(entityHit != null && entityHit.getType() != HitResult.Type.MISS){
+            return entityHit.getLocation();
+        }
+
+        BlockHitResult blockHit = gravityPlayer.level().clip(new ClipContext(
+                eyePos,
+                endPos,
+                ClipContext.Block.OUTLINE,
+                ClipContext.Fluid.NONE,
+                gravityPlayer
+        ));
+        if(blockHit.getType() != HitResult.Type.MISS){
+            return blockHit.getLocation().add(0,1,0);
+        }
+
+        return endPos;
+    }
+
+    public static void blackHolePull(Vec3 holePos, double time)
+    {
+        PacketDistributor.sendToServer(new BlackHolePayload(holePos, time));
     }
 
     @SubscribeEvent

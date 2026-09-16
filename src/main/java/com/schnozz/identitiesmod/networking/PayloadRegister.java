@@ -2,11 +2,13 @@ package com.schnozz.identitiesmod.networking;
 
 import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.entities.ModEntities;
+import com.schnozz.identitiesmod.entities.custom_entities.BlackHoleEntity;
 import com.schnozz.identitiesmod.entities.custom_entities.DragonEntity;
 import com.schnozz.identitiesmod.entities.custom_entities.EmeraldGolemEntity;
 import com.schnozz.identitiesmod.entities.custom_entities.PlayerCloneEntity;
 import com.schnozz.identitiesmod.events.power_events.parry.ClientParryEvents;
 import com.schnozz.identitiesmod.events.power_events.viltrumite.ClientViltrumiteEvents;
+import com.schnozz.identitiesmod.items.BoundingBoxVisualizer;
 import com.schnozz.identitiesmod.networking.handlers.*;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.networking.payloads.*;
@@ -15,16 +17,20 @@ import com.schnozz.identitiesmod.networking.payloads.CDPARRYPayload;
 import com.schnozz.identitiesmod.networking.payloads.CDPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -33,6 +39,8 @@ import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
 import net.neoforged.neoforge.network.registration.HandlerThread;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.apache.logging.log4j.core.jmx.Server;
+
+import java.util.List;
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class PayloadRegister {
@@ -201,6 +209,51 @@ public class PayloadRegister {
                     level.addFreshEntity(dragon);
 
                     dragonPlayer.startRiding(dragon);
+                }
+        );
+
+        registrar.playToServer(
+                BlackHolePayload.TYPE,
+                BlackHolePayload.STREAM_CODEC,
+                (payload, context) -> {
+                    ServerLevel level = (ServerLevel)context.player().level();
+                    Vec3 center = payload.pos();
+
+                    //Spawn Logic
+                    if(payload.time() == 0)
+                    {
+                        BlackHoleEntity blackHole = ModEntities.BLACK_HOLE.get().create(level);
+                        blackHole.moveTo(center);
+                        level.addFreshEntity(blackHole);
+                    }
+
+                    //Pull Logic
+                    double radius = payload.time()*payload.time();
+                    AABB hole = new AABB(center,center).inflate(radius);
+
+                    List<Entity> entityList = level.getEntities((Entity)null,hole,(entity) -> {
+                        return !entity.isSpectator() && entity.distanceToSqr(center) <= (radius*radius);
+                    });
+
+                    for(Entity entity: entityList){
+                        Vec3 entityPos = entity.getPosition(1);
+                        Vec3 differencePos = center.subtract(entityPos);
+                        Vec3 direction = differencePos.normalize();
+
+                        double distance = differencePos.length();
+                        Vec3 entityVelocity = entity.getDeltaMovement();
+                        double str = Math.min(radius/(4*distance),0.2);
+
+                        Vec3 scaledVelocity = direction.scale(-str);
+                        scaledVelocity.multiply(1,0.2,1);
+
+                        Vec3 newVelocity = entityVelocity.subtract(scaledVelocity);
+                        entity.setDeltaMovement(newVelocity);
+
+                        if(entity instanceof Player p){
+                            p.hurtMarked = true;
+                        }
+                    }
                 }
         );
 

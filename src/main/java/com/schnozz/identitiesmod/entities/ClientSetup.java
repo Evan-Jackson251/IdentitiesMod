@@ -1,6 +1,8 @@
 package com.schnozz.identitiesmod.entities;
 
 import com.schnozz.identitiesmod.IdentitiesMod;
+import com.schnozz.identitiesmod.entities.rendering.black_hole.BlackHoleModel;
+import com.schnozz.identitiesmod.entities.rendering.black_hole.BlackHoleRenderer;
 import com.schnozz.identitiesmod.entities.rendering.clone.PlayerCloneRenderer;
 import com.schnozz.identitiesmod.entities.rendering.dragon.DragonModel;
 import com.schnozz.identitiesmod.entities.rendering.dragon.DragonRenderer;
@@ -23,6 +25,7 @@ public final class ClientSetup {
         event.registerEntityRenderer(ModEntities.PLAYER_CLONE.get(), PlayerCloneRenderer::new);
         event.registerEntityRenderer(ModEntities.DRAGON.get(), DragonRenderer::new);
         //event.registerEntityRenderer(ModEntities.EMERLAD_GOLEM.get(), EmeraldGolemRenderer::new);
+        event.registerEntityRenderer(ModEntities.BLACK_HOLE.get(), BlackHoleRenderer::new);
     }
 
     @SubscribeEvent
@@ -34,6 +37,10 @@ public final class ClientSetup {
         event.registerLayerDefinition(
                 EmeraldGolemModel.LAYER_LOCATION,
                 EmeraldGolemModel::createBodyLayer
+        );
+        event.registerLayerDefinition(
+                BlackHoleModel.LAYER_LOCATION,
+                BlackHoleModel::createBodyLayer
         );
     }
 }

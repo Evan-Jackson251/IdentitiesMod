@@ -7,9 +7,9 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 
-public record DripstoneDropPayload(Vec3 pos) implements CustomPacketPayload{
-    public static final CustomPacketPayload.Type<DripstoneDropPayload> TYPE =
-            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("identitiesmod", "dripstone_drop_payload"));
+public record BlackHolePayload(Vec3 pos, double time) implements CustomPacketPayload {
+    public static final CustomPacketPayload.Type<BlackHolePayload> TYPE =
+            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("identitiesmod", "black_hole_payload"));
 
     public static final StreamCodec<ByteBuf,Vec3> VEC_3_CODEC =
             StreamCodec.composite(
@@ -19,10 +19,12 @@ public record DripstoneDropPayload(Vec3 pos) implements CustomPacketPayload{
                     Vec3::new
             );
 
-    public static final StreamCodec<ByteBuf, DripstoneDropPayload> STREAM_CODEC = StreamCodec.composite(
+    public static final StreamCodec<ByteBuf, BlackHolePayload> STREAM_CODEC = StreamCodec.composite(
             VEC_3_CODEC,
-            DripstoneDropPayload::pos,
-            DripstoneDropPayload::new
+            BlackHolePayload::pos,
+            ByteBufCodecs.DOUBLE,
+            BlackHolePayload::time,
+            BlackHolePayload::new
     );
 
 
@@ -31,4 +33,3 @@ public record DripstoneDropPayload(Vec3 pos) implements CustomPacketPayload{
         return TYPE;
     }
 }
-
