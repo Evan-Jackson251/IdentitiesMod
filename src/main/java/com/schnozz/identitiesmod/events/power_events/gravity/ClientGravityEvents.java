@@ -4,6 +4,7 @@ import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.cooldown.CooldownAttachment;
 import com.schnozz.identitiesmod.cooldown.Cooldown;
+import com.schnozz.identitiesmod.damage_sources.ModDamageTypes;
 import com.schnozz.identitiesmod.items.BoundingBoxVisualizer;
 import com.schnozz.identitiesmod.networking.payloads.*;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.CooldownSyncPayload;
@@ -13,10 +14,14 @@ import com.schnozz.identitiesmod.sounds.ModSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -60,7 +65,7 @@ public class ClientGravityEvents {
     private static int cycloneProgress = -1;
     private static int blackHoleProgress = -1;
     private static final int CYCLONE_DURATION = 60;
-    private static final int BLACK_HOLE_DURATION = 200;
+    private static final int BLACK_HOLE_DURATION = 180;
     //entity list within distance
     private static List<Entity> entitiesInBox;
     private static List<BlockState> blocksInBox;
@@ -152,6 +157,9 @@ public class ClientGravityEvents {
             if(holePos != null && blackHoleProgress <= BLACK_HOLE_DURATION && blackHoleProgress>=0){
                 blackHolePull(holePos,blackHoleProgress/20.0);
                 blackHoleProgress++;
+            }else if(blackHoleProgress > BLACK_HOLE_DURATION){
+
+                blackHoleProgress = -1;
             }
             else{
                 blackHoleProgress = -1;
@@ -252,6 +260,26 @@ public class ClientGravityEvents {
     public static void blackHolePull(Vec3 holePos, double time)
     {
         PacketDistributor.sendToServer(new BlackHolePayload(holePos, time));
+    }
+
+    public static void blackHoleExplosion(Player gravityPlayer, Vec3 center)
+    {
+        double radius = (BLACK_HOLE_DURATION/20.0)*(BLACK_HOLE_DURATION/20.0);
+        AABB hole = new AABB(center,center).inflate(radius);
+
+        List<Entity> entityList = gravityPlayer.level().getEntities((Entity)null,hole,(entity) -> {
+            return !entity.isSpectator() && entity.distanceToSqr(center) <= (radius*radius);
+        });
+
+        for(Entity entity: entityList){
+            Holder<DamageType> damageTypeHolder =
+                    gravityPlayer.level().registryAccess()
+                            .registryOrThrow(Registries.DAMAGE_TYPE)
+                            .getHolderOrThrow(DamageTypes.OUTSIDE_BORDER);
+
+            float distance = (float)entity.distanceToSqr(center);
+            PacketDistributor.sendToServer(new EntityDamagePayload(entity.getId(),gravityPlayer.getId(),30F/(distance/2F),damageTypeHolder));
+        }
     }
 
     @SubscribeEvent

@@ -26,11 +26,11 @@ public class BlackHoleEntity extends Entity {
             return;
         }
 
-        if(tickCount < 40){
-            this.setInvisible(true);
-        }else{
-            this.setInvisible(false);
-        }
+//        if(tickCount < 40){
+//            this.setInvisible(true);
+//        }else{
+//            this.setInvisible(false);
+//        }
 
         for (Entity target : level().getEntities(
                 this,
@@ -42,7 +42,7 @@ public class BlackHoleEntity extends Entity {
             target.hurt(damageSources().outOfBorder(), DAMAGE);
         }
 
-        if(tickCount >= 200){
+        if(tickCount >= 180){
             discard();
         }
     }
