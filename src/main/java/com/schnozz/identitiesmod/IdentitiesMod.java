@@ -60,7 +60,7 @@ public class IdentitiesMod
         ItemRegistry.register(modEventBus);
         BlockRegistry.BLOCKS.register(modEventBus);
         BlockEntityRegistry.BLOCK_ENTITIES.register(modEventBus);
-        ModEnchantmentEffects.register(modEventBus);
+        //ModEnchantmentEffects.register(modEventBus);
         //effects registers
         ModEffects.register(modEventBus);
     }
