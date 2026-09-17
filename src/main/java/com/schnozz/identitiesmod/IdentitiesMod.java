@@ -3,7 +3,6 @@ package com.schnozz.identitiesmod;
 import com.schnozz.identitiesmod.blockentities.BlockEntityRegistry;
 import com.schnozz.identitiesmod.blocks.BlockRegistry;
 import com.schnozz.identitiesmod.datacomponent.ModDataComponentRegistry;
-import com.schnozz.identitiesmod.enchantments.enchant_register.ModEnchantmentEffects;
 import com.schnozz.identitiesmod.entities.ModEntities;
 import com.schnozz.identitiesmod.items.ItemRegistry;
 import com.schnozz.identitiesmod.mob_effects.ModEffects;
@@ -49,7 +48,6 @@ public class IdentitiesMod
 
         ModDataComponentRegistry.REGISTRAR.register(modEventBus);
 
-
         ModSounds.register(modEventBus);
         ModEntities.register(modEventBus);
         // Register the item to a creative tab
@@ -60,7 +58,7 @@ public class IdentitiesMod
         ItemRegistry.register(modEventBus);
         BlockRegistry.BLOCKS.register(modEventBus);
         BlockEntityRegistry.BLOCK_ENTITIES.register(modEventBus);
-        //ModEnchantmentEffects.register(modEventBus);
+
         //effects registers
         ModEffects.register(modEventBus);
     }
