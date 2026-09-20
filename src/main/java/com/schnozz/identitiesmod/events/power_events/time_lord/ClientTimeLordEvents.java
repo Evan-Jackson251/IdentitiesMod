@@ -16,6 +16,7 @@ import com.schnozz.identitiesmod.util.EntitySnapshot;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.PostChain;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -35,18 +36,31 @@ import static com.schnozz.identitiesmod.keymapping.ModMappings.*;
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ClientTimeLordEvents {
+    //Time stop variables
     private static final int STOP_DURATION = 100;
     private static int timeCounter = 0;
 
+    //Icon variables
     private static final CooldownIcon TIME_STOP_COOLDOWN_ICON = new CooldownIcon(128,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/clock_icon.png"));
     private static CooldownIcon SNAPSHOT_COOLDOWN_ICON = new CooldownIcon(88,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/open_chest_icon.png"));
     private static final CooldownIcon REWIND_COOLDOWN_ICON = new CooldownIcon(108,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/rewind_icon.png"));
 
-    private static final int TIME_STOP_CD = 1500;
-    private static final int REWIND_CD = 1200;//1200
+    //Cooldown variables
+    private static final int TIME_STOP_CD = 1200;
+    private static final int REWIND_CD = 1800;//1200
 
+    //Snapshot variables
     private static boolean rewindStored = false;
     private static EntitySnapshot snap;
+
+    //Grayscale variables
+    private static final ResourceLocation GRAYSCALE_SHADER =
+            ResourceLocation.fromNamespaceAndPath(
+                    IdentitiesMod.MODID, "shaders/post/grayscale.json"
+            );
+    private static boolean grayScaleOff = false;
+
+    private static PostChain grayscaleEffect;
 
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
@@ -54,6 +68,7 @@ public class ClientTimeLordEvents {
         if (timePlayer == null) return;
         Level level = timePlayer.level();
         if (!level.isClientSide()) return;
+        Minecraft mc = Minecraft.getInstance();
 
         String power = timePlayer.getData(ModDataAttachments.POWER_TYPE);
         if (power.equals("Time Lord")) {
@@ -110,6 +125,8 @@ public class ClientTimeLordEvents {
                 timeCounter++;
                 if(timeCounter >= STOP_DURATION)
                 {
+                    grayScaleOff = true;
+
                     timeCounter = 0;
                     timePlayer.setData(ModDataAttachments.TIME_STOP_STATE,0);
                     PacketDistributor.sendToServer(new TimeStopSyncPayload(0));
@@ -126,6 +143,17 @@ public class ClientTimeLordEvents {
                         PacketDistributor.sendToServer(new EntityDamagePayload(damage.getKey(),timePlayer.getId(),damage.getValue(),damageTypeHolder));
                     }
                 }
+            }
+        }
+        if(timeCounter == 1){
+            mc.gameRenderer.loadEffect(GRAYSCALE_SHADER);
+            grayscaleEffect = mc.gameRenderer.currentEffect();
+        }
+        if(grayScaleOff && grayscaleEffect != null){
+            if(mc.gameRenderer.currentEffect() == grayscaleEffect){
+                mc.gameRenderer.shutdownEffect();
+                grayScaleOff = false;
+                grayscaleEffect = null;
             }
         }
     }

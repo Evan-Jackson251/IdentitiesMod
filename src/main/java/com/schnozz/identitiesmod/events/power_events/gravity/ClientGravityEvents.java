@@ -57,21 +57,26 @@ public class ClientGravityEvents {
     private static final CooldownIcon DRIPSTONE_COOLDOWN_ICON = new CooldownIcon(108,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/dripstone.png"));
     private static final CooldownIcon ARROW_COOLDOWN_ICON = new CooldownIcon(128,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/arrow_icon.png"));
     private static final ChargeIcon CHARGE_ICON = new ChargeIcon(332,259,32,ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/meteor_icon.png"),0);
+
     //final cooldown values
     private static final int DRIPSTONE_CD = 600;
     private static final int CYCLONE_CD = 300;
     private static final int ARROW_CD = 250;
+
     //timer variables
     private static int cycloneProgress = -1;
     private static int blackHoleProgress = -1;
     private static final int CYCLONE_DURATION = 60;
     private static final int BLACK_HOLE_DURATION = 180;
+
     //entity list within distance
     private static List<Entity> entitiesInBox;
     private static List<BlockState> blocksInBox;
+
     //range variables
     private static final int BLACK_HOLE_RANGE = 25;
     private static final int DRIP_STONE_RANGE = 25;
+
     //black hole temp variable
     private static Vec3 holePos = null;
 
@@ -164,6 +169,9 @@ public class ClientGravityEvents {
             else{
                 blackHoleProgress = -1;
             }
+
+
+
         }
     }
 
