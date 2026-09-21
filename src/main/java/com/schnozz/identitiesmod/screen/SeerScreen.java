@@ -52,7 +52,7 @@ public class SeerScreen extends Screen {
         int scaledHeight = Minecraft.getInstance().getWindow().getGuiScaledHeight();
 
         int bWidth = 135;
-        int bHeight = 14;
+        int bHeight = 14; //14
 
         int originX = scaledWidth/3;
         int originY = scaledHeight/3 + bHeight;

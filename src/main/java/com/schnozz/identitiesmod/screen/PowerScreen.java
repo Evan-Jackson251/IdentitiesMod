@@ -68,7 +68,7 @@ public class PowerScreen extends Screen {
 
         int bWidth = 135;
 
-        int bHeight = 14;
+        int bHeight = 11;
 
         //int originX = bWidth - scaledWidth/25;
         int originX = scaledWidth/3;
@@ -86,7 +86,7 @@ public class PowerScreen extends Screen {
         //adds buttons
         for(String power: powerList)
         {
-            if(count==7)
+            if(count==8)
             {
                 originX+=scaledWidth/5;
                 originY = scaledHeight/3 + bHeight;

@@ -16,7 +16,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME)
 public class ServerAdvancementEvents {
-    private static final int[] REQS_NEEDED = {5,3,4,1,3,2,1,1,2,3,1,1}; //in alphabetical order
+    private static final int[] REQS_NEEDED = {5,3,4,2,3,2,1,1,2,3,1,2,3}; //in alphabetical order + seer
     @SubscribeEvent
     public static void onAchievement(AdvancementEvent.AdvancementEarnEvent event)
     {
@@ -77,6 +77,10 @@ public class ServerAdvancementEvents {
             player.getData(ModDataAttachments.POWER_REQS).addReq("Gravity");
             powerAvailable(player, "Gravity", 4);
         }
+        else if (advancementId.equals("minecraft:end/levitate")) {
+            player.getData(ModDataAttachments.POWER_REQS).addReq("Gravity");
+            powerAvailable(player, "Gravity", 4);
+        }
         //Immortal power
         else if (advancementId.equals("minecraft:adventure/totem_of_undying")) {
             player.getData(ModDataAttachments.POWER_REQS).addReq("Immortal");
@@ -134,6 +138,23 @@ public class ServerAdvancementEvents {
         else if (advancementId.equals("minecraft:story/shiny_gear")) {
             player.getData(ModDataAttachments.POWER_REQS).addReq("Viltrumite");
             powerAvailable(player, "Viltrumite", 12);
+        }
+        else if (advancementId.equals("minecraft:nether/loot_bastion")) {
+            player.getData(ModDataAttachments.POWER_REQS).addReq("Viltrumite");
+            powerAvailable(player, "Viltrumite", 12);
+        }
+        //Seer power
+        else if(advancementId.equals("minecraft:story/follow_ender_eye")) {
+            player.getData(ModDataAttachments.POWER_REQS).addReq("Seer");
+            powerAvailable(player, "Seer", 13);
+        }
+        else if(advancementId.equals("minecraft:adventure/read_power_of_chiseled_bookshelf")) {
+            player.getData(ModDataAttachments.POWER_REQS).addReq("Seer");
+            powerAvailable(player, "Seer", 13);
+        }
+        else if(advancementId.equals("minecraft:story/enchant_item")) {
+            player.getData(ModDataAttachments.POWER_REQS).addReq("Seer");
+            powerAvailable(player, "Seer", 13);
         }
     }
     public static void powerAvailable(ServerPlayer player, String power, int powerNumber)
