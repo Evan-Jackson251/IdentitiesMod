@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/IdentitiesModFull.main.iml" filepath="$PROJECT_DIR$/.idea/modules/IdentitiesModFull.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/IdentitiesModZone.main.iml" filepath="$PROJECT_DIR$/.idea/modules/IdentitiesModZone.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/NewIdentitiesMod.main.iml" filepath="$PROJECT_DIR$/.idea/modules/NewIdentitiesMod.main.iml" />
     </modules>
   </component>
 </project>

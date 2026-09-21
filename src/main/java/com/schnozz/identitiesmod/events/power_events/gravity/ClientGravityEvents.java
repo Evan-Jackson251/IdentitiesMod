@@ -4,6 +4,7 @@ import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.cooldown.CooldownAttachment;
 import com.schnozz.identitiesmod.cooldown.Cooldown;
+import com.schnozz.identitiesmod.cooldown.CooldownUtil;
 import com.schnozz.identitiesmod.damage_sources.ModDamageTypes;
 import com.schnozz.identitiesmod.items.BoundingBoxVisualizer;
 import com.schnozz.identitiesmod.networking.payloads.*;
@@ -95,11 +96,7 @@ public class ClientGravityEvents {
             if(UTILITY_MAPPING.get().consumeClick() && !gravityPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "dripstone_cd"),0)) {
                 long currentTime = Minecraft.getInstance().level.getGameTime();
 
-                CooldownAttachment atachment = new CooldownAttachment();
-                atachment.getAllCooldowns().putAll(gravityPlayer.getData(ModDataAttachments.COOLDOWN).getAllCooldowns());
-                atachment.setCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "dripstone_cd"), currentTime, DRIPSTONE_CD);
-                gravityPlayer.setData(ModDataAttachments.COOLDOWN, atachment);
-                PacketDistributor.sendToServer(new CooldownSyncPayload(new Cooldown(currentTime, DRIPSTONE_CD), ResourceLocation.fromNamespaceAndPath("identitiesmod", "dripstone_cd"), false));
+                CooldownUtil.SetCooldown(gravityPlayer, "dripstone_cd", currentTime, DRIPSTONE_CD);
                 DRIPSTONE_COOLDOWN_ICON.setCooldown(new Cooldown(currentTime, DRIPSTONE_CD));
 
                 Vec3 dripPos = getDripPosition(gravityPlayer);
