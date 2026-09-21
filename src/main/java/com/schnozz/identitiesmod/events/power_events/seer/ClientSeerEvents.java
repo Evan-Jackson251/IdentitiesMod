@@ -4,6 +4,11 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
+import com.schnozz.identitiesmod.cooldown.Cooldown;
+import com.schnozz.identitiesmod.cooldown.CooldownAttachment;
+import com.schnozz.identitiesmod.icons.CooldownIcon;
+import com.schnozz.identitiesmod.networking.payloads.EffectAddPayload;
+import com.schnozz.identitiesmod.networking.payloads.sync_payloads.CooldownSyncPayload;
 import com.schnozz.identitiesmod.screen.SeerScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -12,7 +17,10 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -23,6 +31,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Matrix4f;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +39,13 @@ import static com.schnozz.identitiesmod.keymapping.ModMappings.*;
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ClientSeerEvents {
+    //Cooldown icons (change texture)
+    private static final CooldownIcon BLIND_COOLDOWN_ICON = new CooldownIcon(128,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/blind_eye_icon.png"));
+
+    //Cooldown variables
+    private static final int BLIND_COOLDOWN = 200; //6000 is real CD
+
+    //X-Ray variables
     private static final int RADIUS = 16;
     private static final List<BlockPos> ORES = new ArrayList<>();
     private static boolean scanEnabled;
@@ -51,9 +67,21 @@ public class ClientSeerEvents {
                 SeerScreen newSeerScreen = new SeerScreen(Component.literal("Seer Screen"));
                 Minecraft.getInstance().setScreen(newSeerScreen);
             }
-            //SEE INVENTORY
-            if(SECONDARY_MAPPING.get().consumeClick()){
+            //BLIND PLAYER while on their perspective
+            if(!mc.getCameraEntity().is(seerPlayer) && SECONDARY_MAPPING.get().consumeClick() && !seerPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "blind_cd"),0)){
 
+                Player targetPlayer = (Player)mc.getCameraEntity();
+                PacketDistributor.sendToServer(new EffectAddPayload(targetPlayer.getId(),MobEffects.DARKNESS,2,100));
+
+                long currentTime = Minecraft.getInstance().level.getGameTime();
+
+                CooldownAttachment atachment = new CooldownAttachment();
+                atachment.getAllCooldowns().putAll(seerPlayer.getData(ModDataAttachments.COOLDOWN).getAllCooldowns());
+                atachment.setCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "blind_cd"), currentTime, BLIND_COOLDOWN);
+
+                seerPlayer.setData(ModDataAttachments.COOLDOWN, atachment);
+                PacketDistributor.sendToServer(new CooldownSyncPayload(new Cooldown(currentTime, BLIND_COOLDOWN), ResourceLocation.fromNamespaceAndPath("identitiesmod", "blind_cd"), false));
+                BLIND_COOLDOWN_ICON.setCooldown(new Cooldown(currentTime, BLIND_COOLDOWN));
             }
             //X-Ray
             if(UTILITY_MAPPING.get().consumeClick()){
@@ -219,5 +247,7 @@ public class ClientSeerEvents {
 
         long gameTime = Minecraft.getInstance().level.getGameTime();
         GuiGraphics graphics = event.getGuiGraphics();
+
+        BLIND_COOLDOWN_ICON.render(graphics,gameTime);
     }
 }

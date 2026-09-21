@@ -6,9 +6,10 @@
   "mixins": [
     "FarmBlockMixin",
     "PlayerRendererMixin",
-    "SeedUseMixin"
+    "SeedUseMixin",
+    "SeerEnchantmentMixin$EnchantmentMenuInvoker"
   ],
-  "client": [],
+  "client": ["client.EnchantmentScreenMixin"],
   "injectors": {
     "defaultRequire": 1
   }

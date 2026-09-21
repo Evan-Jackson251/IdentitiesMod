@@ -134,6 +134,12 @@ public class PayloadRegister {
                 }
         );
 
+        registrar.playToClient(
+                HiddenEnchantsPayload.TYPE,
+                HiddenEnchantsPayload.STREAM_CODEC,
+                ClientHiddenEnchantsHandler::handle
+        );
+
         registrar.playToServer(
                 SoundPayload.TYPE,
                 SoundPayload.STREAM_CODEC,
@@ -462,6 +468,12 @@ public class PayloadRegister {
                 PotionTogglePayload.TYPE,
                 PotionTogglePayload.STREAM_CODEC,
                 ServerPotionToggleHandler::handle
+        );
+
+        registrar.playToServer(
+                EffectAddPayload.TYPE,
+                EffectAddPayload.STREAM_CODEC,
+                ServerEffectAddHandler::handle
         );
 
         registrar.playToServer(

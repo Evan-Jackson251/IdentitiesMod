@@ -3,6 +3,7 @@ package com.schnozz.identitiesmod.events.power_events.seer;
 import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.mixin.SeerEnchantmentMixin;
+import com.schnozz.identitiesmod.networking.payloads.HiddenEnchantsPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.EnchantmentMenu;
 import net.minecraft.world.item.ItemStack;
@@ -10,6 +11,8 @@ import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,9 +23,6 @@ public class ServerSeerEvents {
         if (!(event.getEntity() instanceof ServerPlayer player)) {return;}
         if (!player.getData(ModDataAttachments.POWER_TYPE).equals("Seer")) {return;}
         if (!(player.containerMenu instanceof EnchantmentMenu menu)) {return;}
-
-        // Check your cached state here.
-        // Only continue if the menu, input item, seed, or costs changed.
 
         ItemStack stack = menu.getSlot(0).getItem();
         List<List<EnchantmentInstance>> options = new ArrayList<>();
@@ -41,8 +41,6 @@ public class ServerSeerEvents {
 
             options.add(enchantments);
         }
-
-        // Send your completed payload only to this player:
-        // PacketDistributor.sendToPlayer(player, payload);
+        PacketDistributor.sendToPlayer(player, new HiddenEnchantsPayload(menu.containerId, options));
     }
 }

@@ -57,7 +57,7 @@ public class ClientGravityEvents {
     private static final CooldownIcon CYCLONE_COOLDOWN_ICON = new CooldownIcon(88,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/cyclone.png"));
     private static final CooldownIcon DRIPSTONE_COOLDOWN_ICON = new CooldownIcon(108,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/dripstone.png"));
     private static final CooldownIcon ARROW_COOLDOWN_ICON = new CooldownIcon(128,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/arrow_icon.png"));
-    private static final ChargeIcon CHARGE_ICON = new ChargeIcon(332,259,32,ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/meteor_icon.png"),0);
+    private static final ChargeIcon CHARGE_ICON = new ChargeIcon(332,259,32,ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/black_hole_icon.png"),0);
 
     //final cooldown values
     private static final int DRIPSTONE_CD = 600;
@@ -186,7 +186,6 @@ public class ClientGravityEvents {
     {
         PacketDistributor.sendToServer(new GravityArrowPayload(gravityPlayer.getId()));
     }
-
     public static Vec3 getDripPosition(Player gravityPlayer) //w name
     {
         Vec3 scaledLookAngle = gravityPlayer.getLookAngle().scale(DRIP_STONE_RANGE);
@@ -206,12 +205,10 @@ public class ClientGravityEvents {
         }
         return endPos;
     }
-
     public static void dripstoneDrop(Vec3 pos)
     {
         PacketDistributor.sendToServer(new DripstoneDropPayload(pos));
     }
-
     public static void cyclone(Player gravityPlayer)
     {
         Level level = gravityPlayer.level();
@@ -236,7 +233,6 @@ public class ClientGravityEvents {
             }
         }
     }
-
     public static Vec3 getHolePosition(Player gravityPlayer) //w name
     {
         Vec3 scaledLookAngle = gravityPlayer.getLookAngle().scale(BLACK_HOLE_RANGE);
@@ -271,30 +267,9 @@ public class ClientGravityEvents {
 
         return endPos;
     }
-
     public static void blackHolePull(Vec3 holePos, double time)
     {
         PacketDistributor.sendToServer(new BlackHolePayload(holePos, time));
-    }
-
-    public static void blackHoleExplosion(Player gravityPlayer, Vec3 center)
-    {
-        double radius = (BLACK_HOLE_DURATION/20.0)*(BLACK_HOLE_DURATION/20.0);
-        AABB hole = new AABB(center,center).inflate(radius);
-
-        List<Entity> entityList = gravityPlayer.level().getEntities((Entity)null,hole,(entity) -> {
-            return !entity.isSpectator() && entity.distanceToSqr(center) <= (radius*radius);
-        });
-
-        for(Entity entity: entityList){
-            Holder<DamageType> damageTypeHolder =
-                    gravityPlayer.level().registryAccess()
-                            .registryOrThrow(Registries.DAMAGE_TYPE)
-                            .getHolderOrThrow(DamageTypes.OUTSIDE_BORDER);
-
-            float distance = (float)entity.distanceToSqr(center);
-            PacketDistributor.sendToServer(new EntityDamagePayload(entity.getId(),gravityPlayer.getId(),30F/(distance/2F),damageTypeHolder));
-        }
     }
 
     @SubscribeEvent
