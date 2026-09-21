@@ -9,7 +9,6 @@ public class ServerSeerPerspectiveHandler {
     public static void handle(SeerPerspectivePayload payload, IPayloadContext context)
     {
         ServerPlayer player = (ServerPlayer) context.player();
-
         Player targetPlayer = player.level().getPlayerByUUID(payload.id());
         if(targetPlayer == null) return;
 

@@ -274,7 +274,6 @@ public class PayloadRegister {
 //                            golemPlayer.getXRot()
 //                    );
 //                    level.addFreshEntity(golem);
-
                 }
         );
 
