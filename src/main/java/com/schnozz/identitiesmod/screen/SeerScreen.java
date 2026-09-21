@@ -82,8 +82,9 @@ public class SeerScreen extends Screen {
                     : mc.level.getPlayerByUUID(info.getProfile().getId());
             if(targetPlayer == null){return;}
             Vec3 cords = targetPlayer.getPosition(1);
+            cords = new Vec3((int)cords.x,(int)cords.y,(int)cords.z);
 
-            Component message = Component.literal(info.getProfile().getName() + " (" + cords + ")");
+            Component message = Component.literal(info.getProfile().getName() + ": " + cords);
             bWidth = message.getString().length()*6 + 3;
 
             SeerPerspectiveButton seerPerspectiveButton = new SeerPerspectiveButton(

@@ -441,6 +441,15 @@ public class PayloadRegister {
         );
 
         registrar.playBidirectional(
+                SeerPerspectivePayload.TYPE,
+                SeerPerspectivePayload.STREAM_CODEC,
+                new DirectionalPayloadHandler<>(
+                        ClientSeerPerspectiveHandler::handle,
+                        ServerSeerPerspectiveHandler::handle
+                )
+        );
+
+        registrar.playBidirectional(
                 TimeStopSyncPayload.TYPE,
                 TimeStopSyncPayload.STREAM_CODEC,
                 new DirectionalPayloadHandler<>(
@@ -489,10 +498,6 @@ public class PayloadRegister {
                 PowerTakenPayload.STREAM_CODEC,
                 ServerPowerTakenHandler::handle
         );
-        registrar.playToServer(
-                SeerPerspectivePayload.TYPE,
-                SeerPerspectivePayload.STREAM_CODEC,
-                ServerSeerPerspectiveHandler::handle
-        );
+
     }
 }

@@ -149,7 +149,7 @@ public class ClientTimeLordEvents {
             mc.gameRenderer.loadEffect(GRAYSCALE_SHADER);
             grayscaleEffect = mc.gameRenderer.currentEffect();
         }
-        if(grayScaleOff && grayscaleEffect != null){
+        if(!grayScaleOff && grayscaleEffect != null){
             if(mc.gameRenderer.currentEffect() == grayscaleEffect){
                 mc.gameRenderer.shutdownEffect();
                 grayScaleOff = false;
