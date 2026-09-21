@@ -31,8 +31,13 @@ public class ChargeIcon {
         if(percentFull > 28){percentFull = 28;}
 
         guiGraphics.blit(texture, x, y, 0, 0, size, size, size, size*2);
-        guiGraphics.blit(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/charge_bar_outside.png"), x+size+1, y, 0, 0, size, size, size, size);
         guiGraphics.blit(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/charge_bar_inside.png"), x+size+1, y-2, 0, percentFull, size, size, size, (size)*2);
 
+        if(charge < 100){
+            guiGraphics.blit(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/charge_bar_outside.png"), x+size+1, y, 0, 0, size, size, size, size);
+        }
+        else{
+            guiGraphics.blit(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/charge_bar_outside_glow.png"), x+size+1, y, 0, 0, size, size, size, size);
+        }
     }
 }
