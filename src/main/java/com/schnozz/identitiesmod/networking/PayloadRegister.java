@@ -485,11 +485,15 @@ public class PayloadRegister {
                 AvailablePowersSyncPayload.STREAM_CODEC,
                 ClientAvailablePowersSyncHandler::handle
         );
-
         registrar.playToServer(
                 PowerTakenPayload.TYPE,
                 PowerTakenPayload.STREAM_CODEC,
                 ServerPowerTakenHandler::handle
+        );
+        registrar.playToServer(
+                SeerPerspectivePayload.TYPE,
+                SeerPerspectivePayload.STREAM_CODEC,
+                ServerSeerPerspectiveHandler::handle
         );
     }
 }
