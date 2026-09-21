@@ -37,7 +37,7 @@ import static com.schnozz.identitiesmod.keymapping.ModMappings.*;
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ClientTimeLordEvents {
     //Time stop variables
-    private static final int STOP_DURATION = 100;
+    private static final int STOP_DURATION = 140;
     private static int timeCounter = 0;
 
     //Icon variables
@@ -58,7 +58,6 @@ public class ClientTimeLordEvents {
             ResourceLocation.fromNamespaceAndPath(
                     IdentitiesMod.MODID, "shaders/post/grayscale.json"
             );
-    private static boolean grayScaleOff = false;
 
     private static PostChain grayscaleEffect;
 
@@ -88,10 +87,6 @@ public class ClientTimeLordEvents {
                 PacketDistributor.sendToServer(new SoundPayload(ModSounds.TIME_STOP_SOUND.get(),10F));
             }
             if(UTILITY_MAPPING.get().consumeClick()) {
-//                if(level.dimension() != Level.OVERWORLD)
-//                {
-//                    return;
-//                }
                 snap = snap.fromEntity(timePlayer);
 
                 rewindStored = true;
@@ -125,8 +120,6 @@ public class ClientTimeLordEvents {
                 timeCounter++;
                 if(timeCounter >= STOP_DURATION)
                 {
-                    grayScaleOff = true;
-
                     timeCounter = 0;
                     timePlayer.setData(ModDataAttachments.TIME_STOP_STATE,0);
                     PacketDistributor.sendToServer(new TimeStopSyncPayload(0));
@@ -145,14 +138,13 @@ public class ClientTimeLordEvents {
                 }
             }
         }
-        if(timeCounter == 1){
+        if(grayscaleEffect == null && timeCounter > 0){
             mc.gameRenderer.loadEffect(GRAYSCALE_SHADER);
             grayscaleEffect = mc.gameRenderer.currentEffect();
         }
-        if(!grayScaleOff && grayscaleEffect != null){
+        if(timeCounter == 0 && grayscaleEffect != null){
             if(mc.gameRenderer.currentEffect() == grayscaleEffect){
                 mc.gameRenderer.shutdownEffect();
-                grayScaleOff = false;
                 grayscaleEffect = null;
             }
         }

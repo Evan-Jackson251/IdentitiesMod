@@ -7,6 +7,7 @@ import com.schnozz.identitiesmod.cooldown.Cooldown;
 import com.schnozz.identitiesmod.damage_sources.ModDamageTypes;
 import com.schnozz.identitiesmod.items.BoundingBoxVisualizer;
 import com.schnozz.identitiesmod.networking.payloads.*;
+import com.schnozz.identitiesmod.networking.payloads.sync_payloads.ChargeSyncPayload;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.CooldownSyncPayload;
 import com.schnozz.identitiesmod.icons.ChargeIcon;
 import com.schnozz.identitiesmod.icons.CooldownIcon;
@@ -61,7 +62,7 @@ public class ClientGravityEvents {
     //final cooldown values
     private static final int DRIPSTONE_CD = 600;
     private static final int CYCLONE_CD = 300;
-    private static final int ARROW_CD = 250;
+    private static final int ARROW_CD = 300;
 
     //timer variables
     private static int cycloneProgress = -1;
@@ -114,9 +115,14 @@ public class ClientGravityEvents {
                 CooldownAttachment atachment = new CooldownAttachment();
                 atachment.getAllCooldowns().putAll(gravityPlayer.getData(ModDataAttachments.COOLDOWN).getAllCooldowns());
                 atachment.setCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "cyclone_cd"), currentTime, CYCLONE_CD);
+                atachment.setCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "gravity_arrow_cd"), currentTime, CYCLONE_CD);
+
+
                 gravityPlayer.setData(ModDataAttachments.COOLDOWN, atachment);
                 PacketDistributor.sendToServer(new CooldownSyncPayload(new Cooldown(currentTime, CYCLONE_CD), ResourceLocation.fromNamespaceAndPath("identitiesmod", "cyclone_cd"), false));
+
                 CYCLONE_COOLDOWN_ICON.setCooldown(new Cooldown(currentTime, CYCLONE_CD));
+                ARROW_COOLDOWN_ICON.setCooldown(new Cooldown(currentTime,ARROW_CD));
 
                 PacketDistributor.sendToServer(new SoundPayload(ModSounds.WIND_BLOWING_SOUND.get(),10F));
             }
@@ -127,26 +133,27 @@ public class ClientGravityEvents {
                 CooldownAttachment atachment = new CooldownAttachment();
                 atachment.getAllCooldowns().putAll(gravityPlayer.getData(ModDataAttachments.COOLDOWN).getAllCooldowns());
                 atachment.setCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "gravity_arrow_cd"), currentTime, ARROW_CD);
+                atachment.setCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "cyclone_cd"), currentTime, ARROW_CD);
+
                 gravityPlayer.setData(ModDataAttachments.COOLDOWN, atachment);
                 PacketDistributor.sendToServer(new CooldownSyncPayload(new Cooldown(currentTime, ARROW_CD), ResourceLocation.fromNamespaceAndPath("identitiesmod", "gravity_arrow_cd"), false));
+
                 ARROW_COOLDOWN_ICON.setCooldown(new Cooldown(currentTime, ARROW_CD));
+                CYCLONE_COOLDOWN_ICON.setCooldown(new Cooldown(currentTime,CYCLONE_CD));
 
                 arrow(gravityPlayer);
                 PacketDistributor.sendToServer(new SoundPayload(SoundEvents.ARROW_SHOOT,20F));
             }
             //black hole
-            else if(SPECIAL_MAPPING.get().consumeClick())
+            else if(SPECIAL_MAPPING.get().consumeClick() && CHARGE_ICON.getFull())
             {
                 holePos = getHolePosition(gravityPlayer);
                 level.addAlwaysVisibleParticle(ParticleTypes.CLOUD,holePos.x,holePos.y,holePos.z,0,0,0);
 
                 blackHoleProgress = 0;
-                /*
-                    -> end of life explodes
-                        -kills everything within 1 block
-                        -does decreasing damage for distance from center
-                */
-
+                CHARGE_ICON.setCharge(0);
+                gravityPlayer.setData(ModDataAttachments.CHARGE,0.0);
+                PacketDistributor.sendToServer(new ChargeSyncPayload(0.0));
             }
 
             //cyclone in progress if cooldown not done
