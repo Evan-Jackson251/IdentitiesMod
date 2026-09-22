@@ -48,7 +48,6 @@ public class ServerEvents {
             long currentTime = hurtPlayer.level().getGameTime();
             CooldownAttachment newAtachment = new CooldownAttachment();
 
-
             if(event.getSource().getDirectEntity() != null && event.getSource().getDirectEntity() instanceof Player)
             {
                 newAtachment.getAllCooldowns().putAll(hurtPlayer.getData(ModDataAttachments.COOLDOWN).getAllCooldowns());

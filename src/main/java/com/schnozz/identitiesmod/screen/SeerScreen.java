@@ -52,7 +52,7 @@ public class SeerScreen extends Screen {
         int scaledHeight = Minecraft.getInstance().getWindow().getGuiScaledHeight();
 
         int bWidth = 135;
-        int bHeight = 14; //14
+        int bHeight = 11; //14
 
         int originX = scaledWidth/3;
         int originY = scaledHeight/3 + bHeight;
@@ -72,7 +72,7 @@ public class SeerScreen extends Screen {
 
         for(PlayerInfo info: playerList)
         {
-            if(count==7)
+            if(count==8)
             {
                 originX+=scaledWidth/5;
                 originY = scaledHeight/3 + bHeight;

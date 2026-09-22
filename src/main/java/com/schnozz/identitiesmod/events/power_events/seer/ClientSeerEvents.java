@@ -71,7 +71,7 @@ public class ClientSeerEvents {
             if(!mc.getCameraEntity().is(seerPlayer) && SECONDARY_MAPPING.get().consumeClick() && !seerPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "blind_cd"),0)){
 
                 Player targetPlayer = (Player)mc.getCameraEntity();
-                PacketDistributor.sendToServer(new EffectAddPayload(targetPlayer.getId(),MobEffects.DARKNESS,2,100));
+                PacketDistributor.sendToServer(new EffectAddPayload(targetPlayer.getId(),MobEffects.DARKNESS,2,200));
 
                 long currentTime = Minecraft.getInstance().level.getGameTime();
 

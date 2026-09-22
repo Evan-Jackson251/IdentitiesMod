@@ -38,7 +38,6 @@ public class Scythe extends SwordItem {
 
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-
         tooltipComponents.add(Component.literal("Bonus Damage: " + stack.getOrDefault(ModDataComponentRegistry.CHARGE, new ChargeRecord(0)).charge()));
     }
 
@@ -62,14 +61,9 @@ public class Scythe extends SwordItem {
                     }
                 }
             }
-
-
         }
-
         return InteractionResult.SUCCESS;
     }
-
-
 
     @Override
     public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
@@ -77,11 +71,10 @@ public class Scythe extends SwordItem {
         {
             long farmValue = FarmValueSavedData.get(attacker.level().getServer()).getValue();
             DamageSource bonusDamageSource = new DamageSource(attacker.level().registryAccess().lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.PLAYER_ATTACK),attacker,attacker,null);
-            float bonusDamage = Math.min((float)(farmValue/2000),20F);
 
+            float bonusDamage = Math.min((float)(farmValue/2000),20F);
             attacker.getMainHandItem().set(ModDataComponentRegistry.CHARGE, new ChargeRecord((int) bonusDamage));
             AABB hurtBox = (new AABB(attacker.position(), target.position())).inflate(3,1,1.5);
-
 
             List<Entity> entities = attacker.level().getEntities(attacker, hurtBox, e -> !(e == attacker));
             for(Entity buh : entities)
@@ -89,19 +82,10 @@ public class Scythe extends SwordItem {
                 buh.hurt(bonusDamageSource, (float) attacker.getMainHandItem().get(ModDataComponentRegistry.CHARGE).charge());
             }
 
-
             player.getCooldowns().addCooldown(this, 18);
-
         }
-
-
-
-
         return true;
     }
-
-
-
 
     public static List<BlockPos> getBlocksToTill(int range, BlockPos initalBlockPos, ServerPlayer player) {
         List<BlockPos> positions = new ArrayList<>();

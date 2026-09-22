@@ -11,8 +11,6 @@ public class FarmValueSavedData extends SavedData {
     private static final String FARM_VALUE_TAG = "FarmTag";
     private long value;
 
-
-
     public static FarmValueSavedData load(CompoundTag tag, HolderLookup.Provider lookupProvider) {
         FarmValueSavedData data = new FarmValueSavedData();
         if (tag.contains(FARM_VALUE_TAG, Tag.TAG_LONG)) {

@@ -39,8 +39,10 @@ public class ServerTimeLordEvents {
             {
                 timeStopped = false;
                 stopperID = -1;
+                event.getEntity().setInvulnerable(false);
                 timeStopDamage(event.getEntity().level(), stopperID);
             }
+            event.getEntity().setInvulnerable(true);
         }
         else if(timeStopped)
         {

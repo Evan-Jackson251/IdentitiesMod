@@ -109,13 +109,11 @@ public class ClientGravityEvents {
 
                 long currentTime = Minecraft.getInstance().level.getGameTime();
 
-                CooldownAttachment atachment = new CooldownAttachment();
-                atachment.getAllCooldowns().putAll(gravityPlayer.getData(ModDataAttachments.COOLDOWN).getAllCooldowns());
-                atachment.setCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "cyclone_cd"), currentTime, CYCLONE_CD);
-                atachment.setCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "gravity_arrow_cd"), currentTime, CYCLONE_CD);
-
-
-                gravityPlayer.setData(ModDataAttachments.COOLDOWN, atachment);
+                CooldownAttachment attachment = new CooldownAttachment();
+                attachment.getAllCooldowns().putAll(gravityPlayer.getData(ModDataAttachments.COOLDOWN).getAllCooldowns());
+                attachment.setCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "cyclone_cd"), currentTime, CYCLONE_CD);
+                attachment.setCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "gravity_arrow_cd"), currentTime, CYCLONE_CD);
+                gravityPlayer.setData(ModDataAttachments.COOLDOWN, attachment);
                 PacketDistributor.sendToServer(new CooldownSyncPayload(new Cooldown(currentTime, CYCLONE_CD), ResourceLocation.fromNamespaceAndPath("identitiesmod", "cyclone_cd"), false));
 
                 CYCLONE_COOLDOWN_ICON.setCooldown(new Cooldown(currentTime, CYCLONE_CD));
@@ -283,6 +281,8 @@ public class ClientGravityEvents {
         DRIPSTONE_COOLDOWN_ICON.render(graphics, gameTime);
         ARROW_COOLDOWN_ICON.render(graphics, gameTime);
         CHARGE_ICON.render(graphics);
+
+        System.out.println("SCREEN SIZE: "); //screen size to find relative x and y
     }
 
 }

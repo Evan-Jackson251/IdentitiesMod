@@ -44,7 +44,7 @@ public class ModMappings {
     public static final Lazy<KeyMapping> SPECIAL_MAPPING = Lazy.of(() -> new KeyMapping(
             "key.identitiesmod.universal.special",
             InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_F,
+            GLFW.GLFW_KEY_X,
             "key.categories.misc"
     ));
     //Clone
