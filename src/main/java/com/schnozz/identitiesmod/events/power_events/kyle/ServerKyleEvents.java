@@ -28,7 +28,12 @@ public class ServerKyleEvents {
             if(event.getEntity().level() instanceof ServerLevel level)
             {
                 FarmValueSavedData data = FarmValueSavedData.get(level.getServer());
-                long toSubtract = ((long )(0.2 * data.getValue()));
+                long farmValue = data.getValue();
+
+                long toSubtract = ((long )(0.2 * farmValue));
+                if(farmValue>40000){
+                    toSubtract = (long)(farmValue/Math.pow(5,1.0/3.5));
+                }
                 data.addToValue(-1 * toSubtract);
             }
         }
@@ -40,7 +45,12 @@ public class ServerKyleEvents {
         if(kylePlayer.getData(ModDataAttachments.POWER_TYPE).equals("Kyle")){
             if(kylePlayer.getMainHandItem().getItem() instanceof Scythe && kylePlayer.getServer() != null){
                 long farmValue = FarmValueSavedData.get(kylePlayer.getServer()).getValue();
-                float bonusDamage = Math.min((float)(farmValue/2000),20F);
+                float bonusDamage;
+                if(farmValue/2000 <= 20){
+                    bonusDamage = farmValue/2000F;
+                } else{
+                    bonusDamage = (float)Math.pow(farmValue,1.0F/3.5F);
+                }
                 kylePlayer.getMainHandItem().set(ModDataComponentRegistry.CHARGE, new ChargeRecord((int) bonusDamage));
             }
         }

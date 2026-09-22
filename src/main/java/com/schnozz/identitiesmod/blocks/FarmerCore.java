@@ -30,9 +30,6 @@ public class FarmerCore extends BaseEntityBlock {
         return CODEC;
     }
 
-
-    /// /// block entity stuff
-
     @Override
     protected RenderShape getRenderShape(BlockState state)
     {
@@ -79,16 +76,14 @@ public class FarmerCore extends BaseEntityBlock {
                     itemEntity.discard();
                 }
 
-                if(FarmValueSavedData.get(level.getServer()).getValue() > 40000)
-                {
-                    FarmValueSavedData.get(level.getServer()).setValue(40000);
-                }
+//                if(FarmValueSavedData.get(level.getServer()).getValue() > 40000)
+//                {
+//                    FarmValueSavedData.get(level.getServer()).setValue(40000);
+//                }
             }
         }
         super.stepOn(level, pos, state, entity);
     }
-
-
 
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston )
