@@ -5,13 +5,16 @@ import com.mojang.blaze3d.vertex.*;
 import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.cooldown.Cooldown;
-import com.schnozz.identitiesmod.cooldown.CooldownAttachment;
+import com.schnozz.identitiesmod.cooldown.CooldownUtil;
 import com.schnozz.identitiesmod.icons.CooldownIcon;
-import com.schnozz.identitiesmod.networking.payloads.EffectAddPayload;
-import com.schnozz.identitiesmod.networking.payloads.sync_payloads.CooldownSyncPayload;
+import com.schnozz.identitiesmod.networking.payloads.sync_payloads.PossessionEntitySyncPayload;
+import com.schnozz.identitiesmod.networking.payloads.sync_payloads.PossessionTimerSyncPayload;
 import com.schnozz.identitiesmod.screen.SeerScreen;
+import com.schnozz.identitiesmod.util.PlayerSuppression;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
@@ -19,15 +22,16 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.common.Tags;
@@ -39,11 +43,10 @@ import static com.schnozz.identitiesmod.keymapping.ModMappings.*;
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ClientSeerEvents {
-    //Cooldown icons (change texture)
-    private static final CooldownIcon BLIND_COOLDOWN_ICON = new CooldownIcon(128,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/blind_eye_icon.png"));
-
-    //Cooldown variables
-    private static final int BLIND_COOLDOWN = 200; //6000 is real CD
+    //CD finals
+    private static final int POSSESSION_CD = 3600;
+    //Icon variables
+    private static final CooldownIcon POSSESSION_ICON = new CooldownIcon(128,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/blind_eye_icon.png"));
 
     //X-Ray variables
     private static final int RADIUS = 16;
@@ -68,20 +71,20 @@ public class ClientSeerEvents {
                 Minecraft.getInstance().setScreen(newSeerScreen);
             }
             //BLIND PLAYER while on their perspective
-            if(!mc.getCameraEntity().is(seerPlayer) && SECONDARY_MAPPING.get().consumeClick() && !seerPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "blind_cd"),0)){
+            if(!mc.getCameraEntity().is(seerPlayer) && SECONDARY_MAPPING.get().consumeClick()){
+                if(seerPlayer.getData(ModDataAttachments.COOLDOWN).isOnCooldown(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID,"possession_cd"),0)){
+                    Player targetPlayer = (Player)mc.getCameraEntity();
 
-                Player targetPlayer = (Player)mc.getCameraEntity();
-                PacketDistributor.sendToServer(new EffectAddPayload(targetPlayer.getId(),MobEffects.DARKNESS,2,200));
+                    targetPlayer.setData(ModDataAttachments.POSSESSION_TIMER,0);
+                    PacketDistributor.sendToServer(new PossessionTimerSyncPayload(0));
 
-                long currentTime = Minecraft.getInstance().level.getGameTime();
+                    seerPlayer.setData(ModDataAttachments.POSSESSER_ENTITY,seerPlayer.getUUID());
+                    PacketDistributor.sendToServer(new PossessionEntitySyncPayload(seerPlayer.getUUID()));
 
-                CooldownAttachment atachment = new CooldownAttachment();
-                atachment.getAllCooldowns().putAll(seerPlayer.getData(ModDataAttachments.COOLDOWN).getAllCooldowns());
-                atachment.setCooldown(ResourceLocation.fromNamespaceAndPath("identitiesmod", "blind_cd"), currentTime, BLIND_COOLDOWN);
-
-                seerPlayer.setData(ModDataAttachments.COOLDOWN, atachment);
-                PacketDistributor.sendToServer(new CooldownSyncPayload(new Cooldown(currentTime, BLIND_COOLDOWN), ResourceLocation.fromNamespaceAndPath("identitiesmod", "blind_cd"), false));
-                BLIND_COOLDOWN_ICON.setCooldown(new Cooldown(currentTime, BLIND_COOLDOWN));
+                    long currentTime = Minecraft.getInstance().level.getGameTime();
+                    CooldownUtil.SetCooldown(seerPlayer,"possession_cd",currentTime,POSSESSION_CD);
+                    POSSESSION_ICON.setCooldown(new Cooldown(currentTime,POSSESSION_CD));
+                }
             }
             //X-Ray
             if(UTILITY_MAPPING.get().consumeClick()){
@@ -93,6 +96,10 @@ public class ClientSeerEvents {
             }
 
             if(scanEnabled){scan();}
+        }
+        //POSSESSED PLAYERS
+        else if(seerPlayer.getData(ModDataAttachments.POSSESSION_TIMER) > -1){
+            PlayerSuppression.shutDown(Minecraft.getInstance());
         }
     }
     //X-Ray Classes
@@ -142,8 +149,7 @@ public class ClientSeerEvents {
         );
 
         for (BlockPos pos : BlockPos.betweenClosed(min, max)) {
-            if (level.hasChunkAt(pos)
-                    && level.getBlockState(pos).is(Tags.Blocks.ORES)) {
+            if (level.getBlockState(pos).is(Tags.Blocks.ORES) || level.getBlockState(pos).is(Blocks.ANCIENT_DEBRIS)) {
                 ORES.add(pos.immutable());
             }
         }
@@ -204,6 +210,7 @@ public class ClientSeerEvents {
         if (state.is(BlockTags.COAL_ORES)) return 0x000000;
         if (state.is(BlockTags.GOLD_ORES)) return 0xFFD700;
         if (state.is(BlockTags.LAPIS_ORES)) return 0x2450FF;
+        if (state.is(Blocks.ANCIENT_DEBRIS)) return 0xFF8800;
 
         return 0xAA66FF; // Other ores, including unhandled modded ores.
     }
@@ -236,8 +243,6 @@ public class ClientSeerEvents {
                 .setColor(red, green, blue, 255);
     }
 
-    //Enchantment Classes
-
     @SubscribeEvent
     public static void onRenderOverlay(RenderGuiEvent.Post event) {
         if(!Minecraft.getInstance().player.getData(ModDataAttachments.POWER_TYPE).equals("Seer"))
@@ -248,6 +253,22 @@ public class ClientSeerEvents {
         long gameTime = Minecraft.getInstance().level.getGameTime();
         GuiGraphics graphics = event.getGuiGraphics();
 
-        BLIND_COOLDOWN_ICON.render(graphics,gameTime);
     }
+    //Possessed events
+    @SubscribeEvent
+    public static void onInteraction(InputEvent.InteractionKeyMappingTriggered event){
+        Player player = Minecraft.getInstance().player;
+        if(player.getData(ModDataAttachments.POSSESSION_TIMER) > -1){
+            event.setSwingHand(false);
+            event.setCanceled(true);
+        }
+    }
+    @SubscribeEvent
+    public static void onScroll(InputEvent.MouseScrollingEvent event){
+        Player player = Minecraft.getInstance().player;
+        if(player.getData(ModDataAttachments.POSSESSION_TIMER) > -1){
+            event.setCanceled(true);
+        }
+    }
+
 }

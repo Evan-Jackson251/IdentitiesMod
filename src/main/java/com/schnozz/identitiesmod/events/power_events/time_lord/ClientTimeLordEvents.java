@@ -13,6 +13,7 @@ import com.schnozz.identitiesmod.networking.payloads.sync_payloads.TimeStopSyncP
 import com.schnozz.identitiesmod.icons.CooldownIcon;
 import com.schnozz.identitiesmod.sounds.ModSounds;
 import com.schnozz.identitiesmod.util.EntitySnapshot;
+import com.schnozz.identitiesmod.util.PlayerSuppression;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
@@ -21,11 +22,13 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -138,6 +141,9 @@ public class ClientTimeLordEvents {
                 }
             }
         }
+        else if(timeCounter > 0){
+            PlayerSuppression.shutDown(Minecraft.getInstance());
+        }
         if(grayscaleEffect == null && timeCounter > 0){
             mc.gameRenderer.loadEffect(GRAYSCALE_SHADER);
             grayscaleEffect = mc.gameRenderer.currentEffect();
@@ -161,5 +167,21 @@ public class ClientTimeLordEvents {
         TIME_STOP_COOLDOWN_ICON.render(graphics, gameTime);
         SNAPSHOT_COOLDOWN_ICON.render(graphics, gameTime);
         REWIND_COOLDOWN_ICON.render(graphics, gameTime);
+    }
+    //Time stopped events
+    @SubscribeEvent
+    public static void onInteraction(InputEvent.InteractionKeyMappingTriggered event){
+        Player player = Minecraft.getInstance().player;
+        if(!player.getData(ModDataAttachments.POWER_TYPE).equals("Time Lord") && timeCounter > 0){
+            event.setSwingHand(false);
+            event.setCanceled(true);
+        }
+    }
+    @SubscribeEvent
+    public static void onScroll(InputEvent.MouseScrollingEvent event){
+        Player player = Minecraft.getInstance().player;
+        if(!player.getData(ModDataAttachments.POWER_TYPE).equals("Time Lord") && timeCounter > 0){
+            event.setCanceled(true);
+        }
     }
 }

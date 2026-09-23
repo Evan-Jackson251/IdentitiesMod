@@ -48,12 +48,12 @@ public class DragonEntity extends Animal {
     public static AttributeSupplier.Builder createAttributes()
     {
         return Animal.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH,50F)
+                .add(Attributes.MAX_HEALTH,60F)
                 .add(Attributes.MOVEMENT_SPEED,1F)
                 .add(Attributes.ATTACK_DAMAGE,8F)
                 .add(Attributes.FOLLOW_RANGE)
                 .add(Attributes.ARMOR,20F)
-                .add(Attributes.ARMOR_TOUGHNESS,10F)
+                .add(Attributes.ARMOR_TOUGHNESS,12F)
                 .add(Attributes.STEP_HEIGHT,3F)
                 .add(Attributes.BURNING_TIME,0F)
                 .add(Attributes.KNOCKBACK_RESISTANCE,1F);
@@ -196,22 +196,6 @@ public class DragonEntity extends Animal {
         super.removePassenger(passenger);
         this.kill();
     }
-    //debuff player on death
-//    @Override
-//    public void die(DamageSource source)
-//    {
-//        if(!this.getPassengers().isEmpty())
-//        {
-//            for(Entity entity: this.getPassengers()){
-//                if(entity instanceof Player dragonPlayer && dragonPlayer.getData(ModDataAttachments.POWER_TYPE).equals("Dragon"))
-//                {
-//                    PacketDistributor.sendToServer(new PotionLevelPayload(MobEffects.MOVEMENT_SLOWDOWN,0,18000));
-//                    PacketDistributor.sendToServer(new PotionLevelPayload(MobEffects.WEAKNESS,0,18000));
-//                }
-//            }
-//        }
-//        super.die(source);
-//    }
 
     @Override
     public void tick() {
