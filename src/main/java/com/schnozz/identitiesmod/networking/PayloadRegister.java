@@ -18,6 +18,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -274,22 +275,12 @@ public class PayloadRegister {
         );
 
         registrar.playToServer(
-                EmeraldGolemSpawnPayload.TYPE,
-                EmeraldGolemSpawnPayload.STREAM_CODEC,
+                SwingPayload.TYPE,
+                SwingPayload.STREAM_CODEC,
                 (payload, context) -> {
-                    ServerLevel level = (ServerLevel)context.player().level();
-                    ServerPlayer golemPlayer = (ServerPlayer) level.getEntity(payload.userID());
-                    if (golemPlayer == null) return;
-
-//                    EmeraldGolemEntity golem = ModEntities.EMERLAD_GOLEM.get().create(level);
-//                    golem.moveTo(
-//                            golemPlayer.getX(),
-//                            golemPlayer.getY(),
-//                            golemPlayer.getZ(),
-//                            golemPlayer.getYRot(),
-//                            golemPlayer.getXRot()
-//                    );
-//                    level.addFreshEntity(golem);
+                    Player possessed = context.player().level().getPlayerByUUID(payload.possessed());
+                    assert possessed != null;
+                    possessed.swing(InteractionHand.MAIN_HAND, true);
                 }
         );
 

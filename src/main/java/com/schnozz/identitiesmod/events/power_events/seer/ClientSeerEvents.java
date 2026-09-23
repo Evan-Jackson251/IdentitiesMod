@@ -7,6 +7,7 @@ import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.cooldown.Cooldown;
 import com.schnozz.identitiesmod.cooldown.CooldownUtil;
 import com.schnozz.identitiesmod.icons.CooldownIcon;
+import com.schnozz.identitiesmod.networking.payloads.SwingPayload;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.PossessionEntitySyncPayload;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.PossessionTimerSyncPayload;
 import com.schnozz.identitiesmod.screen.SeerScreen;
@@ -39,6 +40,8 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Matrix4f;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+
 import static com.schnozz.identitiesmod.keymapping.ModMappings.*;
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
@@ -257,10 +260,33 @@ public class ClientSeerEvents {
     //Possessed events
     @SubscribeEvent
     public static void onInteraction(InputEvent.InteractionKeyMappingTriggered event){
-        Player player = Minecraft.getInstance().player;
+        Minecraft mc = Minecraft.getInstance();
+        if(mc.player == null || mc.level == null){return;}
+
+        Player player = mc.player;
+        //supress possessed attacks
         if(player.getData(ModDataAttachments.POSSESSION_TIMER) > -1){
             event.setSwingHand(false);
             event.setCanceled(true);
+        }
+        //attack when possessor clicks
+        else if(event.isAttack()){
+            for (Player possessed : mc.level.players()) {
+                if (possessed == mc.player
+                        || possessed.getData(ModDataAttachments.POSSESSION_TIMER) <= -1) {
+                    continue;
+                }
+
+                UUID possessorId = possessed.getData(ModDataAttachments.POSSESSER_ENTITY);
+
+                if (mc.player.getUUID().equals(possessorId)) {
+                    event.setCanceled(true);
+                    event.setSwingHand(false);
+
+                    PacketDistributor.sendToServer(new SwingPayload(possessed.getUUID()));
+                    return;
+                }
+            }
         }
     }
     @SubscribeEvent
