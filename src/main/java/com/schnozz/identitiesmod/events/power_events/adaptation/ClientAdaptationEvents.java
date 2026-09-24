@@ -3,6 +3,7 @@ package com.schnozz.identitiesmod.events.power_events.adaptation;
 import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.cooldown.Cooldown;
+import com.schnozz.identitiesmod.cooldown.CooldownUtil;
 import com.schnozz.identitiesmod.networking.payloads.SoundPayload;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.AdaptationSyncPayload;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.CooldownSyncPayload;
@@ -23,7 +24,7 @@ import static com.schnozz.identitiesmod.keymapping.ModMappings.SPECIAL_MAPPING;
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ClientAdaptationEvents {
-    private static final CooldownIcon switchIcon = new CooldownIcon(128,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/adaptation_icon.png"));
+    private static final CooldownIcon switchIcon = new CooldownIcon(0,0,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/adaptation_icon.png"));
     private static final int SWITCH_CD = 3000;
     private static int switchTimer = 0;
 
@@ -63,12 +64,8 @@ public class ClientAdaptationEvents {
         {
             return;
         }
+        switchIcon.setPosition(CooldownUtil.getCooldownX(1),CooldownUtil.getCooldownY());
         switchIcon.render(event.getGuiGraphics(),Minecraft.getInstance().level.getGameTime());
-        //DIAMOND_SWORD_BAR.render(event.getGuiGraphics());
-        //FLAME_BAR.render(event.getGuiGraphics());
-        //POTION_BAR.render(event.getGuiGraphics());
-        //EXPLOSION_BAR.render(event.getGuiGraphics());
-        //ARROW_BAR.render(event.getGuiGraphics());
     }
 
     public static void switchAdaptation(Player adaptationPlayer)

@@ -4,6 +4,7 @@ import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.cooldown.Cooldown;
 import com.schnozz.identitiesmod.cooldown.CooldownAttachment;
+import com.schnozz.identitiesmod.cooldown.CooldownUtil;
 import com.schnozz.identitiesmod.networking.payloads.PotionLevelPayload;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.CooldownSyncPayload;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.SpeedsterLightningSync;
@@ -36,9 +37,9 @@ public class ClientSpeedsterEvents {
     //countdown variable for water walking
     private static boolean walkOn = false;
     //cd final variables
-    private static CooldownIcon LIGHTNING_STATE_ICON = new CooldownIcon(128,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/lightning_icon.png"));
+    private static CooldownIcon LIGHTNING_STATE_ICON = new CooldownIcon(0,0,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/lightning_icon.png"));
     private static final int LIGHTNING_STATE_CD = 600;
-    private static CooldownIcon WATER_ICON = new CooldownIcon(108,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/water_icon.png"));
+    private static CooldownIcon WATER_ICON = new CooldownIcon(0,0,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/water_icon.png"));
 
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
@@ -146,6 +147,9 @@ public class ClientSpeedsterEvents {
         }
         long gameTime = Minecraft.getInstance().level.getGameTime();
         GuiGraphics graphics = event.getGuiGraphics();
+
+        LIGHTNING_STATE_ICON.setPosition(CooldownUtil.getCooldownX(1),CooldownUtil.getCooldownY());
+        WATER_ICON.setPosition(CooldownUtil.getCooldownX(2),CooldownUtil.getCooldownY());
 
         LIGHTNING_STATE_ICON.render(graphics, gameTime);
         WATER_ICON.render(graphics,gameTime);
