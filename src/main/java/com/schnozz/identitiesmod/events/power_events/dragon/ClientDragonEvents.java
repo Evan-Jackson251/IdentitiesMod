@@ -4,6 +4,7 @@ import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.cooldown.Cooldown;
 import com.schnozz.identitiesmod.cooldown.CooldownAttachment;
+import com.schnozz.identitiesmod.cooldown.CooldownUtil;
 import com.schnozz.identitiesmod.entities.custom_entities.DragonEntity;
 import com.schnozz.identitiesmod.icons.ChargeIcon;
 import com.schnozz.identitiesmod.icons.CooldownIcon;
@@ -36,8 +37,8 @@ public class ClientDragonEvents {
     //cooldown variables
     private static final int BITE_ATTACK_CD = 40;
     private static final int SHIFT_CD = 500;//18000
-    private static final CooldownIcon SHIFT_ICON = new CooldownIcon(128, 272, 19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/dragon_head_icon.png"));
-    private static final CooldownIcon BITE_ICON = new CooldownIcon(128, 272, 19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/bite_icon.png"));
+    private static final CooldownIcon SHIFT_ICON = new CooldownIcon(0,0, 19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/dragon_head_icon.png"));
+    private static final CooldownIcon BITE_ICON = new CooldownIcon(0,0, 19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/bite_icon.png"));
     private static final ChargeIcon BREATH_ICON = new ChargeIcon(332, 259, 32, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/soul_flame_icon.png"), 0);
 
     //logic variables
@@ -166,10 +167,12 @@ public class ClientDragonEvents {
         GuiGraphics graphics = event.getGuiGraphics();
 
         if(p.getVehicle() instanceof DragonEntity){
+            BITE_ICON.setPosition(CooldownUtil.getCooldownX(1),CooldownUtil.getCooldownY());
             BITE_ICON.render(graphics, gameTime);
             BREATH_ICON.render(graphics);
         }
         else{
+            SHIFT_ICON.setPosition(CooldownUtil.getCooldownX(1),CooldownUtil.getCooldownY());
             SHIFT_ICON.render(graphics, gameTime);
         }
     }

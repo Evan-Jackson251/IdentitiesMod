@@ -55,9 +55,9 @@ Gravity power plan:
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ClientGravityEvents {
     //cooldown icons
-    private static final CooldownIcon CYCLONE_COOLDOWN_ICON = new CooldownIcon(88,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/cyclone.png"));
-    private static final CooldownIcon DRIPSTONE_COOLDOWN_ICON = new CooldownIcon(108,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/dripstone.png"));
-    private static final CooldownIcon ARROW_COOLDOWN_ICON = new CooldownIcon(128,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/arrow_icon.png"));
+    private static final CooldownIcon CYCLONE_COOLDOWN_ICON = new CooldownIcon(0,0,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/cyclone.png"));
+    private static final CooldownIcon DRIPSTONE_COOLDOWN_ICON = new CooldownIcon(0,0,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/dripstone.png"));
+    private static final CooldownIcon ARROW_COOLDOWN_ICON = new CooldownIcon(0,0,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/arrow_icon.png"));
     private static final ChargeIcon CHARGE_ICON = new ChargeIcon(332,259,32,ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/black_hole_icon.png"),0);
 
     //final cooldown values
@@ -277,9 +277,15 @@ public class ClientGravityEvents {
 
         long gameTime = Minecraft.getInstance().level.getGameTime();
         GuiGraphics graphics = event.getGuiGraphics();
+
+        CYCLONE_COOLDOWN_ICON.setPosition(CooldownUtil.getCooldownX(1),CooldownUtil.getCooldownY());
+        DRIPSTONE_COOLDOWN_ICON.setPosition(CooldownUtil.getCooldownX(2),CooldownUtil.getCooldownY());
+        ARROW_COOLDOWN_ICON.setPosition(CooldownUtil.getCooldownX(3),CooldownUtil.getCooldownY());
+
         CYCLONE_COOLDOWN_ICON.render(graphics, gameTime);
         DRIPSTONE_COOLDOWN_ICON.render(graphics, gameTime);
         ARROW_COOLDOWN_ICON.render(graphics, gameTime);
+
         CHARGE_ICON.render(graphics);
 
         System.out.println("SCREEN SIZE: "); //screen size to find relative x and y

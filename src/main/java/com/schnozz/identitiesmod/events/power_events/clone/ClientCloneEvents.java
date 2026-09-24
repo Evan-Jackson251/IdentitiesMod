@@ -4,6 +4,7 @@ import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.cooldown.Cooldown;
 import com.schnozz.identitiesmod.cooldown.CooldownAttachment;
+import com.schnozz.identitiesmod.cooldown.CooldownUtil;
 import com.schnozz.identitiesmod.networking.payloads.CloneCommandPayload;
 import com.schnozz.identitiesmod.networking.payloads.ClonePayload;
 import com.schnozz.identitiesmod.networking.payloads.SoundPayload;
@@ -29,7 +30,7 @@ import static com.schnozz.identitiesmod.keymapping.ModMappings.*;
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ClientCloneEvents {
-    private static final CooldownIcon CLONE_COOLDOWN_ICON = new CooldownIcon(128,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/clone_icon.png"));
+    private static final CooldownIcon CLONE_COOLDOWN_ICON = new CooldownIcon(0,0,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/clone_icon.png"));
     private static final int CLONE_COOLDOWN = 500;
     private static int cloneLimit = 2;
     @SubscribeEvent
@@ -139,6 +140,8 @@ public class ClientCloneEvents {
 
         long gameTime = Minecraft.getInstance().level.getGameTime();
         GuiGraphics graphics = event.getGuiGraphics();
+
+        CLONE_COOLDOWN_ICON.setPosition(CooldownUtil.getCooldownX(1),CooldownUtil.getCooldownY());
         CLONE_COOLDOWN_ICON.render(graphics, gameTime);
     }
 

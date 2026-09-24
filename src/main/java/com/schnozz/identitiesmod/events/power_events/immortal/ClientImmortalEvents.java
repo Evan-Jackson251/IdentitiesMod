@@ -2,6 +2,7 @@ package com.schnozz.identitiesmod.events.power_events.immortal;
 
 import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
+import com.schnozz.identitiesmod.cooldown.CooldownUtil;
 import com.schnozz.identitiesmod.icons.CooldownIcon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -17,7 +18,7 @@ import net.neoforged.neoforge.client.event.RenderGuiEvent;
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ClientImmortalEvents {
-    private static CooldownIcon Immortal_Icon = new CooldownIcon(128,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/totem_icon.png"));
+    private static CooldownIcon Immortal_Icon = new CooldownIcon(0,0,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/totem_icon.png"));
 
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
@@ -53,6 +54,7 @@ public class ClientImmortalEvents {
         long gameTime = Minecraft.getInstance().level.getGameTime();
         GuiGraphics graphics = event.getGuiGraphics();
 
+        Immortal_Icon.setPosition(CooldownUtil.getCooldownX(1),CooldownUtil.getCooldownY());
         Immortal_Icon.render(graphics,gameTime);
     }
 }

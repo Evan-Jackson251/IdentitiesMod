@@ -4,6 +4,7 @@ import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.cooldown.Cooldown;
 import com.schnozz.identitiesmod.cooldown.CooldownAttachment;
+import com.schnozz.identitiesmod.cooldown.CooldownUtil;
 import com.schnozz.identitiesmod.damage_sources.ModDamageTypes;
 import com.schnozz.identitiesmod.networking.payloads.EntityDamagePayload;
 import com.schnozz.identitiesmod.networking.payloads.SoundPayload;
@@ -44,9 +45,9 @@ public class ClientTimeLordEvents {
     private static int timeCounter = 0;
 
     //Icon variables
-    private static final CooldownIcon TIME_STOP_COOLDOWN_ICON = new CooldownIcon(128,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/clock_icon.png"));
-    private static CooldownIcon SNAPSHOT_COOLDOWN_ICON = new CooldownIcon(88,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/open_chest_icon.png"));
-    private static final CooldownIcon REWIND_COOLDOWN_ICON = new CooldownIcon(108,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/rewind_icon.png"));
+    private static final CooldownIcon TIME_STOP_COOLDOWN_ICON = new CooldownIcon(0,0,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/clock_icon.png"));
+    private static CooldownIcon SNAPSHOT_COOLDOWN_ICON = new CooldownIcon(0,0,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/open_chest_icon.png"));
+    private static final CooldownIcon REWIND_COOLDOWN_ICON = new CooldownIcon(0,0,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/rewind_icon.png"));
 
     //Cooldown variables
     private static final int TIME_STOP_CD = 1200;
@@ -164,6 +165,11 @@ public class ClientTimeLordEvents {
 
         long gameTime = Minecraft.getInstance().level.getGameTime();
         GuiGraphics graphics = event.getGuiGraphics();
+
+        TIME_STOP_COOLDOWN_ICON.setPosition(CooldownUtil.getCooldownX(1),CooldownUtil.getCooldownY());
+        SNAPSHOT_COOLDOWN_ICON.setPosition(CooldownUtil.getCooldownX(2),CooldownUtil.getCooldownY());
+        REWIND_COOLDOWN_ICON.setPosition(CooldownUtil.getCooldownX(3),CooldownUtil.getCooldownY());
+
         TIME_STOP_COOLDOWN_ICON.render(graphics, gameTime);
         SNAPSHOT_COOLDOWN_ICON.render(graphics, gameTime);
         REWIND_COOLDOWN_ICON.render(graphics, gameTime);

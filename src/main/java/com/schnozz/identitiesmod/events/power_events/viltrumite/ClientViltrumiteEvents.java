@@ -1,6 +1,7 @@
 package com.schnozz.identitiesmod.events.power_events.viltrumite;
 
 import com.schnozz.identitiesmod.IdentitiesMod;
+import com.schnozz.identitiesmod.cooldown.CooldownUtil;
 import com.schnozz.identitiesmod.items.BoundingBoxVisualizer;
 import com.schnozz.identitiesmod.items.ItemRegistry;
 import com.schnozz.identitiesmod.items.item_classes.FastPowerGauntlet;
@@ -120,9 +121,9 @@ public class ClientViltrumiteEvents {
         }
     }
 
-    private static final CooldownIcon cooldownIcon = new CooldownIcon(108,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/viltrumitegrabcd_icon.png"));
-    private static final CooldownIcon DASH_CDICON = new CooldownIcon(128,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/viltrumite_choke_dash_cd_icon.png"));
-    private static final CooldownIcon BLOCK_ICON = new CooldownIcon(88,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/shield_icon.png"));
+    private static final CooldownIcon cooldownIcon = new CooldownIcon(0,0,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/viltrumitegrabcd_icon.png"));
+    private static final CooldownIcon DASH_CDICON = new CooldownIcon(0,0,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/viltrumite_choke_dash_cd_icon.png"));
+    private static final CooldownIcon BLOCK_ICON = new CooldownIcon(0,0,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/shield_icon.png"));
     //fix grab with ridable entities by preventing ride function
     private static boolean findEntity (Player player)
     {
@@ -227,6 +228,11 @@ public class ClientViltrumiteEvents {
 
         long gameTime = Minecraft.getInstance().level.getGameTime();
         GuiGraphics graphics = event.getGuiGraphics();
+
+        cooldownIcon.setPosition(CooldownUtil.getCooldownX(1),CooldownUtil.getCooldownY());
+        DASH_CDICON.setPosition(CooldownUtil.getCooldownX(2),CooldownUtil.getCooldownY());
+        BLOCK_ICON.setPosition(CooldownUtil.getCooldownX(3),CooldownUtil.getCooldownY());
+
         cooldownIcon.render(graphics, gameTime);
         DASH_CDICON.render(graphics, gameTime);
         BLOCK_ICON.render(graphics,gameTime);

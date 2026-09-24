@@ -25,6 +25,11 @@ public class CooldownIcon {
         this.cd = cd;
     }
 
+    public void setPosition(int x, int y){
+        this.x = x;
+        this.y = y;
+    }
+
     public void render(GuiGraphics guiGraphics, long currentTime) {
         if (cd != null && (currentTime - cd.startTime()) < cd.duration()) {
             float percentOfCD = (float) (currentTime - cd.startTime()) / cd.duration();

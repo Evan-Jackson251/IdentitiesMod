@@ -49,7 +49,7 @@ public class ClientSeerEvents {
     //CD finals
     private static final int POSSESSION_CD = 3600;
     //Icon variables
-    private static final CooldownIcon POSSESSION_ICON = new CooldownIcon(128,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/blind_eye_icon.png"));
+    private static final CooldownIcon POSSESSION_ICON = new CooldownIcon(0,0,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/blind_eye_icon.png"));
 
     //X-Ray variables
     private static final int RADIUS = 16;
@@ -256,6 +256,8 @@ public class ClientSeerEvents {
         long gameTime = Minecraft.getInstance().level.getGameTime();
         GuiGraphics graphics = event.getGuiGraphics();
 
+        POSSESSION_ICON.setPosition(CooldownUtil.getCooldownX(1),CooldownUtil.getCooldownY());
+        POSSESSION_ICON.render(graphics,gameTime);
     }
     //Possessed events
     @SubscribeEvent

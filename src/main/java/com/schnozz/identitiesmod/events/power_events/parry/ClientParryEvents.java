@@ -4,6 +4,7 @@ import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.cooldown.Cooldown;
 import com.schnozz.identitiesmod.cooldown.CooldownAttachment;
+import com.schnozz.identitiesmod.cooldown.CooldownUtil;
 import com.schnozz.identitiesmod.networking.payloads.ParryParticlePayload;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.CooldownSyncPayload;
 import com.schnozz.identitiesmod.icons.CooldownIcon;
@@ -45,7 +46,7 @@ public class ClientParryEvents {
         }
     }
 
-    private static final CooldownIcon cooldownIcon = new CooldownIcon(128,272,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/parrycd_icon.png"));
+    private static final CooldownIcon cooldownIcon = new CooldownIcon(0,0,19, ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/parrycd_icon.png"));
 
     private static void parry(long currentTime, LocalPlayer player) {
         CooldownAttachment newAtachment = new CooldownAttachment();
@@ -74,8 +75,9 @@ public class ClientParryEvents {
 
         long gameTime = Minecraft.getInstance().level.getGameTime();
         GuiGraphics graphics = event.getGuiGraphics();
-        cooldownIcon.render(graphics, gameTime);
 
+        cooldownIcon.setPosition(CooldownUtil.getCooldownX(1),CooldownUtil.getCooldownY());
+        cooldownIcon.render(graphics, gameTime);
     }
 
 }
