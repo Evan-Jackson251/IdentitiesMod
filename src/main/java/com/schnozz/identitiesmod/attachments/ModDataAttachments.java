@@ -3,14 +3,15 @@ package com.schnozz.identitiesmod.attachments;
 import com.mojang.serialization.Codec;
 import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.cooldown.CooldownAttachment;
-import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
-import java.util.UUID;
+import java.util.ArrayList;
 import java.util.function.Supplier;
 
 public class ModDataAttachments {
@@ -19,10 +20,6 @@ public class ModDataAttachments {
 
     public static final Supplier<AttachmentType<Integer>> HEALTH_NEEDED = ATTACHMENT_TYPES.register(
             "needed_health", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).copyOnDeath().build()
-    );
-
-    public static final Supplier<AttachmentType<Integer>> POSSESSION_TIMER = ATTACHMENT_TYPES.register(
-            "possession", () -> AttachmentType.builder(() -> -1).serialize(Codec.INT).build()
     );
 
     public static final Supplier<AttachmentType<Integer>> SPEEDSTER_LIGHTNING = ATTACHMENT_TYPES.register(
@@ -48,12 +45,6 @@ public class ModDataAttachments {
     public static final Supplier<AttachmentType<CompoundTag>> ENTITY_HELD = ATTACHMENT_TYPES.register(
             "entity_data",
             () -> AttachmentType.builder(CompoundTag::new) // default = empty tag therefore not null
-                    .build()
-    );
-
-    public static final Supplier<AttachmentType<UUID>> POSSESSER_ENTITY = ATTACHMENT_TYPES.register(
-            "possessor_uuid",
-            () -> AttachmentType.builder(() -> Util.NIL_UUID)
                     .build()
     );
 

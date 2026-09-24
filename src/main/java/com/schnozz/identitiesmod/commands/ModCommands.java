@@ -96,17 +96,6 @@ public class ModCommands {
                 })
         );
 
-        dispatcher.register(Commands.literal("deleteNecromancer")
-                .requires(source -> source.hasPermission(2)) // OP level 2
-                .then(Commands.argument("target", EntityArgument.player())
-                                .executes(context -> {
-                                    ServerPlayer target = EntityArgument.getPlayer(context, "target");
-
-                                    UUIDSavedData savedData = UUIDSavedData.get(target.server);
-                                    savedData.clearUUID();
-
-                                    return Command.SINGLE_SUCCESS;
-                                })));
 
         dispatcher.register(Commands.literal("sethome")
                 .requires(source -> source.hasPermission(0)) // allow all players, or raise for ops

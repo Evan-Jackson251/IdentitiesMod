@@ -15,10 +15,6 @@ public class ModEntities {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
             DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, IdentitiesMod.MODID);
 
-    public static final Supplier<EntityType<ThrownMobHolder>> THROW_MOB_HOLDER =
-            ENTITY_TYPES.register("thrownmobholder", () -> EntityType.Builder.<ThrownMobHolder>of(ThrownMobHolder::new, MobCategory.MISC)
-                    .sized(0.5f, 0.5f).build("thrownmobholder"));
-
     public static final Supplier<EntityType<DragonEntity>> DRAGON =
             ENTITY_TYPES.register("dragon",() -> EntityType.Builder.<DragonEntity>of(DragonEntity::new, MobCategory.MISC)
                     .sized(9f, 6f)//try to make viable for pvp as well

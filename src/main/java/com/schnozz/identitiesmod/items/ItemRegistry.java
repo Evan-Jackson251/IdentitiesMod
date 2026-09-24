@@ -20,18 +20,10 @@ public class ItemRegistry {
 
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(IdentitiesMod.MODID);
 
-    //Necromancer
-    public static final DeferredItem<Item> NECROROD = ITEMS.registerItem(
-            "necrorod",
-            Necrorod::new, // The factory that the properties will be passed into.
-            new Item.Properties().stacksTo(1) // The properties to use.
-    );
-    public static final DeferredItem<Item> MOB_HOLDER = ITEMS.registerItem(
-            "mobholder",
-            MobHolder::new, // The factory that the properties will be passed into.
-            new Item.Properties().stacksTo(1) // The properties to use.
-    );
-
+    public static final DeferredItem<Item> NOMICON = ITEMS.register("nomicon", () ->
+            new Nomicon(
+                    new Item.Properties()
+            ));
 
     public static final DeferredItem<Item> DOG_MUSIC_DISC = ITEMS.register("dog_music_disc", () ->
             new Item(
@@ -48,16 +40,7 @@ public class ItemRegistry {
                             .rarity(Rarity.RARE)
                             .jukeboxPlayable(ModSounds.DEF_CAT_KEY)
             ));
-    public static final DeferredItem<Item> BONE_WHISTLE = ITEMS.registerItem(
-            "bone_whistle",
-            BoneWhistle::new, // The factory that the properties will be passed into.
-            new Item.Properties().stacksTo(1) // The properties to use.
-    );
-    public static final DeferredItem<Item> BONE_SHEARS = ITEMS.registerItem(
-            "bone_shears",
-            BoneShears::new, // The factory that the properties will be passed into.
-            new Item.Properties().stacksTo(1) // The properties to use.
-    );
+
 
     //Kyle
     public static final Supplier<SwordItem> SCYTHE = ITEMS.register("scythe", () -> new Scythe(

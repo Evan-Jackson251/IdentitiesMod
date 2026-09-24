@@ -9,74 +9,189 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class UUIDSavedData extends SavedData {
-    private static final String UUID_LIST_TAG = "UUIDList";  // NBT tag for storing UUIDs
-    private List<UUID> uuidList = new ArrayList<>();
+    private static final String OWNERS_TAG = "Owners";
+    private static final String DATA_NAME = "necromancer_list";
 
-    // Load data from NBT (called when loading saved data)
+    private final Map<UUID, List<UUID>> controlled = new HashMap<>();
+
+    // ---------------------------------------------------------------- load/save
+
     public static UUIDSavedData load(CompoundTag tag, HolderLookup.Provider lookupProvider) {
         UUIDSavedData data = new UUIDSavedData();
 
-        if (tag.contains(UUID_LIST_TAG, Tag.TAG_LIST)) {
-            ListTag listTag = tag.getList(UUID_LIST_TAG, Tag.TAG_STRING);  // List of UUID strings
-            for (int i = 0; i < listTag.size(); i++) {
+        if (!tag.contains(OWNERS_TAG, Tag.TAG_COMPOUND)) {
+            return data;
+        }
+
+        CompoundTag owners = tag.getCompound(OWNERS_TAG);
+        for (String key : owners.getAllKeys()) {
+            UUID owner;
+            try {
+                owner = UUID.fromString(key);
+            } catch (IllegalArgumentException e) {
+                continue; // malformed owner key, skip
+            }
+
+            ListTag mobTags = owners.getList(key, Tag.TAG_STRING);
+            List<UUID> mobs = new ArrayList<>(mobTags.size());
+            for (int i = 0; i < mobTags.size(); i++) {
                 try {
-                    UUID uuid = UUID.fromString(listTag.getString(i));  // Convert the string to UUID
-                    data.uuidList.add(uuid);  // Add UUID to the list
+                    UUID mob = UUID.fromString(mobTags.getString(i));
+                    if (!mobs.contains(mob)) {
+                        mobs.add(mob);
+                    }
                 } catch (IllegalArgumentException e) {
-                    // Handle malformed UUID string (log if needed)
+                    // malformed mob UUID, skip
                 }
+            }
+
+            if (!mobs.isEmpty()) {
+                data.controlled.put(owner, mobs);
             }
         }
 
         return data;
     }
 
-    // Save data to NBT (called when saving data)
     @Override
     public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
-        ListTag listTag = new ListTag();
-        for (UUID uuid : uuidList) {
-            listTag.add(StringTag.valueOf(uuid.toString()));  // Add each UUID as a StringTag to the list
+        CompoundTag owners = new CompoundTag();
+
+        for (Map.Entry<UUID, List<UUID>> entry : controlled.entrySet()) {
+            if (entry.getValue().isEmpty()) {
+                continue; // don't persist empty entries
+            }
+            ListTag mobTags = new ListTag();
+            for (UUID mob : entry.getValue()) {
+                mobTags.add(StringTag.valueOf(mob.toString()));
+            }
+            owners.put(entry.getKey().toString(), mobTags);
         }
-        tag.put(UUID_LIST_TAG, listTag);  // Save the list of UUIDs
+
+        tag.put(OWNERS_TAG, owners);
         return tag;
     }
 
-    // Add a UUID to the list
-    public void addUUID(UUID uuid) {
-        if (!uuidList.contains(uuid)) {
-            uuidList.add(uuid);
-            this.setDirty();  // Mark the data as dirty to trigger saving
+    // ------------------------------------------------------------------ mutators
+
+    /** Associates a mob with an owner. Returns true if something changed. */
+    public boolean addMob(UUID owner, UUID mob) {
+        List<UUID> mobs = controlled.computeIfAbsent(owner, k -> new ArrayList<>());
+        if (mobs.contains(mob)) {
+            return false;
+        }
+        mobs.add(mob);
+        this.setDirty();
+        return true;
+    }
+
+    /** Removes a mob from a specific owner. */
+    public boolean removeMob(UUID owner, UUID mob) {
+        List<UUID> mobs = controlled.get(owner);
+        if (mobs == null || !mobs.remove(mob)) {
+            return false;
+        }
+        if (mobs.isEmpty()) {
+            controlled.remove(owner);
+        }
+        this.setDirty();
+        return true;
+    }
+
+    /** Removes a mob from whoever owns it (useful on mob death). */
+    public boolean removeMob(UUID mob) {
+        boolean changed = false;
+        Iterator<Map.Entry<UUID, List<UUID>>> it = controlled.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<UUID, List<UUID>> entry = it.next();
+            if (entry.getValue().remove(mob)) {
+                changed = true;
+                if (entry.getValue().isEmpty()) {
+                    it.remove();
+                }
+            }
+        }
+        if (changed) {
+            this.setDirty();
+        }
+        return changed;
+    }
+
+    /** Drops every mob belonging to one owner. */
+    public void clearMobs(UUID owner) {
+        if (controlled.remove(owner) != null) {
+            this.setDirty();
         }
     }
 
-    public void clearUUID() {
-        uuidList = new ArrayList<>();
+    /** Drops everything for every owner. */
+    public void clearAll() {
+        if (!controlled.isEmpty()) {
+            controlled.clear();
+            this.setDirty();
+        }
+    }
+
+    /** Replaces an owner's whole list at once. */
+    public void setMobs(UUID owner, List<UUID> mobs) {
+        if (mobs == null || mobs.isEmpty()) {
+            clearMobs(owner);
+            return;
+        }
+        List<UUID> copy = new ArrayList<>();
+        for (UUID mob : mobs) {
+            if (!copy.contains(mob)) {
+                copy.add(mob);
+            }
+        }
+        controlled.put(owner, copy);
         this.setDirty();
     }
 
-    // Remove a UUID from the list
-    public void removeUUID(UUID uuid) {
-        if (uuidList.remove(uuid)) {
-            this.setDirty();  // Mark the data as dirty to trigger saving
+    // ------------------------------------------------------------------ queries
+
+    /** Read-only view; never null. Mutating it won't mark the data dirty, so it's immutable. */
+    public List<UUID> getMobs(UUID owner) {
+        List<UUID> mobs = controlled.get(owner);
+        return mobs == null ? List.of() : Collections.unmodifiableList(mobs);
+    }
+
+    public boolean controls(UUID owner, UUID mob) {
+        List<UUID> mobs = controlled.get(owner);
+        return mobs != null && mobs.contains(mob);
+    }
+
+    public int getMobCount(UUID owner) {
+        List<UUID> mobs = controlled.get(owner);
+        return mobs == null ? 0 : mobs.size();
+    }
+
+    /** Reverse lookup: which player owns this mob, if any. */
+    public Optional<UUID> getOwnerOf(UUID mob) {
+        for (Map.Entry<UUID, List<UUID>> entry : controlled.entrySet()) {
+            if (entry.getValue().contains(mob)) {
+                return Optional.of(entry.getKey());
+            }
         }
+        return Optional.empty();
     }
 
-    // Get the list of stored UUIDs
-    public List<UUID> getUUIDList() {
-        return uuidList;
+    public Set<UUID> getOwners() {
+        return Collections.unmodifiableSet(controlled.keySet());
     }
 
-    // Access saved data from the Overworld (using MinecraftServer)
+    public Map<UUID, List<UUID>> getAll() {
+        return Collections.unmodifiableMap(controlled);
+    }
+
+    // ------------------------------------------------------------------- access
+
     public static UUIDSavedData get(MinecraftServer server) {
-        return server.getLevel(Level.OVERWORLD).getDataStorage().computeIfAbsent(new Factory<>(UUIDSavedData::new, UUIDSavedData::load), "necromancer_list");
+        return server.getLevel(Level.OVERWORLD)
+                .getDataStorage()
+                .computeIfAbsent(new Factory<>(UUIDSavedData::new, UUIDSavedData::load), DATA_NAME);
     }
-
-
-
 }

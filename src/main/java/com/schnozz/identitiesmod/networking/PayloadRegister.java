@@ -13,6 +13,7 @@ import com.schnozz.identitiesmod.networking.payloads.*;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.*;
 import com.schnozz.identitiesmod.networking.payloads.CDPARRYPayload;
 import com.schnozz.identitiesmod.networking.payloads.CDPayload;
+import com.schnozz.identitiesmod.networking.snapshots.NomiconSnapshot;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.server.level.ServerLevel;
@@ -228,6 +229,17 @@ public class PayloadRegister {
                     dragonPlayer.startRiding(dragon);
                 }
         );
+
+        registrar.playToClient(NomiconSnapshot.TYPE, NomiconSnapshot.STREAM_CODEC, NomiconSnapshot::handle);
+
+        registrar.playToServer(NomiconActionPayload.TYPE, NomiconActionPayload.STREAM_CODEC,
+                                          NomiconActionPayload::handle);
+
+        registrar.playToServer(NecroSummonPayload.TYPE, NecroSummonPayload.STREAM_CODEC,
+                NecroSummonPayload::handle);
+
+        registrar.playToServer(NecroDespawnPayload.TYPE, NecroDespawnPayload.STREAM_CODEC,
+                NecroDespawnPayload::handle);
 
         registrar.playToServer(
                 BlackHolePayload.TYPE,

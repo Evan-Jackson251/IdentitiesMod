@@ -5,6 +5,7 @@ import com.schnozz.identitiesmod.blocks.BlockRegistry;
 import com.schnozz.identitiesmod.datacomponent.ModDataComponentRegistry;
 import com.schnozz.identitiesmod.entities.ModEntities;
 import com.schnozz.identitiesmod.items.ItemRegistry;
+import com.schnozz.identitiesmod.menu.ModMenus;
 import com.schnozz.identitiesmod.mob_effects.ModEffects;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.sounds.ModSounds;
@@ -58,6 +59,7 @@ public class IdentitiesMod
         ItemRegistry.register(modEventBus);
         BlockRegistry.BLOCKS.register(modEventBus);
         BlockEntityRegistry.BLOCK_ENTITIES.register(modEventBus);
+        ModMenus.MENU_TYPES.register(modEventBus);
 
         //effects registers
         ModEffects.register(modEventBus);
@@ -72,9 +74,7 @@ public class IdentitiesMod
     private void addCreative(BuildCreativeModeTabContentsEvent event)
     {
         if (event.getTabKey().equals(CreativeModeTabs.COMBAT)) {
-            event.accept(ItemRegistry.NECROROD.get());
-            event.accept(ItemRegistry.MOB_HOLDER.get());
-            event.accept(ItemRegistry.BONE_WHISTLE.get());
+
         }
     }
 
