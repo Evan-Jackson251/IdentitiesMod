@@ -3,6 +3,8 @@ package com.schnozz.identitiesmod.attachments;
 import com.mojang.serialization.Codec;
 import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.cooldown.CooldownAttachment;
+import com.schnozz.identitiesmod.events.power_events.necromancer.NecromancerTeam;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -12,6 +14,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 public class ModDataAttachments {
@@ -86,6 +89,20 @@ public class ModDataAttachments {
                             .copyOnDeath()
                             .build()
             );
+
+    public static final Supplier<AttachmentType<Integer>> POSSESSION_TIMER = ATTACHMENT_TYPES.register(
+            "possesion", () -> AttachmentType.builder(() -> -1).serialize(Codec.INT).build()
+    );
+
+    public static final Supplier<AttachmentType<UUID>> POSSESSER_ENTITY = ATTACHMENT_TYPES.register(
+            "possessor_uuid", () -> AttachmentType.builder(() -> Util.NIL_UUID).build()
+    );
+
+    public static final Supplier<AttachmentType<NecromancerTeam>> NECROMANCER_TEAM = ATTACHMENT_TYPES.register("necromancer_team",
+            () -> AttachmentType.builder(NecromancerTeam::new)
+                    .serialize(NecromancerTeam.CODEC)
+                    .copyOnDeath()
+                    .build());
 
     public static final Supplier<AttachmentType<PowerRequirementsAttachment>> POWER_REQS =
             ATTACHMENT_TYPES.register("power_requirements", () ->
