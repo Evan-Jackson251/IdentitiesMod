@@ -17,7 +17,7 @@ public class ModEntities {
 
     public static final Supplier<EntityType<DragonEntity>> DRAGON =
             ENTITY_TYPES.register("dragon",() -> EntityType.Builder.<DragonEntity>of(DragonEntity::new, MobCategory.MISC)
-                    .sized(9f, 6f)//try to make viable for pvp as well
+                    .sized(2f, 3f)
                     .fireImmune()
                     .build("dragon"));
 
@@ -35,7 +35,7 @@ public class ModEntities {
                     "black_hole",
                     () -> EntityType.Builder
                             .of(BlackHoleEntity::new, MobCategory.MISC)
-                            .sized(0.5F, 0.5F)
+                            .sized(1F, 1F)
                             .build("black_hole")
             );
 

@@ -31,10 +31,6 @@ public final class ClientSetup {
     @SubscribeEvent
     public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(
-                DragonModel.LAYER_LOCATION,
-                DragonModel::createBodyLayer
-        );
-        event.registerLayerDefinition(
                 EmeraldGolemModel.LAYER_LOCATION,
                 EmeraldGolemModel::createBodyLayer
         );

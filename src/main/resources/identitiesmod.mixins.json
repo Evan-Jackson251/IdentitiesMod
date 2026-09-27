@@ -7,7 +7,9 @@
     "FarmBlockMixin",
     "PlayerRendererMixin",
     "SeedUseMixin",
-    "SeerEnchantmentMixin$EnchantmentMenuInvoker"
+    "SeerEnchantmentMixin$EnchantmentMenuInvoker",
+    "DragonRiderLivingMixin",
+    "DragonRiderPlayerMixin"
   ],
   "client": ["client.EnchantmentScreenMixin"],
   "injectors": {

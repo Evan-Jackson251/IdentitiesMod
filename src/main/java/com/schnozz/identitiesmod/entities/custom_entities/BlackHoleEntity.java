@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 
 public class BlackHoleEntity extends Entity {
@@ -26,18 +27,13 @@ public class BlackHoleEntity extends Entity {
             return;
         }
 
-//        if(tickCount < 40){
-//            this.setInvisible(true);
-//        }else{
-//            this.setInvisible(false);
-//        }
-
         for (Entity target : level().getEntities(
                 this,
                 getBoundingBox(),
                 entity -> entity.isAlive()
+                        && entity instanceof LivingEntity
                         && !entity.isSpectator()
-                        && !(entity instanceof BlackHoleEntity)))
+                        ))
         {
             target.hurt(damageSources().outOfBorder(), DAMAGE);
         }

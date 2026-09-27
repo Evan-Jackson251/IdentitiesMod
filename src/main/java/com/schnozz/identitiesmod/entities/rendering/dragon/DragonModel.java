@@ -1,174 +1,204 @@
 package com.schnozz.identitiesmod.entities.rendering.dragon;
 
-import com.schnozz.identitiesmod.IdentitiesMod;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.schnozz.identitiesmod.entities.custom_entities.DragonEntity;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HierarchicalModel;
-import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.EnderDragonRenderer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
 
 public class DragonModel extends HierarchicalModel<DragonEntity> {
-
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "dragon"), "main");
-
     private final ModelPart root;
-    private final ModelPart body;
+    private final ModelPart vanilla;
     private final ModelPart head;
     private final ModelPart jaw;
     private final ModelPart leftWing;
-    private final ModelPart leftWingTip;
     private final ModelPart rightWing;
-    private final ModelPart rightWingTip;
 
-    private final ModelPart[] neckParts = new ModelPart[5];
-    private final ModelPart[] tailParts = new ModelPart[12];
+    private final ModelPart[] neck = new ModelPart[5];
+    private final ModelPart[] tail = new ModelPart[12];
 
-    public DragonModel(ModelPart root) {
-        this.root = root;
-        this.body = root.getChild("body");
+    public DragonModel(ModelPart bakedVanillaRoot) {
+        super(RenderType::entityCutoutNoCull);
 
-        // Hierarchy Fix: neck_0 is now a child of body
-        ModelPart currentNeck = this.body.getChild("neck_0");
-        this.neckParts[0] = currentNeck;
-        for (int i = 1; i < 5; i++) {
-            currentNeck = currentNeck.getChild("neck_" + i);
-            this.neckParts[i] = currentNeck;
-        }
-
-        this.head = currentNeck.getChild("head");
+        this.vanilla = bakedVanillaRoot;
+        this.head = vanilla.getChild("head");
         this.jaw = head.getChild("jaw");
+        this.leftWing = vanilla.getChild("left_wing");
+        this.rightWing = vanilla.getChild("right_wing");
 
-        this.leftWing = body.getChild("left_wing");
-        this.leftWingTip = leftWing.getChild("left_wing_tip");
-        this.rightWing = body.getChild("right_wing");
-        this.rightWingTip = rightWing.getChild("right_wing_tip");
+        // The vanilla dragon reuses one mesh for every neck/tail segment.
+        // Create independently posed copies for this hierarchical model.
+        vanilla.getChild("neck").visible = false;
 
-        ModelPart currentTail = body.getChild("tail_0");
-        this.tailParts[0] = currentTail;
-        for (int i = 1; i < 12; i++) {
-            currentTail = currentTail.getChild("tail_" + i);
-            this.tailParts[i] = currentTail;
-        }
-    }
+        Map<String, ModelPart> children = new LinkedHashMap<>();
+        children.put("vanilla", vanilla);
 
-    public static LayerDefinition createBodyLayer() {
-        MeshDefinition mesh = new MeshDefinition();
-        PartDefinition root = mesh.getRoot();
+        LayerDefinition layer = EnderDragonRenderer.createBodyLayer();
 
-        // BODY - Central anchor (24x24x64)
-        PartDefinition body = root.addOrReplaceChild("body",
-                CubeListBuilder.create().texOffs(0, 0).addBox(-12.0F, 0.0F, -16.0F, 24, 24, 64),
-                PartPose.offset(0.0F, 4.0F, 8.0F));
-
-        // BODY SPIKES
-        for (int s = 0; s < 5; s++) {
-            body.addOrReplaceChild("body_spike_" + s,
-                    CubeListBuilder.create().texOffs(0, 0).addBox(-1.0F, -4.0F, -1.0F, 2, 4, 6),
-                    PartPose.offset(0.0F, 0.0F, -10.0F + (s * 12.0F)));
+        for (int i = 0; i < neck.length; i++) {
+            neck[i] = layer.bakeRoot().getChild("neck");
+            children.put("neck_" + i, neck[i]);
         }
 
-        // NECK - Starts at Body Front (-16.0)
-        PartDefinition lastNeck = body.addOrReplaceChild("neck_0",
-                CubeListBuilder.create()
-                        .texOffs(192, 104).addBox(-5.0F, -5.0F, -10.0F, 10, 10, 10)
-                        .texOffs(48, 0).addBox(-1.0F, -9.0F, -7.0F, 2, 4, 6), // Neck Spike
-                PartPose.offset(0.0F, 12.0F, -16.0F));
-
-        for (int i = 1; i < 5; i++) {
-            lastNeck = lastNeck.addOrReplaceChild("neck_" + i,
-                    CubeListBuilder.create()
-                            .texOffs(192, 104).addBox(-5.0F, -5.0F, -10.0F, 10, 10, 10)
-                            .texOffs(48, 0).addBox(-1.0F, -9.0F, -7.0F, 2, 4, 6), // Neck Spike
-                    PartPose.offset(0.0F, 0.0F, -10.0F));
+        for (int i = 0; i < tail.length; i++) {
+            tail[i] = layer.bakeRoot().getChild("neck");
+            children.put("tail_" + i, tail[i]);
         }
 
-        // HEAD
-        PartDefinition head = lastNeck.addOrReplaceChild("head",
-                CubeListBuilder.create()
-                        .texOffs(112, 30).addBox(-8.0F, -8.0F, -10.0F, 16, 16, 16)
-                        .texOffs(176, 44).addBox(-6.0F, -1.0F, -24.0F, 12, 5, 16)
-                        .texOffs(0, 0).addBox(-5.0F, -12.0F, -4.0F, 2, 4, 6)
-                        .texOffs(0, 0).mirror().addBox(3.0F, -12.0F, -4.0F, 2, 4, 6),
-                PartPose.offset(0.0F, 0.0F, -10.0F));
-
-        head.addOrReplaceChild("jaw",
-                CubeListBuilder.create().texOffs(176, 65).addBox(-6.0F, 0.0F, -16.0F, 12, 4, 16),
-                PartPose.offset(0.0F, 4.0F, -8.0F));
-
-        // WINGS
-        PartDefinition leftWing = body.addOrReplaceChild("left_wing",
-                CubeListBuilder.create()
-                        .texOffs(112, 88).addBox(0.0F, -4.0F, -4.0F, 56, 8, 32)
-                        .texOffs(0, 154).addBox(0.0F, 0.0F, -4.0F, 56, 0, 32),
-                PartPose.offset(12.0F, 4.0F, 2.0F));
-
-        leftWing.addOrReplaceChild("left_wing_tip",
-                CubeListBuilder.create()
-                        .texOffs(112, 0).addBox(0.0F, -2.0F, 0.0F, 56, 4, 32)
-                        .texOffs(0, 154).addBox(0.0F, 0.0F, 0.0F, 56, 0, 32),
-                PartPose.offset(56.0F, 0.0F, 0.0F));
-
-        PartDefinition rightWing = body.addOrReplaceChild("right_wing",
-                CubeListBuilder.create()
-                        .texOffs(112, 88).mirror().addBox(-56.0F, -4.0F, -4.0F, 56, 8, 32)
-                        .texOffs(0, 154).mirror().addBox(-56.0F, 0.0F, -4.0F, 56, 0, 32),
-                PartPose.offset(-12.0F, 4.0F, 2.0F));
-
-        rightWing.addOrReplaceChild("right_wing_tip",
-                CubeListBuilder.create()
-                        .texOffs(112, 0).mirror().addBox(-56.0F, -2.0F, 0.0F, 56, 4, 32)
-                        .texOffs(0, 154).mirror().addBox(-56.0F, 0.0F, 0.0F, 56, 0, 32),
-                PartPose.offset(-56.0F, 0.0F, 0.0F));
-
-        // TAIL - Starts at Body Back (48.0)
-        PartDefinition lastTail = body.addOrReplaceChild("tail_0",
-                CubeListBuilder.create()
-                        .texOffs(192, 104).addBox(-5.0F, -5.0F, 0.0F, 10, 10, 10)
-                        .texOffs(48, 0).addBox(-1.0F, -9.0F, 2.0F, 2, 4, 6), // Tail Spike
-                PartPose.offset(0.0F, 10.0F, 48.0F));
-
-        for (int i = 1; i < 12; i++) {
-            lastTail = lastTail.addOrReplaceChild("tail_" + i,
-                    CubeListBuilder.create()
-                            .texOffs(192, 104).addBox(-5.0F, -5.0F, 0.0F, 10, 10, 10)
-                            .texOffs(48, 0).addBox(-1.0F, -9.0F, 2.0F, 2, 4, 6), // Tail Spike
-                    PartPose.offset(0.0F, 0.0F, 10.0F));
-        }
-
-        return LayerDefinition.create(mesh, 256, 256);
-    }
-
-    @Override
-    public void setupAnim(DragonEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        float flap = ageInTicks * 0.2F;
-
-        // Wing animation
-        this.leftWing.zRot = (Mth.sin(flap) + 0.5F) * 0.8F;
-        this.leftWingTip.zRot = (Mth.sin(flap - 0.5F) + 0.5F) * 0.7F;
-        this.rightWing.zRot = -this.leftWing.zRot;
-        this.rightWingTip.zRot = -this.leftWingTip.zRot;
-
-        // Neck swaying
-        for (int i = 0; i < neckParts.length; i++) {
-            neckParts[i].yRot = Mth.cos(ageInTicks * 0.15F + (i * 0.4F)) * 0.05F;
-            neckParts[i].xRot = (headPitch * (Mth.PI / 180F)) / neckParts.length;
-        }
-
-        this.head.yRot = netHeadYaw * (Mth.PI / 180F);
-        this.jaw.xRot = (Mth.sin(ageInTicks * 0.1F) + 1.0F) * 0.2F;
-
-        // Tail swaying
-        for (int i = 0; i < tailParts.length; i++) {
-            tailParts[i].yRot = Mth.sin(ageInTicks * 0.1F + (i * 0.2F)) * 0.1F;
-        }
+        this.root = new ModelPart(List.of(), children);
     }
 
     @Override
     public ModelPart root() {
         return root;
+    }
+
+    @Override
+    public void setupAnim(
+            DragonEntity entity,
+            float limbSwing,
+            float limbSwingAmount,
+            float ageInTicks,
+            float netHeadYaw,
+            float headPitch
+    ) {
+        root.getAllParts().forEach(ModelPart::resetPose);
+
+        float phase = entity.shouldAnimateFlight()
+                ? ageInTicks * 0.2F
+                : 0.0F;
+        float wave = Mth.sin(phase);
+
+        // Jaw
+        jaw.xRot = (wave + 1.0F) * 0.2F;
+
+        // Wings
+        leftWing.xRot = 0.125F - Mth.cos(phase) * 0.2F;
+        leftWing.yRot = -0.25F;
+        leftWing.zRot = -(wave + 0.125F) * 0.8F;
+
+        leftWing.getChild("left_wing_tip").zRot =
+                (Mth.sin(phase + 2.0F) + 0.5F) * 0.75F;
+
+        rightWing.xRot = leftWing.xRot;
+        rightWing.yRot = -leftWing.yRot;
+        rightWing.zRot = -leftWing.zRot;
+
+        rightWing.getChild("right_wing_tip").zRot =
+                -leftWing.getChild("left_wing_tip").zRot;
+
+        // Folded flight pose
+        poseLeg("left", "front", 1.3F, -0.5F, 0.75F);
+        poseLeg("right", "front", 1.3F, -0.5F, 0.75F);
+        poseLeg("left", "hind", 1.0F, 0.5F, 0.75F);
+        poseLeg("right", "hind", 1.0F, 0.5F, 0.75F);
+
+        // Neck
+        boolean riddenByPlayer =
+                entity.getControllingPassenger() instanceof Player;
+
+        float x = 0.0F;
+        float y = 20.0F;
+        float z = -12.0F;
+
+        float yaw = riddenByPlayer
+                ? 0.0F
+                : Mth.clamp(netHeadYaw, -60.0F, 60.0F) * Mth.DEG_TO_RAD;
+
+        float pitch = Mth.clamp(
+                headPitch,
+                -85.0F,
+                85.0F
+        ) * Mth.DEG_TO_RAD;
+
+        for (int i = 0; i < neck.length; i++) {
+            ModelPart segment = neck[i];
+
+            segment.setPos(x, y, z);
+
+            if (riddenByPlayer) {
+                // Stable neck: no idle motion pulling the head away from the camera.
+                segment.yRot = 0.0F;
+                segment.xRot = 0.0F;
+                segment.zRot = 0.0F;
+            } else {
+                segment.yRot = yaw * (i + 1.0F) / neck.length;
+                segment.xRot =
+                        pitch + Mth.cos(phase + i * 0.45F) * 0.15F;
+            }
+
+            x -= Mth.sin(segment.yRot)
+                    * Mth.cos(segment.xRot) * 10.0F;
+
+            y += Mth.sin(segment.xRot) * 10.0F;
+
+            z -= Mth.cos(segment.yRot)
+                    * Mth.cos(segment.xRot) * 10.0F;
+        }
+
+        head.setPos(x, y, z);
+        head.yRot = yaw;
+        head.xRot = pitch;
+        head.zRot = 0.0F;
+
+        // Tail
+        x = 0.0F;
+        y = 10.0F;
+        z = 60.0F;
+
+        float tailPitch = 0.0F;
+
+        for (int i = 0; i < tail.length; i++) {
+            ModelPart segment = tail[i];
+
+            segment.setPos(x, y, z);
+
+            tailPitch += Mth.sin(phase + i * 0.45F) * 0.05F;
+            segment.xRot = tailPitch;
+            segment.yRot = Mth.PI;
+
+            y += Mth.sin(tailPitch) * 10.0F;
+            z += Mth.cos(tailPitch) * 10.0F;
+        }
+
+        Minecraft minecraft = Minecraft.getInstance();
+
+        boolean hideHeadForRider =
+                minecraft.player != null
+                        && minecraft.getCameraEntity() == minecraft.player
+                        && minecraft.options.getCameraType().isFirstPerson()
+                        && entity.getControllingPassenger() == minecraft.player;
+
+// Hiding the head also hides its child jaw and the eye-layer geometry.
+        head.visible = !hideHeadForRider;
+
+        for (ModelPart segment : neck) {
+            segment.visible = !hideHeadForRider;
+        }
+    }
+
+    private void poseLeg(
+            String side,
+            String position,
+            float upperAngle,
+            float lowerAngle,
+            float footAngle
+    ) {
+        String prefix = side + "_" + position;
+
+        ModelPart leg = vanilla.getChild(prefix + "_leg");
+        ModelPart tip = leg.getChild(prefix + "_leg_tip");
+
+        leg.xRot = upperAngle;
+        tip.xRot = lowerAngle;
+        tip.getChild(prefix + "_foot").xRot = footAngle;
     }
 }

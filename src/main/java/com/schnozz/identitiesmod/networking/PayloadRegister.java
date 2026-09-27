@@ -302,6 +302,21 @@ public class PayloadRegister {
                 ServerVelocityHandler::handle
         );
         registrar.playToServer(
+                SetFirePayload.TYPE,
+                SetFirePayload.STREAM_CODEC,
+                ServerSetFireHandler::handle
+        );
+        registrar.playToServer(
+                ExplosionPayload.TYPE,
+                ExplosionPayload.STREAM_CODEC,
+                ServerExplosionHandler::handle
+        );
+        registrar.playToServer(
+                HealPayload.TYPE,
+                HealPayload.STREAM_CODEC,
+                ServerHealHandler::handle
+        );
+        registrar.playToServer(
                 CloneCommandPayload.TYPE,
                 CloneCommandPayload.STREAM_CODEC,
                 ServerCloneCommandHandler::handle

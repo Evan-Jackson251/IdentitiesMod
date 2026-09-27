@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 public class CooldownIcon {
 
     private ResourceLocation texture;
+    private ResourceLocation backTexture = ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/green_back.png");
     private int x;
     private int y;
     private int size;
@@ -19,6 +20,14 @@ public class CooldownIcon {
         this.y = y;
         this.size = size;
         this.texture = texture;
+    }
+    public CooldownIcon(int x, int y, int size, ResourceLocation texture,ResourceLocation backTexture) {
+
+        this.x = x;
+        this.y = y;
+        this.size = size;
+        this.texture = texture;
+        this.backTexture = backTexture;
     }
 
     public void setCooldown(Cooldown cd) {
@@ -35,7 +44,7 @@ public class CooldownIcon {
             float percentOfCD = (float) (currentTime - cd.startTime()) / cd.duration();
             guiGraphics.blit(texture, x, y, 0, (size * percentOfCD) - size, size, size, size, size * 2);
         } else {
-            guiGraphics.blit(ResourceLocation.fromNamespaceAndPath(IdentitiesMod.MODID, "textures/gui/green_back.png"), x - 1, y - 1, 0, 0, size + 2, size + 2, size + 2, size + 2);
+            guiGraphics.blit(backTexture, x - 1, y - 1, 0, 0, size + 2, size + 2, size + 2, size + 2);
             guiGraphics.blit(texture, x, y, 0, 0, size, size, size, size * 2);
         }
     }

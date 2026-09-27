@@ -8,11 +8,13 @@ import com.schnozz.identitiesmod.networking.payloads.sync_payloads.ChargeSyncPay
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.level.ExplosionEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME)
@@ -39,7 +41,10 @@ public class ServerDragonEvents {
     public static void onLivingDamage(LivingIncomingDamageEvent event) {
         if (event.getSource().getEntity() instanceof DragonEntity dragon) {
             //return if dragon breath is dealing the damage
-            if (event.getSource().is(DamageTypes.IN_FIRE)) return;
+            if (event.getSource().is(DamageTypes.IN_FIRE)
+                            || event.getSource().is(DamageTypes.EXPLOSION)
+                            || event.getSource().is(DamageTypes.PLAYER_EXPLOSION)
+            ) return;
             //increase charge
             for(Entity entity: dragon.getPassengers()){
                 if(entity instanceof ServerPlayer dragonPlayer && dragonPlayer.getData(ModDataAttachments.POWER_TYPE).equals("Dragon"))
@@ -55,6 +60,13 @@ public class ServerDragonEvents {
                     PacketDistributor.sendToPlayer(dragonPlayer, new ChargeSyncPayload(newCharge));
                 }
             }
+        }
+
+    }
+    @SubscribeEvent
+    public static void explosionEvent(ExplosionEvent.Detonate event){
+        if(event.getExplosion().getDirectSourceEntity() instanceof DragonEntity){
+            event.getAffectedEntities().clear();
         }
     }
 }

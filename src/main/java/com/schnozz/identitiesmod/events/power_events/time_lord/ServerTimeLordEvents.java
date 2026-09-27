@@ -69,7 +69,7 @@ public class ServerTimeLordEvents {
             }
             event.setCanceled(true);
         }
-        if(timeStopped && event.getSource().getEntity().getId() != stopperID){
+        if(timeStopped && event.getEntity().getId() == stopperID){
             event.setCanceled(true);
         }
         if(event.getEntity().getData(ModDataAttachments.POWER_TYPE).equals("Time Lord")) {

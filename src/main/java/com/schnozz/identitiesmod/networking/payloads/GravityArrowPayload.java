@@ -16,7 +16,6 @@ public record GravityArrowPayload(int userID) implements CustomPacketPayload {
             GravityArrowPayload::new
     );
 
-
     @Override
     public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
         return TYPE;
