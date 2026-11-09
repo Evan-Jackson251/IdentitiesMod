@@ -122,9 +122,6 @@ public class ClientTimeLordEvents {
                 }
             }
         }
-        else if(timeCounter > 0){
-            PlayerSuppression.shutDown(Minecraft.getInstance());
-        }
         if(grayscaleEffect == null && timeCounter > 0){
             mc.gameRenderer.loadEffect(GRAYSCALE_SHADER);
             grayscaleEffect = mc.gameRenderer.currentEffect();
@@ -136,6 +133,21 @@ public class ClientTimeLordEvents {
             }
         }
     }
+
+    //Stopped player key suppression
+    @SubscribeEvent
+    public static void onClientTickPre(ClientTickEvent.Pre event){
+        LocalPlayer timePlayer = Minecraft.getInstance().player;
+        if (timePlayer == null) return;
+        Level level = timePlayer.level();
+        if (!level.isClientSide()) return;
+
+        String power = timePlayer.getData(ModDataAttachments.POWER_TYPE);
+        if(!power.equals("Time Lord") && timeCounter > 0){
+            PlayerSuppression.shutDown(Minecraft.getInstance());
+        }
+    }
+
     @SubscribeEvent
     public static void onRenderOverlay(RenderGuiEvent.Post event) {
         if(!Minecraft.getInstance().player.getData(ModDataAttachments.POWER_TYPE).equals("Time Lord"))
