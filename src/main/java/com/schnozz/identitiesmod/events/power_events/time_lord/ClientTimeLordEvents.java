@@ -5,8 +5,6 @@ import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.cooldown.Cooldown;
 import com.schnozz.identitiesmod.cooldown.CooldownAttachment;
 import com.schnozz.identitiesmod.cooldown.CooldownUtil;
-import com.schnozz.identitiesmod.damage_sources.ModDamageTypes;
-import com.schnozz.identitiesmod.networking.payloads.EntityDamagePayload;
 import com.schnozz.identitiesmod.networking.payloads.SoundPayload;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.CooldownSyncPayload;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.SnapShotSyncPayload;
@@ -19,10 +17,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.PostChain;
-import net.minecraft.core.Holder;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
@@ -33,9 +28,6 @@ import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-import java.util.Map;
-
-import static com.schnozz.identitiesmod.events.power_events.time_lord.ServerTimeLordEvents.Time_Stop_Damage;
 import static com.schnozz.identitiesmod.keymapping.ModMappings.*;
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
@@ -127,18 +119,6 @@ public class ClientTimeLordEvents {
                     timeCounter = 0;
                     timePlayer.setData(ModDataAttachments.TIME_STOP_STATE,0);
                     PacketDistributor.sendToServer(new TimeStopSyncPayload(0));
-
-                    //damage entities in map
-                    for(Map.Entry<Integer,Float> damage: Time_Stop_Damage.entrySet())
-                    {
-                        Holder<DamageType> damageTypeHolder =
-                                level.registryAccess()
-                                        .registryOrThrow(Registries.DAMAGE_TYPE)
-                                        .getHolderOrThrow(ModDamageTypes.TIME_DAMAGE);
-                        System.out.println("Entity: " + level.getEntity(damage.getKey()));
-                        System.out.println("Damage: " + damage.getValue());
-                        PacketDistributor.sendToServer(new EntityDamagePayload(damage.getKey(),timePlayer.getId(),damage.getValue(),damageTypeHolder));
-                    }
                 }
             }
         }

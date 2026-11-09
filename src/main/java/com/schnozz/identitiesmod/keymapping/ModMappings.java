@@ -20,75 +20,75 @@ public class ModMappings {
             KeyConflictContext.UNIVERSAL,
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_J,
-            "key.categories.misc"
+            "key.categories.IdentitiesMod.Universal"
     ));
     //universal ability mappings
     public static final Lazy<KeyMapping> PRIMARY_MAPPING = Lazy.of(() -> new KeyMapping(
             "key.identitiesmod.universal.primary",
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_C,
-            "key.categories.misc"
+            "key.categories.IdentitiesMod.Universal"
     ));
     public static final Lazy<KeyMapping> SECONDARY_MAPPING = Lazy.of(() -> new KeyMapping(
             "key.identitiesmod.universal.secondary",
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_G,
-            "key.categories.misc"
+            "key.categories.IdentitiesMod.Universal"
     ));
     public static final Lazy<KeyMapping> UTILITY_MAPPING = Lazy.of(() -> new KeyMapping(
             "key.identitiesmod.universal.utility",
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_R,
-            "key.categories.misc"
+            "key.categories.IdentitiesMod.Universal"
     ));
     public static final Lazy<KeyMapping> SPECIAL_MAPPING = Lazy.of(() -> new KeyMapping(
             "key.identitiesmod.universal.special",
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_X,
-            "key.categories.misc"
+            "key.categories.IdentitiesMod.Universal"
     ));
     //Clone
     public static final Lazy<KeyMapping> CLONE_MAPPING = Lazy.of(() -> new KeyMapping(
             "key.identitiesmod.clone.clone",
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_C,
-            "key.categories.misc"
+            "key.categories.IdentitiesMod.Clone"
     ));
     public static final Lazy<KeyMapping> TELEPORT_CLONE_MAPPING = Lazy.of(() -> new KeyMapping(
             "key.identitiesmod.clone.teleport_clone",
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_G,
-            "key.categories.misc"
+            "key.categories.IdentitiesMod.Clone"
     ));
     public static final Lazy<KeyMapping> KILL_CLONE_MAPPING = Lazy.of(() -> new KeyMapping(
             "key.identitiesmod.clone.kill_clone",
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_X,
-            "key.categories.misc"
+            "key.categories.IdentitiesMod.Clone"
     ));
     public static final Lazy<KeyMapping> AGGRESIVE_MODE_MAPPING = Lazy.of(() -> new KeyMapping(
             "key.identitiesmod.clone.aggresive_mode",
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_R,
-            "key.categories.misc"
+            "key.categories.IdentitiesMod.Clone"
     ));
     public static final Lazy<KeyMapping> PEACEFUL_MODE_MAPPING = Lazy.of(() -> new KeyMapping(
             "key.identitiesmod.clone.peaceful_mode",
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_V,
-            "key.categories.misc"
+            "key.categories.IdentitiesMod.Clone"
     ));
     public static final Lazy<KeyMapping> FOLLOW_MAPPING = Lazy.of(() -> new KeyMapping(
             "key.identitiesmod.clone.follow",
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_Z,
-            "key.categories.misc"
+            "key.categories.IdentitiesMod.Clone"
     ));
     public static final Lazy<KeyMapping> UNFOLLOW_MAPPING = Lazy.of(() -> new KeyMapping(
             "key.identitiesmod.clone.unfollow",
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_T,
-            "key.categories.misc"
+            "key.categories.IdentitiesMod.Clone"
     ));
 
     // Event is on the mod event bus only on the physical client
