@@ -14,19 +14,24 @@ public class PlayerSuppression {
         suppress(options.keyDrop);
         suppress(options.keySwapOffhand);
         suppress(options.keyInventory);
+        suppress(options.keyUp);
+        suppress(options.keyDown);
+        suppress(options.keyRight);
+        suppress(options.keyLeft);
+        suppress(options.keyJump);
 
         for (KeyMapping key : options.keyHotbarSlots) {
             suppress(key);
         }
 
         if (mc.screen instanceof AbstractContainerScreen<?>) {
-            mc.player.closeContainer();
+            mc.setScreen(null);
         }
     }
 
     public static void suppress(KeyMapping key) {
         key.setDown(false);
         // Discard queued presses as well as the held state.
-        while (key.consumeClick()) {}
+        while(key.consumeClick()){}
     }
 }

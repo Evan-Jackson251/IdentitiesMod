@@ -60,9 +60,6 @@ public class ServerTimeLordEvents {
             }
             else if(timeStopped)
             {
-                player.setDeltaMovement(0,0,0);
-                player.hurtMarked = true;
-
                 player.setYRot(player.yRotO);
                 player.setXRot(player.xRotO);
                 event.setCanceled(true);
