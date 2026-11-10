@@ -6,6 +6,7 @@ import com.schnozz.identitiesmod.mixin.SeerEnchantmentMixin;
 import com.schnozz.identitiesmod.networking.payloads.HiddenEnchantsPayload;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.PossessionEntitySyncPayload;
 import com.schnozz.identitiesmod.networking.payloads.sync_payloads.PossessionTimerSyncPayload;
+import com.schnozz.identitiesmod.util.PlayerSuppression;
 import net.minecraft.Util;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -53,8 +54,12 @@ public class ServerSeerEvents {
                 PacketDistributor.sendToPlayer(player, new HiddenEnchantsPayload(menu.containerId, options));
             }
         }
+    }
+    @SubscribeEvent
+    public static void onPlayerTickPre(PlayerTickEvent.Pre event){
         //!Seer Player
-        else{
+        if (!(event.getEntity() instanceof ServerPlayer player)) {return;}
+        if(!player.getData(ModDataAttachments.POWER_TYPE).equals("Seer")){
             if(player.getData(ModDataAttachments.POSSESSION_TIMER) > -1){
                 //Get possessor
                 if(player.level().getPlayerByUUID(player.getData(ModDataAttachments.POSSESSER_ENTITY)) == null)
@@ -99,5 +104,4 @@ public class ServerSeerEvents {
             }
         }
     }
-
 }
