@@ -25,6 +25,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -143,8 +144,9 @@ public class ClientTimeLordEvents {
         if (!level.isClientSide()) return;
 
         String power = timePlayer.getData(ModDataAttachments.POWER_TYPE);
+
         if(!power.equals("Time Lord") && timeCounter > 0){
-            PlayerSuppression.shutDown(Minecraft.getInstance());
+            //PlayerSuppression.shutDown(Minecraft.getInstance());
         }
     }
 
@@ -167,6 +169,29 @@ public class ClientTimeLordEvents {
         REWIND_COOLDOWN_ICON.render(graphics, gameTime);
     }
     //Time stopped events
+    @SubscribeEvent
+    public static void onMovementInput(MovementInputUpdateEvent event) {
+        LocalPlayer timePlayer = Minecraft.getInstance().player;
+        if (timePlayer == null) return;
+        Level level = timePlayer.level();
+        if (!level.isClientSide()) return;
+        String power = timePlayer.getData(ModDataAttachments.POWER_TYPE);
+
+        if(power.equals("Time Lord") || timeCounter <= 0){return;}
+
+        var input = event.getInput();
+
+        input.forwardImpulse = 0.0F;
+        input.leftImpulse = 0.0F;
+
+        input.up = false;
+        input.down = false;
+        input.left = false;
+        input.right = false;
+
+        input.jumping = false;
+        input.shiftKeyDown = false;
+    }
     @SubscribeEvent
     public static void onInteraction(InputEvent.InteractionKeyMappingTriggered event){
         Player player = Minecraft.getInstance().player;
