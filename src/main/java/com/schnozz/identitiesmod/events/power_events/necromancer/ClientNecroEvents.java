@@ -3,7 +3,9 @@ package com.schnozz.identitiesmod.events.power_events.necromancer;
 import com.schnozz.identitiesmod.IdentitiesMod;
 import com.schnozz.identitiesmod.attachments.ModDataAttachments;
 import com.schnozz.identitiesmod.networking.payloads.NecroDespawnPayload;
+import com.schnozz.identitiesmod.networking.payloads.NecroOrderPayload;
 import com.schnozz.identitiesmod.networking.payloads.NecroSummonPayload;
+import com.schnozz.identitiesmod.networking.payloads.NecroTargetPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -17,8 +19,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-import static com.schnozz.identitiesmod.keymapping.ModMappings.PRIMARY_MAPPING;
-import static com.schnozz.identitiesmod.keymapping.ModMappings.UTILITY_MAPPING;
+import static com.schnozz.identitiesmod.keymapping.ModMappings.*;
 
 @EventBusSubscriber(modid = IdentitiesMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ClientNecroEvents {
@@ -40,6 +41,25 @@ public class ClientNecroEvents {
         if(power.equals("Necromancer") && UTILITY_MAPPING.get().consumeClick())
         {
             PacketDistributor.sendToServer(new NecroDespawnPayload(p.getId()));
+        }
+
+        //Set team target to whatever you're looking at within 50 blocks
+        //(the server does the raycast so the client can't pick arbitrary entities)
+        if(power.equals("Necromancer") && SPECIAL_MAPPING.get().consumeClick())
+        {
+            PacketDistributor.sendToServer(NecroTargetPayload.INSTANCE);
+        }
+
+        //Clear team targets so they go back to following you
+        if(power.equals("Necromancer") && FOLLOW_MAPPING.get().consumeClick())
+        {
+            PacketDistributor.sendToServer(new NecroOrderPayload(NecroOrderPayload.Order.RECALL));
+        }
+
+        //Teleport the whole team to you and clear their targets
+        if(power.equals("Necromancer") && SECONDARY_MAPPING.get().consumeClick())
+        {
+            PacketDistributor.sendToServer(new NecroOrderPayload(NecroOrderPayload.Order.TELEPORT));
         }
     }
 }

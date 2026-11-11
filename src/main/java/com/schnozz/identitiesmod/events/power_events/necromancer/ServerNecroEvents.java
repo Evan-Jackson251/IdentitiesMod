@@ -17,6 +17,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.monster.Monster;
@@ -24,11 +25,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -61,6 +65,47 @@ public class ServerNecroEvents {
         if (!"Necromancer".equals(player.getData(ModDataAttachments.POWER_TYPE))) return;
 
         KillTallySavedData.get(player.server).addKill(player.getUUID(), victim);
+    }
+
+    // A summon died: return its gear and free its roster slot.
+    // LOWEST priority so this only runs if no other handler canceled the death
+    // (canceled events aren't delivered to later handlers).
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onSummonDeath(LivingDeathEvent event) {
+        if (!(event.getEntity() instanceof Mob mob) || mob.level().isClientSide()) return;
+        MinecraftServer server = mob.getServer();
+        if (server == null) return;
+
+        Optional<UUID> ownerId = UUIDSavedData.get(server).getOwnerOf(mob.getUUID());
+        if (ownerId.isEmpty()) return;
+
+        ServerPlayer owner = server.getPlayerList().getPlayer(ownerId.get());
+        if (owner == null) return;   // owner offline; shouldn't happen since summons are put away on logout
+
+        NecromancerSummons.onSummonDied(owner, mob);
+    }
+
+    // Forget a summon in UUIDSavedData once its body is actually gone. This runs after
+    // the drop and XP events, so those still recognize it as a summon and cancel its loot.
+    @SubscribeEvent
+    public static void onEntityLeave(EntityLeaveLevelEvent event) {
+        Entity e = event.getEntity();
+        if (e.level().isClientSide() || e.getRemovalReason() != Entity.RemovalReason.KILLED) return;
+        MinecraftServer server = e.getServer();
+        if (server == null) return;
+
+        UUIDSavedData list = UUIDSavedData.get(server);
+        list.getOwnerOf(e.getUUID()).ifPresent(owner -> list.removeMob(owner, e.getUUID()));
+    }
+
+    // Slowly heals stored team members while the necromancer is online
+    @SubscribeEvent
+    public static void onPlayerTick(PlayerTickEvent.Post event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        if (player.tickCount % NecromancerSummons.REGEN_INTERVAL_TICKS != 0) return;
+        if (!"Necromancer".equals(player.getData(ModDataAttachments.POWER_TYPE))) return;
+
+        NecromancerSummons.regenStored(player);
     }
 
     //puts away team when you log off

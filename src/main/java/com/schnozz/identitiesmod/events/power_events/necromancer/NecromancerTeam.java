@@ -155,6 +155,39 @@ public class NecromancerTeam {
         }
     }
 
+    /**
+     * Used when a summon dies: strips everything it is wearing/holding and puts it
+     * in the stash. Returns whatever didn't fit so the caller can hand it to the player.
+     *
+     * Only the mob's worn items are returned, not member.getGear(). While a mob is
+     * summoned, member.getGear() is just a stale copy of what applyGear put on it,
+     * so returning both would duplicate items.
+     */
+    public List<ItemStack> returnGearToStash(Mob mob) {
+        List<ItemStack> leftovers = new ArrayList<>();
+        for (EquipmentSlot slot : GEAR_SLOTS) {
+            ItemStack worn = mob.getItemBySlot(slot);
+            if (worn.isEmpty()) {
+                continue;
+            }
+            mob.setItemSlot(slot, ItemStack.EMPTY);
+            ItemStack rest = depositToStash(makeBreakable(worn.copy()));
+            if (!rest.isEmpty()) {
+                leftovers.add(rest);
+            }
+        }
+        return leftovers;
+    }
+
+    /**
+     * Undoes makeUnbreakable for items going back to the player. Without this, a player
+     * could equip a summon, let it die, and get the gear back permanently unbreakable.
+     */
+    public static ItemStack makeBreakable(ItemStack stack) {
+        stack.remove(DataComponents.UNBREAKABLE);
+        return stack;
+    }
+
     public static ItemStack makeUnbreakable(ItemStack stack) {
         if (stack.isDamageableItem()) {
             stack.set(DataComponents.UNBREAKABLE, new Unbreakable(false));
@@ -188,7 +221,8 @@ public class NecromancerTeam {
                 Codec.BOOL.optionalFieldOf("active", false).forGetter(Member::isActive),
                 ItemStack.OPTIONAL_CODEC.listOf().optionalFieldOf("gear", List.of()).forGetter(m -> m.gear),
                 UUIDUtil.CODEC.optionalFieldOf("entity").forGetter(Member::getEntityId),
-                Codec.FLOAT.optionalFieldOf("health", -1.0F).forGetter(Member::getHealth)
+                Codec.FLOAT.optionalFieldOf("health", -1.0F).forGetter(Member::getHealth),
+                Codec.FLOAT.optionalFieldOf("max_health", -1.0F).forGetter(Member::getMaxHealth)
         ).apply(inst, Member::new));
 
         private final ResourceLocation typeId;
@@ -196,19 +230,21 @@ public class NecromancerTeam {
         private final NonNullList<ItemStack> gear;
         @Nullable
         private UUID entityId;
-        private float health;   // -1 = no stored value, spawn at max
+        private float health;      // -1 = no stored value, spawn at max
+        private float maxHealth;   // -1 = unknown; recorded on despawn so regen knows where to stop
 
         public Member(ResourceLocation typeId) {
-            this(typeId, false, List.of(), Optional.empty(), -1.0F);
+            this(typeId, false, List.of(), Optional.empty(), -1.0F, -1.0F);
         }
 
         private Member(ResourceLocation typeId, boolean active, List<ItemStack> gear,
-                       Optional<UUID> entityId, float health) {
+                       Optional<UUID> entityId, float health, float maxHealth) {
             this.typeId = typeId;
             this.active = active;
             this.gear = pad(gear, GEAR_SIZE);
             this.entityId = entityId.orElse(null);
             this.health = health;
+            this.maxHealth = maxHealth;
         }
 
         public ResourceLocation getTypeId() {
@@ -234,6 +270,28 @@ public class NecromancerTeam {
 
         public float getHealth() { return health; }
         public void setHealth(float health) { this.health = health; }
+
+        public float getMaxHealth() { return maxHealth; }
+        public void setMaxHealth(float maxHealth) { this.maxHealth = maxHealth; }
+
+        /**
+         * Heals a stored member by a fraction of its max health. Does nothing while
+         * summoned or already full. Once full, health resets to -1 (spawn at max).
+         */
+        public void regenStored(float fractionOfMax) {
+            if (entityId != null || health < 0.0F) {
+                return;
+            }
+            if (maxHealth <= 0.0F) {
+                // Saved before max_health existed; we can't know the cap, so treat as full.
+                health = -1.0F;
+                return;
+            }
+            health = Math.min(maxHealth, health + maxHealth * fractionOfMax);
+            if (health >= maxHealth) {
+                health = -1.0F;
+            }
+        }
 
         /** UUID of the live entity while summoned. */
         public Optional<UUID> getEntityId() {

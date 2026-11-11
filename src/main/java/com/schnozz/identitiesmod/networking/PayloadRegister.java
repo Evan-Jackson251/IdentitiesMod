@@ -230,6 +230,18 @@ public class PayloadRegister {
                 }
         );
 
+        registrar.playToServer(
+                NecroTargetPayload.TYPE,
+                NecroTargetPayload.STREAM_CODEC,
+                NecroTargetPayload::handle
+        );
+
+        registrar.playToServer(
+                NecroOrderPayload.TYPE,
+                NecroOrderPayload.STREAM_CODEC,
+                NecroOrderPayload::handle
+        );
+
         registrar.playToClient(NomiconSnapshot.TYPE, NomiconSnapshot.STREAM_CODEC, NomiconSnapshot::handle);
 
         registrar.playToServer(NomiconActionPayload.TYPE, NomiconActionPayload.STREAM_CODEC,
